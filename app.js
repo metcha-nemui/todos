@@ -1,0 +1,50 @@
+// app.js - Presenter / Application Entry Point
+import { TodoModel } from './model.js';
+import { TodoView } from './view.js';
+
+class TodoPresenter {
+    constructor(model, view) {
+        this.model = model;
+        this.view = view;
+
+        // 1. Modelデータ変更時の自動描画をバインド
+        this.model.bindOnChange(() => this.view.render(this.model));
+
+        // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
+        
+        // 日付コントロール
+        this.view.bindAdvanceDay(() => this.model.advanceToNextDay());
+        this.view.bindDatePicker((newDate) => this.model.setCurrentDate(newDate));
+        
+        // タスク追加（今日 / バックログ）
+        this.view.bindAddTodo((title) => this.model.addTodo(title));
+        this.view.bindAddBacklog((title, date) => this.model.addTodo(title, date));
+        
+        // タスクに対する各種アクション（チェック、物理削除、編集、今日へ移動）
+        this.view.bindTaskActions(
+            (id) => this.model.toggleTodo(id),
+            (id) => this.model.deleteTodo(id),
+            (id, newTitle) => this.model.editTodo(id, newTitle),
+            (id) => this.model.moveToToday(id)
+        );
+
+        // ドラッグ＆ドロップによる並び替え順序の同期
+        this.view.bindDragAndDrop((orderedIds) => this.model.updateSortOrder(orderedIds));
+        
+        // Markdownクリップボードコピー（独立ボタン）
+        this.view.bindCopyButtons(
+            () => this.model.getTodayTodos(),
+            () => this.model.getTodayDones()
+        );
+
+        // 3. アプリ起動時の初期レンダリング
+        this.view.render(this.model);
+    }
+}
+
+// ページ読み込み完了時にPresenterを初期化してアプリケーションを起動
+document.addEventListener('DOMContentLoaded', () => {
+    const model = new TodoModel();
+    const view = new TodoView();
+    new TodoPresenter(model, view);
+});
