@@ -40,24 +40,22 @@ export class TodoView {
             });
         });
     }
+   
+   render(data) {
+      // 日付反映
+      this.currentDateText.textContent = data.currentDate;
+      this.datePicker.value = data.currentDate;
 
-    render(model) {
-        // 日付反映
-        this.currentDateText.textContent = model.currentDate;
-        this.datePicker.value = model.currentDate;
-
-        // 今日のToDo描画
-        this._renderTaskList(this.listTodo, model.getTodayTodos(), false);
-        // 今日のDone描画
-        this._renderTaskList(this.listDone, model.getTodayDones(), true);
-
-        // バックログ描画
-        this._renderTaskList(this.listNoDate, model.getNoDateTodos(), false, true);
-        this._renderFutureTasks(model.getFutureTodosGrouped());
-
-        // アーカイブ描画
-        this._renderArchive(model.getArchiveGrouped());
-    }
+      // 今日のToDo描画
+      this._renderTaskList(this.listTodo, data.todayTodos, false);
+      // 今日のDone描画
+      this._renderTaskList(this.listDone, data.todayDones, true);
+      // バックログ描画
+      this._renderTaskList(this.listNoDate, data.noDateTodos, false, true);
+      this._renderFutureTasks(data.futureTodos);
+      // アーカイブ描画
+      this._renderArchive(data.archiveTodos);
+   }
 
     _renderTaskList(element, tasks, isDone, showMoveToToday = false) {
         element.innerHTML = '';
