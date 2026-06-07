@@ -7,7 +7,7 @@ export class TodoView {
         this.datePicker = document.getElementById('date-picker');
         this.tabs = document.querySelectorAll('.tab-btn');
         this.sections = document.querySelectorAll('.view-section');
-
+        
         // 今日ビュー
         this.formAddTodo = document.getElementById('form-add-todo');
         this.inputTodoTitle = document.getElementById('input-todo-title');
@@ -15,26 +15,26 @@ export class TodoView {
         this.listDone = document.getElementById('list-done');
         this.btnCopyTodo = document.getElementById('btn-copy-todo');
         this.btnCopyDone = document.getElementById('btn-copy-done');
-
+        
         // バックログビュー
         this.formBacklogAdd = document.getElementById('form-backlog-add');
         this.inputBacklogTitle = document.getElementById('input-backlog-title');
         this.inputBacklogDate = document.getElementById('input-backlog-date');
         this.listNoDate = document.getElementById('list-no-date');
         this.containerFutureTasks = document.getElementById('container-future-tasks');
-
+        
         // アーカイブビュー
         this.containerArchive = document.getElementById('container-archive');
-
+        
         this._initTabs();
     }
-
+    
     _initTabs() {
         this.tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 this.tabs.forEach(t => t.classList.remove('active'));
                 this.sections.forEach(s => s.classList.remove('active'));
-
+                
                 tab.classList.add('active');
                 document.getElementById(tab.dataset.target).classList.add('active');
             });
@@ -45,7 +45,7 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-
+      
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false);
       // 今日のDone描画
@@ -56,7 +56,7 @@ export class TodoView {
       // アーカイブ描画
       this._renderArchive(data.archiveTodos);
    }
-
+   
     _renderTaskList(element, tasks, isDone, showMoveToToday = false) {
         element.innerHTML = '';
         tasks.forEach(task => {
@@ -64,7 +64,7 @@ export class TodoView {
             li.className = 'task-item';
             li.dataset.id = task.id;
             if (!isDone) li.setAttribute('draggable', 'true');
-
+            
             li.innerHTML = `
                 <div class="task-item-content ${isDone ? 'done' : ''}">
                     <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
@@ -79,14 +79,14 @@ export class TodoView {
             element.appendChild(li);
         });
     }
-
+    
     _renderFutureTasks(groupedTasks) {
         this.containerFutureTasks.innerHTML = '';
         if (Object.keys(groupedTasks).length === 0) {
             this.containerFutureTasks.innerHTML = '<p style="color: var(--text-muted);">予定されている将来のタスクはありません</p>';
             return;
         }
-
+        
         for (const [date, tasks] of Object.entries(groupedTasks)) {
             const div = document.createElement('div');
             div.className = 'backlog-group';
@@ -100,14 +100,14 @@ export class TodoView {
             this.containerFutureTasks.appendChild(div);
         }
     }
-
+    
     _renderArchive(groupedArchive) {
         this.containerArchive.innerHTML = '';
         if (Object.keys(groupedArchive).length === 0) {
             this.containerArchive.innerHTML = '<p style="color: var(--text-muted);">過去の完了タスクはありません</p>';
             return;
         }
-
+        
         for (const [date, tasks] of Object.entries(groupedArchive)) {
             const div = document.createElement('div');
             div.className = 'archive-day';
@@ -121,16 +121,16 @@ export class TodoView {
             this.containerArchive.appendChild(div);
         }
     }
-
+    
     // イベントバインド群
     bindAdvanceDay(handler) {
         this.btnNextDay.addEventListener('click', handler);
     }
-
+    
     bindDatePicker(handler) {
         this.datePicker.addEventListener('change', (e) => handler(e.target.value));
     }
-
+    
     bindAddTodo(handler) {
         this.formAddTodo.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -140,7 +140,7 @@ export class TodoView {
             }
         });
     }
-
+    
     bindAddBacklog(handler) {
         this.formBacklogAdd.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -153,7 +153,7 @@ export class TodoView {
             }
         });
     }
-
+    
     bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
         const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks, this.containerArchive];
         
@@ -164,7 +164,7 @@ export class TodoView {
                 const li = target.closest('.task-item');
                 if (!li) return;
                 const id = li.dataset.id;
-
+                
                 if (target.classList.contains('toggle-check')) {
                     handleToggle(id);
                 } else if (target.classList.contains('delete-btn')) {
@@ -186,10 +186,10 @@ export class TodoView {
             });
         });
     }
-
+    
     bindDragAndDrop(handleSortUpdate) {
         let draggedElement = null;
-
+        
         // ToDoリストコンテナにリスナーを設定
         this.listTodo.addEventListener('dragstart', (e) => {
             draggedElement = e.target.closest('.task-item');
@@ -197,7 +197,7 @@ export class TodoView {
                 draggedElement.classList.add('dragging');
             }
         });
-
+        
         this.listTodo.addEventListener('dragend', () => {
             if (draggedElement) {
                 draggedElement.classList.remove('dragging');
@@ -208,7 +208,7 @@ export class TodoView {
                 handleSortUpdate(orderedIds);
             }
         });
-
+        
         this.listTodo.addEventListener('dragover', (e) => {
             e.preventDefault();
             const afterElement = this._getDragAfterElement(this.listTodo, e.clientY);
@@ -219,7 +219,7 @@ export class TodoView {
             }
         });
     }
-
+    
     _getDragAfterElement(container, y) {
         const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
         return draggableElements.reduce((closest, child) => {
@@ -232,19 +232,19 @@ export class TodoView {
             }
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
-
+    
     bindCopyButtons(getTodos, getDones) {
         this.btnCopyTodo.addEventListener('click', () => {
             const md = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
             navigator.clipboard.writeText(md).then(() => alert('ToDoリスト（Markdown）をコピーしました！'));
         });
-
+        
         this.btnCopyDone.addEventListener('click', () => {
             const md = getDones().map(t => `- [x] ${t.title}`).join('\n');
             navigator.clipboard.writeText(md).then(() => alert('Doneリスト（Markdown）をコピーしました！'));
         });
     }
-
+    
     _escapeHtml(str) {
         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }

@@ -6,7 +6,7 @@ class TodoPresenter {
    constructor(model, view) {
       this.model = model;
       this.view  = view;
-
+      
       // 1. Modelデータ変更時の自動描画をバインド
       this.model.bindOnChange(() => {
          const renderData = {
@@ -19,7 +19,7 @@ class TodoPresenter {
          };
          this.view.render(renderData);
       });
-
+      
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
       // 日付コントロール
@@ -37,7 +37,7 @@ class TodoPresenter {
          (id, newTitle) => this.model.editTodo(id, newTitle),
          (id) => this.model.moveToToday(id)
       );
-
+      
       // ドラッグ＆ドロップによる並び替え順序の同期
       this.view.bindDragAndDrop((orderedIds) => this.model.updateSortOrder(orderedIds));
       
@@ -46,7 +46,7 @@ class TodoPresenter {
          () => this.model.getTodayTodos(),
          () => this.model.getTodayDones()
       );
-
+      
       // 3. アプリ起動時の初期レンダリング
       const renderData = {
          currentDate: this.model.currentDate,
