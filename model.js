@@ -47,7 +47,7 @@ export class TodoModel {
    
    // タスク操作
    addTodo(title, dueDate = null) {
-      const targetDate = dueDate || this.currentDate;
+      const targetDate = dueDate;
       
       // 追加先の最大sort_orderを取得
       const sameDayTasks = this.todos.filter(t => t.due_date === targetDate);
@@ -57,7 +57,7 @@ export class TodoModel {
          id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
          title: title,
          is_done: false,
-         due_date: targetDate ? targetDate : null,
+         due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
          sort_order: maxOrder + 1
