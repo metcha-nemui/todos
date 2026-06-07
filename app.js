@@ -17,7 +17,7 @@ class TodoPresenter {
       this.view.bindDatePicker((newDate) => this.model.setCurrentDate(newDate));
       
       // タスク追加（今日 / バックログ）
-      this.view.bindAddTodo((title) => this.model.addTodo(title));
+      this.view.bindAddTodo((title, date) => this.model.addTodo(title, date));
       this.view.bindAddBacklog((title, date) => this.model.addTodo(title, date));
       
       // タスクに対する各種アクション（チェック、物理削除、編集、今日へ移動）

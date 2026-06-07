@@ -11,6 +11,7 @@ export class TodoView {
       // 今日ビュー
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputTodoTitle = document.getElementById('input-todo-title');
+      this.inputTodoDate  = document.getElementById('input-todo-date');
       this.listTodo = document.getElementById('list-todo');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
@@ -134,9 +135,12 @@ export class TodoView {
    bindAddTodo(handler) {
       this.formAddTodo.addEventListener('submit', (e) => {
          e.preventDefault();
-         if (this.inputTodoTitle.value.trim()) {
-            handler(this.inputTodoTitle.value.trim());
+         const title = this.inputTodoTitle.value.trim();
+         const date  = this.inputTodoDate.value || null;
+         if(title) {
+            handler(title, date);
             this.inputTodoTitle.value = '';
+            this.inputTodoDate.value  = '';
          }
       });
    }
