@@ -154,39 +154,40 @@ export class TodoView {
         });
     }
     
-    bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
-        const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks, this.containerArchive];
-        
-        lists.forEach(listContainer => {
-            if (!listContainer) return;
-            listContainer.addEventListener('click', (e) => {
-                const target = e.target;
-                const li = target.closest('.task-item');
-                if (!li) return;
-                const id = li.dataset.id;
-                
-                if (target.classList.contains('toggle-check')) {
-                    handleToggle(id);
-                } else if (target.classList.contains('delete-btn')) {
-                    if (confirm('このタスクを物理削除しますか？（復元できません）')) {
-                        handleDelete(id);
-                    } else {
-                        // チェック状態などが戻らないようキャンセル時はリバインドか再描画が必要
-                        e.preventDefault();
-                    }
-                } else if (target.classList.contains('edit-btn')) {
-                    const currentTitle = li.querySelector('span').textContent;
-                    const newTitle = prompt('タスク名を編集してください:', currentTitle);
-                    if (newTitle && newTitle.trim()) {
-                        handleEdit(id, newTitle.trim());
-                    }
-                } else if (target.classList.contains('move-today-btn')) {
-                    handleMoveToday(id);
-                }
-            });
-        });
-    }
-    
+   bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
+      const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks, this.containerArchive];
+      
+      lists.forEach(listContainer => {
+         if(!listContainer) return;
+         
+         listContainer.addEventListener('click', (e) => {
+            const target = e.target;
+            const li = target.closest('.task-item');
+            if (!li) return;
+            const id = li.dataset.id;
+            
+            const actionMap = {
+               'toggle-check': () => handleToggle(id),
+               'delete-btn'  : () => {
+                  const ret = confirm('このタスクを物理削除しますか？（復元できません）')
+                  if(ret) handleDelete(id);
+                  else    e.preventDefault();
+               },
+               'edit-btn'    : () => {
+                  const currentTitle = li.querySelector('span').textContent;
+                  const newTitle = prompt('タスク名を編集してください:', currentTitle);
+                  if(newTitle && newTitle.trim()) handleEdit(id, newTitle.trim());
+               },
+               'move-today-btn': () => handleMoveToday(id)
+            };
+            
+            for(const className of target.classList) {
+               if(actionMap[className]) { actionMap[className](); break; }
+            }
+         });
+      });
+   }
+   
     bindDragAndDrop(handleSortUpdate) {
         let draggedElement = null;
         
