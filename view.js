@@ -18,9 +18,6 @@ export class TodoView {
       this.btnCopyDone = document.getElementById('btn-copy-done');
       
       // バックログビュー
-      this.formBacklogAdd = document.getElementById('form-backlog-add');
-      this.inputBacklogTitle = document.getElementById('input-backlog-title');
-      this.inputBacklogDate = document.getElementById('input-backlog-date');
       this.listNoDate = document.getElementById('list-no-date');
       this.containerFutureTasks = document.getElementById('container-future-tasks');
       
@@ -144,20 +141,7 @@ export class TodoView {
          }
       });
    }
-    
-   bindAddBacklog(handler) {
-      this.formBacklogAdd.addEventListener('submit', (e) => {
-         e.preventDefault();
-         const title = this.inputBacklogTitle.value.trim();
-         const date = this.inputBacklogDate.value || null;
-         if (title) {
-            handler(title, date);
-            this.inputBacklogTitle.value = '';
-            this.inputBacklogDate.value = '';
-         }
-      });
-   }
-    
+   
    bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
       const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks, this.containerArchive];
       
