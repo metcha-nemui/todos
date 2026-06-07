@@ -220,8 +220,8 @@ export class TodoView {
          }
       });
    }
-    
-    _getDragAfterElement(container, y) {
+   
+   _getDragAfterElement(container, y) {
       const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
       return draggableElements.reduce((closest, child) => {
          const box = child.getBoundingClientRect();
@@ -232,8 +232,8 @@ export class TodoView {
             return closest;
          }
       }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-    
+   }
+   
    bindCopyButtons(getTodos, getDones) {
       this.btnCopyTodo.addEventListener('click', () => {
          const md = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
