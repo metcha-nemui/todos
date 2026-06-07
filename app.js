@@ -8,17 +8,7 @@ class TodoPresenter {
       this.view  = view;
       
       // 1. Modelデータ変更時の自動描画をバインド
-      this.model.bindOnChange(() => {
-         const renderData = {
-            currentDate: this.model.currentDate,
-            todayTodos: this.model.getTodayTodos(),
-            todayDones: this.model.getTodayDones(),
-            noDateTodos: this.model.getNoDateTodos(),
-            futureTodos: this.model.getFutureTodosGrouped(),
-            archiveTodos: this.model.getArchiveGrouped()
-         };
-         this.view.render(renderData);
-      });
+      this.model.bindOnChange(() => this.updateView());
       
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
@@ -48,15 +38,18 @@ class TodoPresenter {
       );
       
       // 3. アプリ起動時の初期レンダリング
-      const renderData = {
-         currentDate: this.model.currentDate,
-         todayTodos: this.model.getTodayTodos(),
-         todayDones: this.model.getTodayDones(),
-         noDateTodos: this.model.getNoDateTodos(),
-         futureTodos: this.model.getFutureTodosGrouped(),
+      this.updateView();
+   }
+   
+   updateView() {
+      this.view.render({
+         currentDate:  this.model.currentDate,
+         todayTodos:   this.model.getTodayTodos(),
+         todayDones:   this.model.getTodayDones(),
+         noDateTodos:  this.model.getNoDateTodos(),
+         futureTodos:  this.model.getFutureTodosGrouped(),
          archiveTodos: this.model.getArchiveGrouped()
-      };
-      this.view.render(renderData);
+      });
    }
 }
 
