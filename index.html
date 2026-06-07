@@ -224,9 +224,9 @@
    <div class="container">
       <header>
          <div class="date-control">
-               <span class="date-display" id="current-date-text">2026-06-06</span>
-               <button id="btn-next-day">翌日へ進む →</button>
-               <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+            <span class="date-display" id="current-date-text">2026-06-06</span>
+            <button id="btn-next-day">翌日へ進む →</button>
+            <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
          </div>
       </header>
       
@@ -239,65 +239,65 @@
       <!-- 今日ビュー -->
       <div id="view-today" class="view-section active">
          <div class="main-layout">
-               <!-- ToDoパネル -->
-               <div class="panel">
-                  <div class="panel-header">
-                     <h2>ToDo (未完了)</h2>
-                     <button id="btn-copy-todo" class="secondary">MDコピー</button>
-                  </div>
-                  <form class="todo-input-form" id="form-add-todo">
-                     <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
-                     <button type="submit">追加</button>
-                  </form>
-                  <ul class="task-list" id="list-todo"></ul>
+            <!-- ToDoパネル -->
+            <div class="panel">
+               <div class="panel-header">
+                  <h2>ToDo (未完了)</h2>
+                  <button id="btn-copy-todo" class="secondary">MDコピー</button>
                </div>
-               
-               <!-- Doneパネル -->
-               <div class="panel">
-                  <div class="panel-header">
-                     <h2>Done (完了)</h2>
-                     <button id="btn-copy-done" class="secondary">MDコピー</button>
-                  </div>
-                  <ul class="task-list" id="list-done"></ul>
+               <form class="todo-input-form" id="form-add-todo">
+                  <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
+                  <button type="submit">追加</button>
+               </form>
+               <ul class="task-list" id="list-todo"></ul>
+            </div>
+            
+            <!-- Doneパネル -->
+            <div class="panel">
+               <div class="panel-header">
+                  <h2>Done (完了)</h2>
+                  <button id="btn-copy-done" class="secondary">MDコピー</button>
                </div>
+               <ul class="task-list" id="list-done"></ul>
+            </div>
          </div>
       </div>
       
       <!-- バックログビュー -->
       <div id="view-backlog" class="view-section">
          <div class="panel" style="margin-bottom: 20px;">
-               <div class="panel-header">
-                  <h2>バックログへの新規登録</h2>
-               </div>
-               <form class="todo-input-form" id="form-backlog-add">
-                  <input type="text" id="input-backlog-title" placeholder="バックログタスクを入力..." required>
-                  <input type="date" id="input-backlog-date">
-                  <button type="submit">バックログに追加</button>
-               </form>
+            <div class="panel-header">
+               <h2>バックログへの新規登録</h2>
+            </div>
+            <form class="todo-input-form" id="form-backlog-add">
+               <input type="text" id="input-backlog-title" placeholder="バックログタスクを入力..." required>
+               <input type="date" id="input-backlog-date">
+               <button type="submit">バックログに追加</button>
+            </form>
          </div>
          
          <div class="panel">
-               <div class="panel-header">
-                  <h2>日付なしタスク</h2>
-               </div>
-               <ul class="task-list" id="list-no-date"></ul>
+            <div class="panel-header">
+               <h2>日付なしタスク</h2>
+            </div>
+            <ul class="task-list" id="list-no-date"></ul>
          </div>
          <br>
          <div class="panel">
-               <div class="panel-header">
-                  <h2>将来のタスク</h2>
-               </div>
-               <div id="container-future-tasks"></div>
+            <div class="panel-header">
+               <h2>将来のタスク</h2>
+            </div>
+            <div id="container-future-tasks"></div>
          </div>
       </div>
       
       <!-- アーカイブビュー -->
       <div id="view-archive" class="view-section">
          <div class="panel">
-               <div class="panel-header">
-                  <h2>過去の完了タスク履歴</h2>
-               </div>
-               <div id="container-archive"></div>
+            <div class="panel-header">
+               <h2>過去の完了タスク履歴</h2>
+            </div>
+            <div id="container-archive"></div>
          </div>
       </div>
    </div>
