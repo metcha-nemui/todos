@@ -202,20 +202,15 @@ export class TodoView {
          });
          
          // 2. 日付変更（datepicker）の変更イベントをキャッチするリスナーを追加
-         listContainer.addEventListener('change', (e) => {
+         listContainer.addEventListener('input', (e) => {
             const target = e.target;
             // 変更されたのが日付選択（move-date-picker）の場合のみ処理
             if (target.classList.contains('move-date-picker')) {
                const li = target.closest('.task-item');
                if (!li) return;
                const id = li.dataset.id;
-               const chosenDate = target.value; // 選択された日付 (YYYY-MM-DD)
-               
-               if (chosenDate) {
-                  // Presenter経由でModelのロジックを呼び出す
-                  // 既存の `handleMoveToday` は「指定日付に変更する」内部ロジックになっているためそのまま流用可能
-                  handleMoveToday(id, chosenDate); 
-               }
+               const chosenDate = target.value || null; // 選択された日付 (YYYY-MM-DD)
+               handleMoveToday(id, chosenDate); 
             }
          });
          
