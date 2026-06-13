@@ -23,7 +23,7 @@ body {
 }
 
 .container {
-   max-width: 1200px;
+   max-width: 800px;
    margin: 0 auto;
 }
 
@@ -106,21 +106,9 @@ button.secondary {
 }
 
 .main-layout {
-   display: grid;
-   grid-template-columns: 1fr 1fr 1fr;
+   display: flex;
+   flex-direction: column;
    gap: 20px;
-}
-
-@media (max-width: 992px) {
-   .main-layout {
-      grid-template-columns: 1fr 1fr;
-   }
-}
-
-@media (max-width: 768px) {
-   .main-layout {
-      grid-template-columns: 1fr;
-   }
 }
 
 .panel {
