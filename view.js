@@ -43,6 +43,7 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
+      this.inputTodoDate.value = data.currentDate;
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false);
