@@ -8,14 +8,6 @@
 </head>
 <body>
    <div class="container">
-      <header>
-         <div class="date-control">
-            <span class="date-display" id="current-date-text">2026-06-06</span>
-            <button id="btn-next-day">翌日へ進む →</button>
-            <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
-         </div>
-      </header>
-      
       <div class="nav-tabs">
          <button class="tab-btn active" data-target="view-today">メイン</button>
          <button class="tab-btn" data-target="view-debug">デバッグ</button>
@@ -24,27 +16,38 @@
       <!-- 今日ビュー -->
       <div id="view-today" class="view-section active">
          <div class="main-layout">
-            <!-- Doneパネル -->
+            <!-- 今日のタスクパネル -->
             <div class="panel">
-               <div class="panel-header">
-                  <h2>Done (完了)</h2>
-                  <button id="btn-copy-done" class="secondary">MDコピー</button>
+               <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+                  <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
+                     <span class="date-display" id="current-date-text" style="font-size: 1.5rem; font-weight: bold;">2026-06-06</span>
+                     <button id="btn-next-day">翌日へ進む →</button>
+                     <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                  </div>
+                  <div style="display: flex; gap: 5px;">
+                     <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;">ToDoコピー</button>
+                     <button id="btn-copy-done" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;">Doneコピー</button>
+                  </div>
                </div>
-               <ul class="task-list" id="list-done"></ul>
-            </div>
-
-            <!-- ToDoパネル -->
-            <div class="panel">
-               <div class="panel-header">
-                  <h2>ToDo (未完了)</h2>
-                  <button id="btn-copy-todo" class="secondary">MDコピー</button>
+               
+               <div id="container-today-tasks">
+                  <!-- ToDo (未完了) -->
+                  <div class="backlog-group">
+                     <div class="backlog-title">ToDo (未完了)</div>
+                     <form class="todo-input-form" id="form-add-todo" style="margin-bottom: 15px;">
+                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
+                        <input type="date" id="input-todo-date">
+                        <button type="submit">追加</button>
+                     </form>
+                     <ul class="task-list" id="list-todo"></ul>
+                  </div>
+                  
+                  <!-- Done (完了) -->
+                  <div class="backlog-group" style="margin-top: 20px;">
+                     <div class="backlog-title">Done (完了)</div>
+                     <ul class="task-list" id="list-done"></ul>
+                  </div>
                </div>
-               <form class="todo-input-form" id="form-add-todo">
-                  <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
-                  <input type="date" id="input-todo-date">
-                  <button type="submit">追加</button>
-               </form>
-               <ul class="task-list" id="list-todo"></ul>
             </div>
 
             <!-- 今後のタスクパネル -->
