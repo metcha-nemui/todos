@@ -21,9 +21,6 @@ export class TodoView {
       this.listNoDate = document.getElementById('list-no-date');
       this.containerFutureTasks = document.getElementById('container-future-tasks');
       
-      // アーカイブビュー
-      this.containerArchive = document.getElementById('container-archive');
-      
       // デバッグビュー
       this.containerDebug = document.getElementById('container-debug');
       this.btnClearAllDebug = document.getElementById('btn-clear-all-debug');
@@ -55,8 +52,6 @@ export class TodoView {
       // バックログ描画
       this._renderTaskList(this.listNoDate, data.noDateTodos, false, true);
       this._renderFutureTasks(data.futureTodos);
-      // アーカイブ描画
-      this._renderArchive(data.archiveTodos);
       // デバッグ描画
       this._renderDebug(data.storageItems, data.todos);
    }
@@ -119,27 +114,6 @@ export class TodoView {
       }
    }
     
-   _renderArchive(groupedArchive) {
-      this.containerArchive.innerHTML = '';
-      if (Object.keys(groupedArchive).length === 0) {
-         this.containerArchive.innerHTML = '<p style="color: var(--text-muted);">過去の完了タスクはありません</p>';
-         return;
-      }
-      
-      for (const [date, tasks] of Object.entries(groupedArchive)) {
-         const div = document.createElement('div');
-         div.className = 'archive-day';
-         div.innerHTML = `<div class="archive-date">${date}</div>`;
-         
-         const ul = document.createElement('ul');
-         ul.className = 'task-list';
-         this._renderTaskList(ul, tasks, true, false);
-         
-         div.appendChild(ul);
-         this.containerArchive.appendChild(div);
-      }
-   }
-    
    // イベントバインド群
    bindAdvanceDay(handler) {
       this.btnNextDay.addEventListener('click', handler);
@@ -162,7 +136,7 @@ export class TodoView {
    }
    
    bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
-      const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks, this.containerArchive];
+      const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks];
       
       lists.forEach(listContainer => {
          if(!listContainer) return;

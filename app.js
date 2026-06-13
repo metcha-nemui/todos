@@ -67,7 +67,6 @@ class TodoPresenter {
          todayDones:   this.model.getTodayDones(),
          noDateTodos:  this.model.getNoDateTodos(),
          futureTodos:  this.model.getFutureTodosGrouped(),
-         archiveTodos: this.model.getArchiveGrouped(),
          storageItems: this.model.getAllStorageItems(),
          todos:        this.model.todos
       });

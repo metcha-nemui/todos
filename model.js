@@ -152,20 +152,6 @@ export class TodoModel {
       });
       return groups;
    }
-   
-   getArchiveGrouped() {
-      const pastDones = this.todos.filter(t => t.due_date && t.due_date < this.currentDate && t.is_done);
-      const groups = {};
-      pastDones.forEach(task => {
-         if (!groups[task.due_date]) groups[task.due_date] = [];
-         groups[task.due_date].push(task);
-      });
-      // 日付の降順ソート
-      return Object.keys(groups).sort((a, b) => b.localeCompare(a)).reduce((obj, key) => {
-         obj[key] = groups[key];
-         return obj;
-      }, {});
-   }
 
     getAllStorageItems() {
        const items = [];
