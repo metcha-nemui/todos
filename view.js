@@ -18,8 +18,7 @@ export class TodoView {
       this.btnCopyDone = document.getElementById('btn-copy-done');
       
       // バックログビュー
-      this.listNoDate = document.getElementById('list-no-date');
-      this.containerFutureTasks = document.getElementById('container-future-tasks');
+      this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
       
       // デバッグビュー
       this.containerDebug = document.getElementById('container-debug');
@@ -50,8 +49,7 @@ export class TodoView {
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
       // バックログ描画
-      this._renderTaskList(this.listNoDate, data.noDateTodos, false, true);
-      this._renderFutureTasks(data.futureTodos);
+      this._renderBacklogTasks(data.backlogTodos);
       // デバッグ描画
       this._renderDebug(data.storageItems, data.todos);
    }
@@ -93,10 +91,10 @@ export class TodoView {
       });
    }
     
-   _renderFutureTasks(groupedTasks) {
-      this.containerFutureTasks.innerHTML = '';
+   _renderBacklogTasks(groupedTasks) {
+      this.containerBacklogTasks.innerHTML = '';
       if (Object.keys(groupedTasks).length === 0) {
-         this.containerFutureTasks.innerHTML = '<p style="color: var(--text-muted);">予定されている将来のタスクはありません</p>';
+         this.containerBacklogTasks.innerHTML = '<p style="color: var(--text-muted);">今後のタスク予定はありません</p>';
          return;
       }
       
@@ -110,7 +108,7 @@ export class TodoView {
          this._renderTaskList(ul, tasks, false, true);
          
          div.appendChild(ul);
-         this.containerFutureTasks.appendChild(div);
+         this.containerBacklogTasks.appendChild(div);
       }
    }
     
@@ -136,7 +134,7 @@ export class TodoView {
    }
    
    bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
-      const lists = [this.listTodo, this.listDone, this.listNoDate, this.containerFutureTasks];
+      const lists = [this.listTodo, this.listDone, this.containerBacklogTasks];
       
       lists.forEach(listContainer => {
          if(!listContainer) return;

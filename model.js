@@ -138,19 +138,32 @@ export class TodoModel {
          .filter(t => t.due_date === this.currentDate && t.is_done)
          .sort((a, b) => a.sort_order - b.sort_order);
    }
-   
-   getNoDateTodos() {
-      return this.todos.filter(t => !t.due_date);
-   }
-   
-   getFutureTodosGrouped() {
+      getBacklogTodosGrouped() {
+      const noDateTasks = this.todos.filter(t => !t.due_date);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate);
+      
       const groups = {};
+      
+      if (noDateTasks.length > 0) {
+         groups["日付なし"] = noDateTasks;
+      }
+      
       futureTasks.forEach(task => {
          if (!groups[task.due_date]) groups[task.due_date] = [];
          groups[task.due_date].push(task);
       });
-      return groups;
+      
+      // 「日付なし」を先頭にし、それ以外の日付を昇順でソート
+      const sortedKeys = Object.keys(groups).sort((a, b) => {
+         if (a === "日付なし") return -1;
+         if (b === "日付なし") return 1;
+         return a.localeCompare(b);
+      });
+      
+      return sortedKeys.reduce((obj, key) => {
+         obj[key] = groups[key];
+         return obj;
+      }, {});
    }
 
     getAllStorageItems() {
