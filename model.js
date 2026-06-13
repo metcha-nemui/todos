@@ -1,8 +1,18 @@
 // model.js - Data & Business Logic Layer
+const getTodayDateString = () => {
+   const now = new Date();
+   const yyyy = now.getFullYear();
+   const mm = String(now.getMonth() + 1).padStart(2, '0');
+   const dd = String(now.getDate()).padStart(2, '0');
+   return `${yyyy}-${mm}-${dd}`;
+};
+
+const DEFAULT_DATE = getTodayDateString();
+
 export class TodoModel {
    constructor() {
       this.todos = JSON.parse(localStorage.getItem('mvp_todos')) || [];
-      this.currentDate = localStorage.getItem('mvp_current_date') || "2026-06-06";
+      this.currentDate = localStorage.getItem('mvp_current_date') || DEFAULT_DATE;
       this.onChangeCallback = null;
    }
    
@@ -170,7 +180,7 @@ export class TodoModel {
     clearAllStorage() {
        localStorage.clear();
        this.todos = [];
-       this.currentDate = "2026-06-06";
+       this.currentDate = DEFAULT_DATE;
        if (this.onChangeCallback) {
           this.onChangeCallback();
        }
@@ -181,7 +191,7 @@ export class TodoModel {
        if (key === 'mvp_todos') {
           this.todos = [];
        } else if (key === 'mvp_current_date') {
-          this.currentDate = "2026-06-06";
+          this.currentDate = DEFAULT_DATE;
        }
        if (this.onChangeCallback) {
           this.onChangeCallback();
