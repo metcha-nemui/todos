@@ -52,6 +52,11 @@ export class TodoView {
       this._renderBacklogTasks(data.backlogTodos);
       // デバッグ描画
       this._renderDebug(data.storageItems, data.todos);
+      
+      // 動的生成された要素のLucideアイコンを有効化
+      if (typeof lucide !== 'undefined') {
+         lucide.createIcons();
+      }
    }
    
    setInitialDate(date) {

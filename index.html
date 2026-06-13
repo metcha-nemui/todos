@@ -4,6 +4,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="style.css">
+   <script src="https://unpkg.com/lucide@latest"></script>
    <title>ToDo App</title>
 </head>
 <body>
@@ -20,13 +21,13 @@
             <div class="panel">
                <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
                   <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
-                     <span class="date-display" id="current-date-text" style="font-size: 1.5rem; font-weight: bold;">2026-06-06</span>
+                     <span class="date-display" id="current-date-text" style="font-size: 1.5rem; font-weight: bold;"></span>
                      <button id="btn-next-day">翌日へ進む →</button>
                      <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
                   </div>
                   <div style="display: flex; gap: 5px;">
-                     <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;">ToDoコピー</button>
-                     <button id="btn-copy-done" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;">Doneコピー</button>
+                     <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i> ToDo</button>
+                     <button id="btn-copy-done" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i> Done</button>
                   </div>
                </div>
                
@@ -73,5 +74,9 @@
    </div>
    
    <script type="module" src="app.js"></script>
+   <script>
+      // 初回アイコンレンダリング
+      lucide.createIcons();
+   </script>
 </body>
 </html>
