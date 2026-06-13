@@ -156,4 +156,35 @@ export class TodoModel {
          return obj;
       }, {});
    }
-}
+
+    getAllStorageItems() {
+       const items = [];
+       for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          items.push({ key, value });
+       }
+       return items.sort((a, b) => a.key.localeCompare(b.key));
+    }
+
+    clearAllStorage() {
+       localStorage.clear();
+       this.todos = [];
+       this.currentDate = "2026-06-06";
+       if (this.onChangeCallback) {
+          this.onChangeCallback();
+       }
+    }
+
+    removeStorageKey(key) {
+       localStorage.removeItem(key);
+       if (key === 'mvp_todos') {
+          this.todos = [];
+       } else if (key === 'mvp_current_date') {
+          this.currentDate = "2026-06-06";
+       }
+       if (this.onChangeCallback) {
+          this.onChangeCallback();
+       }
+    }
+ }

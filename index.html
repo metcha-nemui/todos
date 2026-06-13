@@ -20,6 +20,7 @@
          <button class="tab-btn active" data-target="view-today">今日</button>
          <button class="tab-btn" data-target="view-backlog">バックログ</button>
          <button class="tab-btn" data-target="view-archive">アーカイブ</button>
+         <button class="tab-btn" data-target="view-debug">デバッグ</button>
       </div>
       
       <!-- 今日ビュー -->
@@ -74,6 +75,17 @@
                <h2>過去の完了タスク履歴</h2>
             </div>
             <div id="container-archive"></div>
+         </div>
+      </div>
+      
+      <!-- デバッグビュー -->
+      <div id="view-debug" class="view-section">
+         <div class="panel">
+            <div class="panel-header">
+               <h2>localStorage データ一覧</h2>
+               <button id="btn-clear-all-debug" class="danger">ストレージ全削除</button>
+            </div>
+            <div id="container-debug"></div>
          </div>
       </div>
    </div>
