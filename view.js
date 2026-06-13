@@ -64,15 +64,19 @@ export class TodoView {
          li.dataset.id = task.id;
          if (!isDone) li.setAttribute('draggable', 'true');
          
-         // 編集中の状態を保持するため、通常表示と編集用フォームの両方を最初から仕込んでおきます
          li.innerHTML = `
             <div class="task-view-mode" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                <div class="task-item-content ${isDone ? 'done' : ''}">
                   <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
                   <span class="task-title-text">${this._escapeHtml(task.title)}</span>
                </div>
-               <div class="task-actions">
-                  ${showMoveToToday ? '<button class="move-today-btn">今日やる</button>' : ''}
+               <div class="task-actions" style="display: flex; align-items: center; gap: 5px;">
+                  ${showMoveToToday ? `
+                     <label style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 3px;">
+                        日付移動:
+                        <input type="date" class="move-date-picker" style="padding: 2px 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.8rem;">
+                     </label>
+                  ` : ''}
                   <button class="edit-btn secondary">編集</button>
                   <button class="delete-btn danger">削除</button>
                </div>
@@ -158,13 +162,13 @@ export class TodoView {
       lists.forEach(listContainer => {
          if(!listContainer) return;
          
+         // 1. 通常のアクション（クリックイベント）
          listContainer.addEventListener('click', (e) => {
             const target = e.target;
             const li = target.closest('.task-item');
             if (!li) return;
             const id = li.dataset.id;
             
-            // --- インライン編集の切り替えロジック ---
             const viewMode = li.querySelector('.task-view-mode');
             const editMode = li.querySelector('.task-edit-mode');
             const editInput = li.querySelector('.edit-input');
@@ -176,23 +180,20 @@ export class TodoView {
                   if(ret) handleDelete(id);
                   else    e.preventDefault();
                },
-               // 編集ボタンが押されたら、表示を切り替えてインプットにフォーカス
                'edit-btn'    : () => {
                   viewMode.style.display = 'none';
                   editMode.style.display = 'flex';
                   editInput.focus();
-                  // カーソルをテキストの末尾に移動させる
                   const val = editInput.value;
                   editInput.value = '';
                   editInput.value = val;
                },
-               // キャンセルボタンが押されたら元に戻す
                'cancel-btn'  : () => {
-                  editInput.value = li.querySelector('.task-title-text').textContent; // 値を元に戻す
+                  editInput.value = li.querySelector('.task-title-text').textContent;
                   editMode.style.display = 'none';
                   viewMode.style.display = 'flex';
-               },
-               'move-today-btn': () => handleMoveToday(id)
+               }
+               // 「move-today-btn」は削除したためここからは除外
             };
             
             for(const className of target.classList) {
@@ -203,7 +204,25 @@ export class TodoView {
             }
          });
          
-         // 編集フォームの「Submit（保存）」イベントをキャッチするリスナーを追加
+         // 2. 日付変更（datepicker）の変更イベントをキャッチするリスナーを追加
+         listContainer.addEventListener('change', (e) => {
+            const target = e.target;
+            // 変更されたのが日付選択（move-date-picker）の場合のみ処理
+            if (target.classList.contains('move-date-picker')) {
+               const li = target.closest('.task-item');
+               if (!li) return;
+               const id = li.dataset.id;
+               const chosenDate = target.value; // 選択された日付 (YYYY-MM-DD)
+               
+               if (chosenDate) {
+                  // Presenter経由でModelのロジックを呼び出す
+                  // 既存の `handleMoveToday` は「指定日付に変更する」内部ロジックになっているためそのまま流用可能
+                  handleMoveToday(id, chosenDate); 
+               }
+            }
+         });
+         
+         // 3. 編集フォームのSubmit
          listContainer.addEventListener('submit', (e) => {
             e.preventDefault();
             const targetForm = e.target.closest('.task-edit-mode');
