@@ -43,7 +43,6 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-      this.inputTodoDate.value = data.currentDate;
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
@@ -54,6 +53,10 @@ export class TodoView {
       this._renderFutureTasks(data.futureTodos);
       // アーカイブ描画
       this._renderArchive(data.archiveTodos);
+   }
+   
+   setInitialDate(date) {
+      this.inputTodoDate.value = date;
    }
    
    _renderTaskList(element, tasks, isDone, showDateChanger = false) {
@@ -148,7 +151,6 @@ export class TodoView {
          if(title) {
             handler(title, date);
             this.inputTodoTitle.value = '';
-            this.inputTodoDate.value  = '';
          }
       });
    }
