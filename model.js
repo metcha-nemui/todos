@@ -94,13 +94,13 @@ export class TodoModel {
       this._commit();
    }
    
-   moveToToday(id) {
+   changeTodoDate(id, targetDate) {
       const maxOrder = this.todos
-         .filter(t => t.due_date === this.currentDate)
+         .filter(t => t.due_date === targetDate)
          .reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
       
       this.todos = this.todos.map(todo => 
-         todo.id === id ? { ...todo, due_date: this.currentDate, sort_order: maxOrder + 1 } : todo
+         todo.id === id ? { ...todo, due_date: targetDate, sort_order: maxOrder + 1 } : todo
       );
       this._commit();
    }

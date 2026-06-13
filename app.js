@@ -24,7 +24,7 @@ class TodoPresenter {
          (id) => this.model.toggleTodo(id),
          (id) => this.model.deleteTodo(id),
          (id, newTitle) => this.model.editTodo(id, newTitle),
-         (id) => this.model.moveToToday(id)
+         (id, date) => this.model.changeTodoDate(id, date)
       );
       
       // ドラッグ＆ドロップによる並び替え順序の同期

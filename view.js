@@ -46,7 +46,7 @@ export class TodoView {
       this.inputTodoDate.value = data.currentDate;
       
       // 今日のToDo描画
-      this._renderTaskList(this.listTodo, data.todayTodos, false);
+      this._renderTaskList(this.listTodo, data.todayTodos, false, true);
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
       // バックログ描画
@@ -56,7 +56,7 @@ export class TodoView {
       this._renderArchive(data.archiveTodos);
    }
    
-   _renderTaskList(element, tasks, isDone, showMoveToToday = false) {
+   _renderTaskList(element, tasks, isDone, showDateChanger = false) {
       element.innerHTML = '';
       tasks.forEach(task => {
          const li = document.createElement('li');
@@ -71,11 +71,8 @@ export class TodoView {
                   <span class="task-title-text">${this._escapeHtml(task.title)}</span>
                </div>
                <div class="task-actions" style="display: flex; align-items: center; gap: 5px;">
-                  ${showMoveToToday ? `
-                     <label style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 3px;">
-                        日付移動:
-                        <input type="date" class="move-date-picker" style="padding: 2px 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.8rem;">
-                     </label>
+                  ${showDateChanger ? `
+                     <input type="date" class="move-date-picker" style="padding: 2px 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.8rem;">
                   ` : ''}
                   <button class="edit-btn secondary">編集</button>
                   <button class="delete-btn danger">削除</button>
