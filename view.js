@@ -64,16 +64,25 @@ export class TodoView {
          li.dataset.id = task.id;
          if (!isDone) li.setAttribute('draggable', 'true');
          
+         // 編集中の状態を保持するため、通常表示と編集用フォームの両方を最初から仕込んでおきます
          li.innerHTML = `
-            <div class="task-item-content ${isDone ? 'done' : ''}">
-               <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
-               <span>${this._escapeHtml(task.title)}</span>
+            <div class="task-view-mode" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+               <div class="task-item-content ${isDone ? 'done' : ''}">
+                  <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
+                  <span class="task-title-text">${this._escapeHtml(task.title)}</span>
+               </div>
+               <div class="task-actions">
+                  ${showMoveToToday ? '<button class="move-today-btn">今日やる</button>' : ''}
+                  <button class="edit-btn secondary">編集</button>
+                  <button class="delete-btn danger">削除</button>
+               </div>
             </div>
-            <div class="task-actions">
-               ${showMoveToToday ? '<button class="move-today-btn">今日やる</button>' : ''}
-               <button class="edit-btn secondary">編集</button>
-               <button class="delete-btn danger">削除</button>
-            </div>
+            
+            <form class="task-edit-mode" style="display: none; width: 100%; gap: 10px;">
+               <input type="text" class="edit-input" value="${this._escapeHtml(task.title)}" required style="flex: 1; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+               <button type="submit" class="save-btn">保存</button>
+               <button type="button" class="cancel-btn secondary">キャンセル</button>
+            </form>
          `;
          element.appendChild(li);
       });
@@ -155,23 +164,58 @@ export class TodoView {
             if (!li) return;
             const id = li.dataset.id;
             
+            // --- インライン編集の切り替えロジック ---
+            const viewMode = li.querySelector('.task-view-mode');
+            const editMode = li.querySelector('.task-edit-mode');
+            const editInput = li.querySelector('.edit-input');
+            
             const actionMap = {
                'toggle-check': () => handleToggle(id),
                'delete-btn'  : () => {
-                  const ret = confirm('このタスクを物理削除しますか？（復元できません）')
+                  const ret = confirm('このタスクを物理削除しますか？（復元できません）');
                   if(ret) handleDelete(id);
                   else    e.preventDefault();
                },
+               // 編集ボタンが押されたら、表示を切り替えてインプットにフォーカス
                'edit-btn'    : () => {
-                  const currentTitle = li.querySelector('span').textContent;
-                  const newTitle = prompt('タスク名を編集してください:', currentTitle);
-                  if(newTitle && newTitle.trim()) handleEdit(id, newTitle.trim());
+                  viewMode.style.display = 'none';
+                  editMode.style.display = 'flex';
+                  editInput.focus();
+                  // カーソルをテキストの末尾に移動させる
+                  const val = editInput.value;
+                  editInput.value = '';
+                  editInput.value = val;
+               },
+               // キャンセルボタンが押されたら元に戻す
+               'cancel-btn'  : () => {
+                  editInput.value = li.querySelector('.task-title-text').textContent; // 値を元に戻す
+                  editMode.style.display = 'none';
+                  viewMode.style.display = 'flex';
                },
                'move-today-btn': () => handleMoveToday(id)
             };
             
             for(const className of target.classList) {
-               if(actionMap[className]) { actionMap[className](); break; }
+               if(actionMap[className]) { 
+                  actionMap[className](); 
+                  return; 
+               }
+            }
+         });
+         
+         // 編集フォームの「Submit（保存）」イベントをキャッチするリスナーを追加
+         listContainer.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const targetForm = e.target.closest('.task-edit-mode');
+            if (!targetForm) return;
+            
+            const li = targetForm.closest('.task-item');
+            const id = li.dataset.id;
+            const editInput = targetForm.querySelector('.edit-input');
+            const newTitle = editInput.value.trim();
+            
+            if (newTitle) {
+               handleEdit(id, newTitle);
             }
          });
       });
