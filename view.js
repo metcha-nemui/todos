@@ -272,13 +272,62 @@ export class TodoView {
    bindCopyButtons(getTodos, getDones) {
       this.btnCopyTodo.addEventListener('click', () => {
          const md = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
-         navigator.clipboard.writeText(md).then(() => alert('ToDoリスト（Markdown）をコピーしました！'));
+         this._copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
       });
       
       this.btnCopyDone.addEventListener('click', () => {
          const md = getDones().map(t => `- [x] ${t.title}`).join('\n');
-         navigator.clipboard.writeText(md).then(() => alert('Doneリスト（Markdown）をコピーしました！'));
+         this._copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
       });
+   }
+   
+   async _copyToClipboard(text) {
+      // 1. モダンな Clipboard API が使える（かつセキュアコンテキストである）場合
+      if (navigator.clipboard && window.isSecureContext) {
+         try {
+            await navigator.clipboard.writeText(text);
+            console.log('Clipboard API でコピー成功');
+            return true;
+         } catch (err) {
+            console.error('Clipboard API でのエラー:', err);
+         }
+      }
+      
+      // 2. フォールバック: 古いブラウザや非HTTPS環境の場合
+      return this._fallbackCopyToClipboard(text);
+   }
+   
+   _fallbackCopyToClipboard(text) {
+      // 一時的な textarea 要素を作成
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      
+      // 画面の外に配置してユーザーに見えないようにする
+      textArea.style.position = 'fixed';
+      textArea.style.top = '-9999px';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      
+      // テキストを選択状態にする
+      textArea.focus();
+      textArea.select();
+      
+      let success = false;
+      try {
+         // 選択されたテキストをクリップボードにコピー
+         success = document.execCommand('copy');
+         if (success) {
+            console.log('フォールバック（execCommand）でコピー成功');
+         } else {
+            console.error('フォールバックでのコピーに失敗しました');
+         }
+      } catch (err) {
+         console.error('フォールバック実行中にエラーが発生:', err);
+      }
+      
+      // 不要になった要素を削除
+      document.body.removeChild(textArea);
+      return success;
    }
    
    _renderDebug(storageItems, todos) {
