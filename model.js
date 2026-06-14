@@ -141,17 +141,35 @@ export class TodoModel {
       this.todos = await Promise.all(this.todos.map(async todo => {
          if (todo.id === id) {
             const updatedDone = !todo.is_done;
+            
+            let newOrder = todo.sort_order;
+            // 1. ToDo ➔ Done にする場合：今日の Done の中で最大の sort_order + 1 を計算
+            if (updatedDone) {
+               const todayDones = this.todos.filter(t => t.due_date === this.currentDate && t.is_done);
+               const maxDoneOrder = todayDones.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
+               newOrder = maxDoneOrder + 1;
+            // 2. Done ➔ ToDo に戻す場合：今日の ToDo の中で最大の sort_order + 1 を計算
+            } else {
+               const todayTodos = this.todos.filter(t => t.due_date === this.currentDate && !t.is_done);
+               const maxTodoOrder = todayTodos.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
+               newOrder = maxTodoOrder + 1;
+            }
+            
             const updated = {
                ...todo,
                is_done: updatedDone,
                done_at: updatedDone ? new Date().toISOString() : null,
                due_date: this.currentDate,
+               sort_order: newOrder
             };
+            
             const { error } = await supabase.from('todos').update({
                is_done: updatedDone,
                done_at: updated.done_at,
-               due_date: updated.due_date
+               due_date: updated.due_date,
+               sort_order: updated.sort_order
             }).eq('id', id);
+            
             if (error) console.error('Supabase toggle error:', error);
             return updated;
          }
