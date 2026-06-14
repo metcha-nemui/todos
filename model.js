@@ -59,27 +59,6 @@ export class TodoModel {
       this._commit();
    }
    
-   advanceToNextDay() {
-      const date = new Date(this.currentDate);
-      date.setDate(date.getDate() + 1);
-      
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const nextDateStr = `${yyyy}-${mm}-${dd}`;
-      
-      // 未完了タスクをすべて明日に自動繰り越し
-      this.todos = this.todos.map(todo => {
-         if (!todo.is_done && todo.due_date === this.currentDate) {
-               return { ...todo, due_date: nextDateStr };
-         }
-         return todo;
-      });
-      
-      this.currentDate = nextDateStr;
-      this._commit();
-   }
-   
    // タスク操作
    async addTodo(title, dueDate = null) {
       const targetDate = dueDate;

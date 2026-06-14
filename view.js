@@ -3,7 +3,6 @@ export class TodoView {
    constructor() {
       // ヘッダー・共通
       this.currentDateText = document.getElementById('current-date-text');
-      this.btnNextDay = document.getElementById('btn-next-day');
       this.datePicker = document.getElementById('date-picker');
       this.tabs = document.querySelectorAll('.tab-btn');
       this.sections = document.querySelectorAll('.view-section');
@@ -123,11 +122,6 @@ export class TodoView {
       }
    }
     
-   // イベントバインド群
-   bindAdvanceDay(handler) {
-      this.btnNextDay.addEventListener('click', handler);
-   }
-   
    bindDatePicker(handler) {
       this.datePicker.addEventListener('change', (e) => handler(e.target.value));
    }

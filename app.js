@@ -13,7 +13,6 @@ class TodoPresenter {
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
       // 日付コントロール
-      this.view.bindAdvanceDay(() => this.model.advanceToNextDay());
       this.view.bindDatePicker((newDate) => this.model.setCurrentDate(newDate));
       
       // タスク追加
