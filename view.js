@@ -53,7 +53,7 @@ export class TodoView {
          const li = document.createElement('li');
          li.className = 'task-item';
          li.dataset.id = task.id;
-         if (!isDone) li.setAttribute('draggable', 'true');
+         li.setAttribute('draggable', 'true');
          
          li.innerHTML = `
             <div class="task-view-mode" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
@@ -201,33 +201,39 @@ export class TodoView {
    bindDragAndDrop(handleSortUpdate) {
       let draggedElement = null;
       
-      // ToDoリストコンテナにリスナーを設定
-      this.listTodo.addEventListener('dragstart', (e) => {
-         draggedElement = e.target.closest('.task-item');
-         if (draggedElement) {
-            draggedElement.classList.add('dragging');
-         }
-      });
+      // 1. ToDoリストとDoneリストの両方をループで処理する
+      const targets = [this.listTodo, this.listDone];
       
-      this.listTodo.addEventListener('dragend', () => {
-         if (draggedElement) {
-            draggedElement.classList.remove('dragging');
-            draggedElement = null;
-            
-            // 現在のDOM順序からすべてのIDを抽出してソート順の更新を依頼
-            const orderedIds = [...this.listTodo.querySelectorAll('.task-item')].map(li => li.dataset.id);
-            handleSortUpdate(orderedIds);
-         }
-      });
-      
-      this.listTodo.addEventListener('dragover', (e) => {
-         e.preventDefault();
-         const afterElement = this._getDragAfterElement(this.listTodo, e.clientY);
-         if (afterElement == null) {
-            this.listTodo.appendChild(draggedElement);
-         } else {
-            this.listTodo.insertBefore(draggedElement, afterElement);
-         }
+      targets.forEach(targetList => {
+         if (!targetList) return;
+         
+         targetList.addEventListener('dragstart', (e) => {
+            draggedElement = e.target.closest('.task-item');
+            if (draggedElement) {
+               draggedElement.classList.add('dragging');
+            }
+         });
+         
+         targetList.addEventListener('dragend', () => {
+            if (draggedElement) {
+               draggedElement.classList.remove('dragging');
+               draggedElement = null;
+               
+               // 現在のDOM順序から、そのリスト内のすべてのIDを抽出してソート順の更新を依頼
+               const orderedIds = [...targetList.querySelectorAll('.task-item')].map(li => li.dataset.id);
+               handleSortUpdate(orderedIds);
+            }
+         });
+         
+         targetList.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = this._getDragAfterElement(targetList, e.clientY);
+            if (afterElement == null) {
+               targetList.appendChild(draggedElement);
+            } else {
+               targetList.insertBefore(draggedElement, afterElement);
+            }
+         });
       });
    }
    
