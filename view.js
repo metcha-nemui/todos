@@ -140,7 +140,7 @@ export class TodoView {
             const actionMap = {
                'toggle-check': () => handleToggle(id),
                'delete-btn'  : () => {
-                  const ret = confirm('このタスクを物理削除しますか？（復元できません）');
+                  const ret = confirm('このタスクを削除しますか？');
                   if(ret) handleDelete(id);
                   else    e.preventDefault();
                },
@@ -157,7 +157,6 @@ export class TodoView {
                   editMode.style.display = 'none';
                   viewMode.style.display = 'flex';
                }
-               // 「move-today-btn」は削除したためここからは除外
             };
             
             for(const className of target.classList) {

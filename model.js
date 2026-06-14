@@ -145,8 +145,13 @@ export class TodoModel {
                ...todo,
                is_done: updatedDone,
                done_at: updatedDone ? new Date().toISOString() : null,
+               due_date: todo.due_date ?? this.currentDate,
             };
-            const { error } = await supabase.from('todos').update({ is_done: updatedDone, done_at: updated.done_at }).eq('id', id);
+            const { error } = await supabase.from('todos').update({
+               is_done: updatedDone,
+               done_at: updated.done_at,
+               due_date: updated.due_date
+            }).eq('id', id);
             if (error) console.error('Supabase toggle error:', error);
             return updated;
          }
