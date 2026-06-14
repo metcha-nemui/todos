@@ -127,6 +127,7 @@ button.secondary {
 button [data-lucide] {
    width: 16px;
    height: 16px;
+   pointer-events: none;
 }
 
 .view-section {
