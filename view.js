@@ -62,6 +62,7 @@ export class TodoView {
                   <span class="task-title-text">${this._escapeHtml(task.title)}</span>
                </div>
                <div class="task-actions" style="display: flex; align-items: center; gap: 5px;">
+                  <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
                   ${showDateChanger ? `
                      <button class="secondary" style="position: relative;">
                         <input type="date" class="move-date-picker">
@@ -120,7 +121,7 @@ export class TodoView {
       });
    }
    
-   bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
+   bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday, handleCopy) {
       const lists = [this.listTodo, this.listDone, this.containerBacklogTasks];
       
       lists.forEach(listContainer => {
@@ -143,6 +144,10 @@ export class TodoView {
                   const ret = confirm('このタスクを削除しますか？');
                   if(ret) handleDelete(id);
                   else    e.preventDefault();
+               },
+               'copy-btn'    : () => {
+                  const titleText = li.querySelector('.task-title-text').textContent;
+                  this._copyToClipboard(titleText);
                },
                'edit-btn'    : () => {
                   viewMode.style.display = 'none';
