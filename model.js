@@ -1,4 +1,9 @@
-// model.js - Data & Business Logic Layer
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// Hardcoded Supabase configuration (replace with your own project details)
+const SUPABASE_URL      = window.MY_APP_CONFIG.SUPABASE_URL;
+const SUPABASE_ANON_KEY = window.MY_APP_CONFIG.SUPABASE_ANON_KEY;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const getTodayDateString = () => {
    const now = new Date();
    const yyyy = now.getFullYear();
@@ -11,24 +16,52 @@ const DEFAULT_DATE = getTodayDateString();
 
 export class TodoModel {
    constructor() {
-      this.todos = JSON.parse(localStorage.getItem('mvp_todos')) || [];
-      this.currentDate = localStorage.getItem('mvp_current_date') || DEFAULT_DATE;
+      this.todos = [];
+      this.currentDate = null; // will be set after loading
       this.onChangeCallback = null;
+      // Load all todos from Supabase and set current date to today if not stored
+      this._loadFromSupabase();
    }
    
    bindOnChange(callback) {
       this.onChangeCallback = callback;
    }
    
-   _commit() {
-      localStorage.setItem('mvp_todos', JSON.stringify(this.todos));
-      localStorage.setItem('mvp_current_date', this.currentDate);
-      if (this.onChangeCallback) {
-         this.onChangeCallback();
+   async _loadFromSupabase() {
+      const { data, error } = await supabase.from('todos').select('*');
+      if (error) {
+         console.error('Failed to load todos from Supabase:', error);
+         this.todos = [];
+      } else {
+         // Supabase returns rows matching the table definition
+         this.todos = data.map(row => ({
+            id: row.id,
+            title: row.title,
+            is_done: row.is_done,
+            due_date: row.due_date,
+            done_at: row.done_at,
+            created_at: row.created_at,
+            sort_order: row.sort_order,
+         }));
       }
+      // Determine current date – if stored in localStorage fallback, else use today
+      const storedDate = localStorage.getItem('mvp_current_date');
+      this.currentDate = storedDate || getTodayDateString();
+      // Notify UI after loading
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   // 日付コントロール
+       // Utility methods
+    async _upsertTodo(todo) {
+       const { error } = await supabase.from('todos').upsert(todo, { returning: 'minimal' });
+       if (error) console.error('Supabase upsert error:', error);
+    }
+
+    async _commit() {
+       // Trigger UI update callback if present
+       if (this.onChangeCallback) this.onChangeCallback();
+    }
+    // 日付コントロール
    setCurrentDate(newDateString) {
       this.currentDate = newDateString;
       this._commit();
@@ -56,13 +89,13 @@ export class TodoModel {
    }
    
    // タスク操作
-   addTodo(title, dueDate = null) {
+   async addTodo(title, dueDate = null) {
       const targetDate = dueDate;
-      
-      // 追加先の最大sort_orderを取得
+
+      // Determine max sort_order for the target date
       const sameDayTasks = this.todos.filter(t => t.due_date === targetDate);
       const maxOrder = sameDayTasks.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
-      
+
       const newTodo = {
          id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
          title: title,
@@ -70,60 +103,72 @@ export class TodoModel {
          due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
-         sort_order: maxOrder + 1
+         sort_order: maxOrder + 1,
       };
-      
+
       this.todos.push(newTodo);
-      this._commit();
+      await this._upsertTodo(newTodo);
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   editTodo(id, newTitle) {
-      this.todos = this.todos.map(todo => 
+   async editTodo(id, newTitle) {
+      this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, title: newTitle } : todo
       );
-      this._commit();
+      const { error } = await supabase.from('todos').update({ title: newTitle }).eq('id', id);
+      if (error) console.error('Supabase edit error:', error);
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   deleteTodo(id) {
+   async deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id);
-      this._commit();
+      const { error } = await supabase.from('todos').delete().eq('id', id);
+      if (error) console.error('Supabase delete error:', error);
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   toggleTodo(id) {
-      this.todos = this.todos.map(todo => {
+   async toggleTodo(id) {
+      this.todos = await Promise.all(this.todos.map(async todo => {
          if (todo.id === id) {
-               const updatedDone = !todo.is_done;
-               return {
-                  ...todo,
-                  is_done: updatedDone,
-                  done_at: updatedDone ? new Date().toISOString() : null
-               };
+            const updatedDone = !todo.is_done;
+            const updated = {
+               ...todo,
+               is_done: updatedDone,
+               done_at: updatedDone ? new Date().toISOString() : null,
+            };
+            const { error } = await supabase.from('todos').update({ is_done: updatedDone, done_at: updated.done_at }).eq('id', id);
+            if (error) console.error('Supabase toggle error:', error);
+            return updated;
          }
          return todo;
-      });
-      this._commit();
+      }));
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   changeTodoDate(id, targetDate) {
+   async changeTodoDate(id, targetDate) {
       const maxOrder = this.todos
          .filter(t => t.due_date === targetDate)
          .reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
-      
-      this.todos = this.todos.map(todo => 
+
+      this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, due_date: targetDate, sort_order: maxOrder + 1 } : todo
       );
-      this._commit();
+      const { error } = await supabase.from('todos').update({ due_date: targetDate, sort_order: maxOrder + 1 }).eq('id', id);
+      if (error) console.error('Supabase change date error:', error);
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
-   updateSortOrder(orderedIds) {
-      // 受け取ったID配列の順序通りにsort_orderを再インデックス
-      orderedIds.forEach((id, index) => {
+   async updateSortOrder(orderedIds) {
+      const updates = orderedIds.map((id, index) => {
          const todo = this.todos.find(t => t.id === id);
          if (todo) {
-               todo.sort_order = index;
+            todo.sort_order = index;
+            return supabase.from('todos').update({ sort_order: index }).eq('id', id);
          }
-      });
-      this._commit();
+      }).filter(Boolean);
+      const results = await Promise.all(updates);
+      results.forEach(res => { if (res.error) console.error('Supabase sort update error:', res.error); });
+      if (this.onChangeCallback) this.onChangeCallback();
    }
    
    // ゲッター群
@@ -176,24 +221,25 @@ export class TodoModel {
        return items.sort((a, b) => a.key.localeCompare(b.key));
     }
 
-    clearAllStorage() {
-       localStorage.clear();
+    async clearAllStorage() {
+       // Delete all todos from Supabase
+       const { error } = await supabase.from('todos').delete().neq('id', '');
+       if (error) console.error('Supabase clear all error:', error);
        this.todos = [];
        this.currentDate = DEFAULT_DATE;
-       if (this.onChangeCallback) {
-          this.onChangeCallback();
-       }
+       if (this.onChangeCallback) this.onChangeCallback();
     }
 
-    removeStorageKey(key) {
-       localStorage.removeItem(key);
+    async removeStorageKey(key) {
+       // No longer using localStorage keys; handle specific keys if needed.
        if (key === 'mvp_todos') {
+          // Delete all todos from Supabase
+          const { error } = await supabase.from('todos').delete().neq('id', '');
+          if (error) console.error('Supabase clear todos error:', error);
           this.todos = [];
        } else if (key === 'mvp_current_date') {
           this.currentDate = DEFAULT_DATE;
        }
-       if (this.onChangeCallback) {
-          this.onChangeCallback();
-       }
+       if (this.onChangeCallback) this.onChangeCallback();
     }
  }
