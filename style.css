@@ -78,7 +78,8 @@ header {
    position: relative;
 }
 
-.date-picker {
+.date-picker,
+.move-date-picker {
    position: absolute;
    top: 0;
    left: 0;
@@ -88,7 +89,8 @@ header {
    cursor: pointer;
 }
 
-.date-picker::-webkit-calendar-picker-indicator {
+.date-picker::-webkit-calendar-picker-indicator,
+.move-date-picker::-webkit-calendar-picker-indicator {
    position: absolute;
    top: 0;
    left: 0;
