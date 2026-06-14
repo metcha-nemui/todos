@@ -106,6 +106,8 @@ button {
    cursor: pointer;
    font-size: 0.9rem;
    transition: opacity 0.2s;
+   display: inline-flex;
+   align-items: center;
 }
 
 button:hover {
