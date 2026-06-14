@@ -10,11 +10,6 @@
 </head>
 <body>
    <div class="container">
-      <div class="nav-tabs">
-         <button class="tab-btn active" data-target="view-today">メイン</button>
-         <button class="tab-btn" data-target="view-debug">デバッグ</button>
-      </div>
-      
       <!-- 今日ビュー -->
       <div id="view-today" class="view-section active">
          <div class="main-layout">
@@ -63,17 +58,6 @@
                </div>
                <div id="container-backlog-tasks"></div>
             </div>
-         </div>
-      </div>
-      
-      <!-- デバッグビュー -->
-      <div id="view-debug" class="view-section">
-         <div class="panel">
-            <div class="panel-header">
-               <h2>localStorage データ一覧</h2>
-               <button id="btn-clear-all-debug" class="danger">ストレージ全削除</button>
-            </div>
-            <div id="container-debug"></div>
          </div>
       </div>
    </div>

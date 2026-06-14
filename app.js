@@ -35,25 +35,6 @@ class TodoPresenter {
          () => this.model.getTodayDones()
       );
       
-      // デバッグのアクション
-      this.view.bindDebugActions(
-         () => {
-            if (confirm('localStorage内のすべてのデータをクリアしますか？')) {
-               this.model.clearAllStorage();
-            }
-         },
-         (key) => {
-            if (confirm(`キー "${key}" のデータを削除しますか？`)) {
-               this.model.removeStorageKey(key);
-            }
-         },
-         (id) => {
-            if (confirm('このタスクを削除しますか？')) {
-               this.model.deleteTodo(id);
-            }
-         }
-      );
-      
       // 3. アプリ起動時の初期レンダリング
       this.view.setInitialDate(this.model.currentDate);
       this.updateView();
@@ -65,7 +46,6 @@ class TodoPresenter {
          todayTodos:   this.model.getTodayTodos(),
          todayDones:   this.model.getTodayDones(),
          backlogTodos: this.model.getBacklogTodosGrouped(),
-         storageItems: this.model.getAllStorageItems(),
          todos:        this.model.todos
       });
    }
