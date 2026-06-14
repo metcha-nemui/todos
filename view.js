@@ -63,10 +63,13 @@ export class TodoView {
                </div>
                <div class="task-actions" style="display: flex; align-items: center; gap: 5px;">
                   ${showDateChanger ? `
-                     <input type="date" class="move-date-picker" style="padding: 2px 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.8rem;">
+                     <button class="secondary" style="position: relative;">
+                        <input type="date" class="move-date-picker">
+                        <i data-lucide="calendar-days"></i>
+                     </button>
                   ` : ''}
-                  <button class="edit-btn secondary">編集</button>
-                  <button class="delete-btn danger">削除</button>
+                  <button class="edit-btn secondary"><i data-lucide="pencil"></i></button>
+                  <button class="delete-btn danger"><i data-lucide="trash-2"></i></button>
                </div>
             </div>
             
