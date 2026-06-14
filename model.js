@@ -141,17 +141,35 @@ export class TodoModel {
       this.todos = await Promise.all(this.todos.map(async todo => {
          if (todo.id === id) {
             const updatedDone = !todo.is_done;
+            
+            let newOrder = todo.sort_order;
+            // 1. ToDo ➔ Done にする場合：今日の Done の中で最大の sort_order + 1 を計算
+            if (updatedDone) {
+               const todayDones = this.todos.filter(t => t.due_date === this.currentDate && t.is_done);
+               const maxDoneOrder = todayDones.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
+               newOrder = maxDoneOrder + 1;
+            // 2. Done ➔ ToDo に戻す場合：今日の ToDo の中で最大の sort_order + 1 を計算
+            } else {
+               const todayTodos = this.todos.filter(t => t.due_date === this.currentDate && !t.is_done);
+               const maxTodoOrder = todayTodos.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
+               newOrder = maxTodoOrder + 1;
+            }
+            
             const updated = {
                ...todo,
                is_done: updatedDone,
                done_at: updatedDone ? new Date().toISOString() : null,
-               due_date: todo.due_date ?? this.currentDate,
+               due_date: this.currentDate,
+               sort_order: newOrder
             };
+            
             const { error } = await supabase.from('todos').update({
                is_done: updatedDone,
                done_at: updated.done_at,
-               due_date: updated.due_date
+               due_date: updated.due_date,
+               sort_order: updated.sort_order
             }).eq('id', id);
+            
             if (error) console.error('Supabase toggle error:', error);
             return updated;
          }
@@ -201,30 +219,34 @@ export class TodoModel {
          .sort((a, b) => a.sort_order - b.sort_order);
    }
    getBacklogTodosGrouped() {
-      const noDateTasks = this.todos.filter(t => !t.due_date);
-      const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate);
+      // 1. 未完了（!t.is_done）かつ、今後のタスク（日付なし、または明日以降）をフィルター
+      const noDateTasks = this.todos.filter(t => !t.due_date && !t.is_done);
+      const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate && !t.is_done);
+      
+      // 💡 日付なしタスクは、純粋に sort_order 順でOK
+      noDateTasks.sort((a, b) => a.sort_order - b.sort_order);
+      
+      // 💡 【ここを修正】未来のタスクは、まず「日付順」、日付が同じなら「sort_order 順」にソート
+      futureTasks.sort((a, b) => {
+         if (a.due_date !== b.due_date) {
+            return a.due_date.localeCompare(b.due_date); // 先に日付順（昇順）
+         }
+         return a.sort_order - b.sort_order; // 日付が同じなら sort_order 順
+      });
       
       const groups = {};
       
+      // 「日付なし」グループの作成
       if (noDateTasks.length > 0) {
          groups["日付なし"] = noDateTasks;
       }
       
+      // 日付ごとのグループに振り分け（すでに上できれいにソートされているので、順番通りに格納される）
       futureTasks.forEach(task => {
          if (!groups[task.due_date]) groups[task.due_date] = [];
          groups[task.due_date].push(task);
       });
       
-      // 「日付なし」を先頭にし、それ以外の日付を昇順でソート
-      const sortedKeys = Object.keys(groups).sort((a, b) => {
-         if (a === "日付なし") return -1;
-         if (b === "日付なし") return 1;
-         return a.localeCompare(b);
-      });
-      
-      return sortedKeys.reduce((obj, key) => {
-         obj[key] = groups[key];
-         return obj;
-      }, {});
+      return groups;
    }
 }
