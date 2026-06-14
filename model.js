@@ -144,7 +144,7 @@ export class TodoModel {
       const maxOrder = this.todos
          .filter(t => t.due_date === targetDate)
          .reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
-
+      
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, due_date: targetDate, sort_order: maxOrder + 1 } : todo
       );
@@ -178,7 +178,7 @@ export class TodoModel {
          .filter(t => t.due_date === this.currentDate && t.is_done)
          .sort((a, b) => a.sort_order - b.sort_order);
    }
-      getBacklogTodosGrouped() {
+   getBacklogTodosGrouped() {
       const noDateTasks = this.todos.filter(t => !t.due_date);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate);
       
@@ -205,36 +205,36 @@ export class TodoModel {
          return obj;
       }, {});
    }
-
-    getAllStorageItems() {
-       const items = [];
-       for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          const value = localStorage.getItem(key);
-          items.push({ key, value });
-       }
-       return items.sort((a, b) => a.key.localeCompare(b.key));
-    }
-
-    async clearAllStorage() {
-       // Delete all todos from Supabase
-       const { error } = await supabase.from('todos').delete().neq('id', '');
-       if (error) console.error('Supabase clear all error:', error);
-       this.todos = [];
-       this.currentDate = DEFAULT_DATE;
-       this._commit();
-    }
-
-    async removeStorageKey(key) {
-       // No longer using localStorage keys; handle specific keys if needed.
-       if (key === 'mvp_todos') {
-          // Delete all todos from Supabase
-          const { error } = await supabase.from('todos').delete().neq('id', '');
-          if (error) console.error('Supabase clear todos error:', error);
-          this.todos = [];
-       } else if (key === 'mvp_current_date') {
-          this.currentDate = DEFAULT_DATE;
-       }
-       this._commit();
-    }
- }
+   
+   getAllStorageItems() {
+      const items = [];
+      for (let i = 0; i < localStorage.length; i++) {
+         const key = localStorage.key(i);
+         const value = localStorage.getItem(key);
+         items.push({ key, value });
+      }
+      return items.sort((a, b) => a.key.localeCompare(b.key));
+   }
+   
+   async clearAllStorage() {
+      // Delete all todos from Supabase
+      const { error } = await supabase.from('todos').delete().neq('id', '');
+      if (error) console.error('Supabase clear all error:', error);
+      this.todos = [];
+      this.currentDate = DEFAULT_DATE;
+      this._commit();
+   }
+   
+   async removeStorageKey(key) {
+      // No longer using localStorage keys; handle specific keys if needed.
+      if (key === 'mvp_todos') {
+         // Delete all todos from Supabase
+         const { error } = await supabase.from('todos').delete().neq('id', '');
+         if (error) console.error('Supabase clear todos error:', error);
+         this.todos = [];
+      } else if (key === 'mvp_current_date') {
+         this.currentDate = DEFAULT_DATE;
+      }
+      this._commit();
+   }
+}
