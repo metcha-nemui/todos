@@ -21,9 +21,12 @@
             <div class="panel">
                <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
                   <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
+                     <span class="date-picker-wrapper">
+                        <input type="date" id="date-picker" class="date-picker">
+                        <i data-lucide="calendar-days"></i>
+                     </span>
                      <span class="date-display" id="current-date-text" style="font-size: 1.5rem; font-weight: bold;"></span>
-                     <button id="btn-next-day">翌日へ進む →</button>
-                     <input type="date" id="date-picker" style="padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                     <button id="btn-next-day"><i data-lucide="chevron-right"></i></button>
                   </div>
                   <div style="display: flex; gap: 5px;">
                      <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i> ToDo</button>

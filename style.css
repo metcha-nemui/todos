@@ -14,11 +14,6 @@
    padding: 0;
 }
 
-[data-lucide] {
-   width: 16px;
-   height: 16px;
-}
-
 body {
    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
    font-feature-settings: "palt";
@@ -59,6 +54,30 @@ header {
    font-weight: bold;
 }
 
+.date-picker-wrapper {
+   display: flex;
+   position: relative;
+}
+
+.date-picker {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0;
+   cursor: pointer;
+}
+
+.date-picker::-webkit-calendar-picker-indicator {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   cursor: pointer;
+}
+
 button {
    background-color: var(--accent-color);
    color: white;
@@ -80,6 +99,11 @@ button.danger {
 
 button.secondary {
    background-color: #6c757d;
+}
+
+button [data-lucide] {
+   width: 16px;
+   height: 16px;
 }
 
 .nav-tabs {
