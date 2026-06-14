@@ -2,9 +2,9 @@
 <html lang="ja">
 <head>
    <meta charset="UTF-8">
+   <meta name="robots" content="noindex, nofollow, noarchive">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="style.css">
-   <script src="config.js"></script>
    <script src="https://unpkg.com/lucide@latest"></script>
    <title>ToDo App</title>
 </head>
@@ -62,6 +62,36 @@
       </div>
    </div>
    
+   <!-- Config Modal -->
+   <div id="config-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+         <h2>Supabase 設定</h2>
+         <label>URL: <input type="text" id="supabase-url" placeholder="https://xxxx.supabase.co"></label><br>
+         <label>Anon Key: <input type="text" id="supabase-key" placeholder="anon key"></label><br>
+         <button id="save-config">保存</button>
+      </div>
+   </div>
+   
+   <script>
+      document.addEventListener('DOMContentLoaded', () => {
+         const cfg = localStorage.getItem('supabaseConfig');
+         if(!cfg) {
+            const modal = document.getElementById('config-modal');
+            modal.style.display = 'flex';
+            document.getElementById('save-config').addEventListener('click', () => {
+               const url = document.getElementById('supabase-url').value.trim();
+               const key = document.getElementById('supabase-key').value.trim();
+               if (url && key) {
+                  const stored = { SUPABASE_URL: url, SUPABASE_ANON_KEY: key };
+                  localStorage.setItem('supabaseConfig', JSON.stringify(stored));
+                  window.location.reload();
+               } else {
+                  alert('URL とキーを入力してください');
+               }
+            });
+         }
+      });
+   </script>
    <script type="module" src="app.js"></script>
    <script>
       // 初回アイコンレンダリング

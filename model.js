@@ -1,9 +1,19 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// Hardcoded Supabase configuration (replace with your own project details)
-const SUPABASE_URL      = window.MY_APP_CONFIG.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.MY_APP_CONFIG.SUPABASE_ANON_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Load Supabase configuration from localStorage
+let cfg = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '' };
+const stored = localStorage.getItem('supabaseConfig');
+if (stored) {
+   try { cfg = JSON.parse(stored); } catch(e) { console.error('Failed to parse Supabase config:', e); }
+}
+const { SUPABASE_URL, SUPABASE_ANON_KEY } = cfg;
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+   supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+   console.warn('Supabase configuration missing; client not initialized.');
+}
+
 const getTodayDateString = () => {
    const now = new Date();
    const yyyy = now.getFullYear();
@@ -28,6 +38,7 @@ export class TodoModel {
    }
    
    async _loadFromSupabase() {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       const { data, error } = await supabase.from('todos').select('*');
       if (error) {
          console.error('Failed to load todos from Supabase:', error);
@@ -61,6 +72,7 @@ export class TodoModel {
    
    // タスク操作
    async addTodo(title, dueDate = null) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
       
       // 同一日付内の最大の sort_order を取得
@@ -107,6 +119,7 @@ export class TodoModel {
    }
    
    async editTodo(id, newTitle) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, title: newTitle } : todo
       );
@@ -116,6 +129,7 @@ export class TodoModel {
    }
    
    async deleteTodo(id) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       this.todos = this.todos.filter(todo => todo.id !== id);
       const { error } = await supabase.from('todos').delete().eq('id', id);
       if (error) console.error('Supabase delete error:', error);
@@ -123,6 +137,7 @@ export class TodoModel {
    }
    
    async toggleTodo(id) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       this.todos = await Promise.all(this.todos.map(async todo => {
          if (todo.id === id) {
             const updatedDone = !todo.is_done;
@@ -141,6 +156,7 @@ export class TodoModel {
    }
    
    async changeTodoDate(id, targetDate) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       const maxOrder = this.todos
          .filter(t => t.due_date === targetDate)
          .reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
@@ -154,6 +170,7 @@ export class TodoModel {
    }
    
    async updateSortOrder(orderedIds) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
       const updates = orderedIds.map((id, index) => {
          const todo = this.todos.find(t => t.id === id);
          if (todo) {
