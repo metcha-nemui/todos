@@ -1,0 +1,223 @@
+:root {
+   --bg-color: #f4f6f9;
+   --card-bg: #ffffff;
+   --text-color: #333333;
+   --text-muted: #777777;
+   --accent-color: #4a90e2;
+   --danger-color: #e05454;
+   --border-color: #e1e4e8;
+}
+
+* {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+}
+
+/* Modal styling */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+body {
+   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+   font-feature-settings: "palt";
+   background-color: var(--bg-color);
+   color: var(--text-color);
+   line-height: 1.6;
+   padding: 20px;
+}
+
+input[type=date] {
+   font-family: "Segoe UI", sans-serif;
+}
+
+.container {
+   max-width: 800px;
+   margin: 0 auto;
+}
+
+header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background: var(--card-bg);
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+   margin-bottom: 20px;
+}
+
+.date-control {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.date-display {
+   font-size: 1.2rem;
+   font-weight: bold;
+}
+
+.date-picker-wrapper {
+   display: flex;
+   position: relative;
+}
+
+.date-picker {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0;
+   cursor: pointer;
+}
+
+.date-picker::-webkit-calendar-picker-indicator {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   cursor: pointer;
+}
+
+button {
+   background-color: var(--accent-color);
+   color: white;
+   border: none;
+   padding: 8px 16px;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 0.9rem;
+   transition: opacity 0.2s;
+}
+
+button:hover {
+   opacity: 0.9;
+}
+
+button.danger {
+   background-color: var(--danger-color);
+}
+
+button.secondary {
+   background-color: #6c757d;
+}
+
+button [data-lucide] {
+   width: 16px;
+   height: 16px;
+}
+
+.view-section {
+   display: none;
+}
+
+.view-section.active {
+   display: block;
+}
+
+.main-layout {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+.panel {
+   background: var(--card-bg);
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.panel-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 15px;
+   border-bottom: 1px solid var(--border-color);
+   padding-bottom: 10px;
+}
+
+.todo-input-form {
+   display: flex;
+   gap: 10px;
+   margin-bottom: 15px;
+}
+
+.todo-input-form input[type="text"] {
+   flex: 1;
+   padding: 8px;
+   border: 1px solid var(--border-color);
+   border-radius: 4px;
+}
+
+.task-list {
+   list-style: none;
+   min-height: 100px;
+}
+
+.task-item {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 10px;
+   background: var(--bg-color);
+   margin-bottom: 8px;
+   border-radius: 4px;
+   border: 1px solid transparent;
+   cursor: grab;
+}
+
+.task-item.dragging {
+   opacity: 0.5;
+   border: 1px dashed var(--accent-color);
+}
+
+.task-item-content {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   flex: 1;
+}
+
+.task-item-content.done span {
+   text-decoration: line-through;
+   color: var(--text-muted);
+}
+
+.task-actions {
+   display: flex;
+   gap: 5px;
+}
+
+.task-actions button {
+   padding: 4px 8px;
+   font-size: 0.8rem;
+}
+
+.backlog-group {
+   margin-bottom: 20px;
+}
+
+.backlog-title {
+   font-weight: bold;
+   margin-bottom: 10px;
+   color: var(--text-muted);
+}

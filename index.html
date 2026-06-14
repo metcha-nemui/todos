@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta name="robots" content="noindex, nofollow, noarchive">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="style.css">
+   <script src="https://unpkg.com/lucide@latest"></script>
+   <title>ToDo App</title>
+</head>
+<body>
+   <div class="container">
+      <!-- 今日ビュー -->
+      <div id="view-today" class="view-section active">
+         <div class="main-layout">
+            <!-- 今日のタスクパネル -->
+            <div class="panel">
+               <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+                  <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
+                     <span class="date-picker-wrapper">
+                        <input type="date" id="date-picker" class="date-picker">
+                        <i data-lucide="calendar-days"></i>
+                     </span>
+                     <span class="date-display" id="current-date-text" style="font-size: 1.5rem; font-weight: bold;"></span>
+                  </div>
+               </div>
+               
+               <div id="container-today-tasks">
+                  <!-- Done (完了) -->
+                  <div class="backlog-group" style="margin-top: 20px;">
+                     <div class="backlog-title">
+                        <span>Done</span>
+                        <button id="btn-copy-done" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i></button>
+                     </div>
+                     <ul class="task-list" id="list-done"></ul>
+                  </div>
+                  
+                  <!-- ToDo (未完了) -->
+                  <div class="backlog-group">
+                     <div class="backlog-title">
+                        <span>ToDo</span>
+                        <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i></button>
+                     </div>
+                     <form class="todo-input-form" id="form-add-todo" style="margin-bottom: 15px;">
+                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
+                        <input type="date" id="input-todo-date">
+                        <button type="submit">追加</button>
+                     </form>
+                     <ul class="task-list" id="list-todo"></ul>
+                  </div>
+               </div>
+            </div>
+            
+            <!-- 今後のタスクパネル -->
+            <div class="panel">
+               <div class="panel-header">
+                  <h2>今後のタスク</h2>
+               </div>
+               <div id="container-backlog-tasks"></div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <!-- Config Modal -->
+   <div id="config-modal" class="modal" style="display:none;">
+      <div class="modal-content">
+         <h2>Supabase 設定</h2>
+         <label>URL: <input type="text" id="supabase-url" placeholder="https://xxxx.supabase.co"></label><br>
+         <label>Anon Key: <input type="text" id="supabase-key" placeholder="anon key"></label><br>
+         <button id="save-config">保存</button>
+      </div>
+   </div>
+   
+   <script>
+      document.addEventListener('DOMContentLoaded', () => {
+         const cfg = localStorage.getItem('supabaseConfig');
+         if(!cfg) {
+            const modal = document.getElementById('config-modal');
+            modal.style.display = 'flex';
+            document.getElementById('save-config').addEventListener('click', () => {
+               const url = document.getElementById('supabase-url').value.trim();
+               const key = document.getElementById('supabase-key').value.trim();
+               if (url && key) {
+                  const stored = { SUPABASE_URL: url, SUPABASE_ANON_KEY: key };
+                  localStorage.setItem('supabaseConfig', JSON.stringify(stored));
+                  window.location.reload();
+               } else {
+                  alert('URL とキーを入力してください');
+               }
+            });
+         }
+      });
+   </script>
+   <script type="module" src="app.js"></script>
+   <script>
+      // 初回アイコンレンダリング
+      lucide.createIcons();
+   </script>
+</body>
+</html>
