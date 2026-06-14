@@ -25,6 +25,8 @@ export class TodoView {
       this.btnClearAllDebug = document.getElementById('btn-clear-all-debug');
       
       this._initTabs();
+      
+      this.isInitTodoDate = true;
    }
     
    _initTabs() {
@@ -43,6 +45,10 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
+      if(this.isInitTodoDate && data.currentDate)
+      {  this.inputTodoDate.value = data.currentDate;
+         this.isInitTodoDate = false;
+      }
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);

@@ -44,9 +44,7 @@ export class TodoModel {
             sort_order: row.sort_order,
          }));
       }
-      // Determine current date – if stored in localStorage fallback, else use today
-      const storedDate = localStorage.getItem('mvp_current_date');
-      this.currentDate = storedDate || getTodayDateString();
+      this.currentDate = getTodayDateString();
       // Notify UI after loading
       this._commit();
    }
