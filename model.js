@@ -145,7 +145,7 @@ export class TodoModel {
                ...todo,
                is_done: updatedDone,
                done_at: updatedDone ? new Date().toISOString() : null,
-               due_date: todo.due_date ?? this.currentDate,
+               due_date: this.currentDate,
             };
             const { error } = await supabase.from('todos').update({
                is_done: updatedDone,
