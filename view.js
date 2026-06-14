@@ -200,40 +200,92 @@ export class TodoView {
    
    bindDragAndDrop(handleSortUpdate) {
       let draggedElement = null;
-      
-      // 1. ToDoリストとDoneリストの両方をループで処理する
-      const targets = [this.listTodo, this.listDone];
-      
-      targets.forEach(targetList => {
+      let sourceList = null; // ドラッグを開始したリストを保持
+
+      // 1. 固定のリスト（今日ToDo、今日Done）のイベント設定
+      const staticTargets = [this.listTodo, this.listDone];
+      staticTargets.forEach(targetList => {
          if (!targetList) return;
-         
-         targetList.addEventListener('dragstart', (e) => {
+         this._setupDragEventsForList(targetList, () => draggedElement, (el) => draggedElement = el, handleSortUpdate);
+      });
+
+      // 2. 「今後のタスク」コンテナ全体のイベント設定（動的に生成されるリストに対応）
+      if (this.containerBacklogTasks) {
+         // dragstart: バックログ内のタスクがドラッグされたとき
+         this.containerBacklogTasks.addEventListener('dragstart', (e) => {
             draggedElement = e.target.closest('.task-item');
             if (draggedElement) {
                draggedElement.classList.add('dragging');
+               sourceList = draggedElement.closest('.task-list'); // どのグループからドラッグしたか記録
             }
          });
-         
-         targetList.addEventListener('dragend', () => {
+
+         // dragover: バックログ内のいずれかのリスト上でドラッグしているとき
+         this.containerBacklogTasks.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const currentList = e.target.closest('.task-list');
+            
+            // 💡 安全策: 別のグループ（別の日付）への移動を防ぎ、同じグループ内だけの並び替えにする場合
+            if (!currentList || currentList !== sourceList) return; 
+
+            const afterElement = this._getDragAfterElement(currentList, e.clientY);
+            if (afterElement == null) {
+               currentList.appendChild(draggedElement);
+            } else {
+               currentList.insertBefore(draggedElement, afterElement);
+            }
+         });
+
+         // dragend: ドラッグが終了したとき
+         this.containerBacklogTasks.addEventListener('dragend', () => {
             if (draggedElement) {
                draggedElement.classList.remove('dragging');
-               draggedElement = null;
                
-               // 現在のDOM順序から、そのリスト内のすべてのIDを抽出してソート順の更新を依頼
-               const orderedIds = [...targetList.querySelectorAll('.task-item')].map(li => li.dataset.id);
-               handleSortUpdate(orderedIds);
+               // ドラッグが終了したリスト内の最新の並び順を取得して保存
+               if (sourceList) {
+                  const orderedIds = [...sourceList.querySelectorAll('.task-item')].map(li => li.dataset.id);
+                  handleSortUpdate(orderedIds);
+               }
+               
+               draggedElement = null;
+               sourceList = null;
             }
          });
+      }
+   }
+
+   // 💡 共通のイベントを設定するためのヘルパーメソッド（コードの重複を避けるため）
+   _setupDragEventsForList(targetList, getDragged, setDragged, handleSortUpdate) {
+      targetList.addEventListener('dragstart', (e) => {
+         const el = e.target.closest('.task-item');
+         if (el) {
+            el.classList.add('dragging');
+            setDragged(el);
+         }
+      });
+      
+      targetList.addEventListener('dragend', () => {
+         const dragged = getDragged();
+         if (dragged) {
+            dragged.classList.remove('dragging');
+            setDragged(null);
+            
+            const orderedIds = [...targetList.querySelectorAll('.task-item')].map(li => li.dataset.id);
+            handleSortUpdate(orderedIds);
+         }
+      });
+      
+      targetList.addEventListener('dragover', (e) => {
+         e.preventDefault();
+         const dragged = getDragged();
+         if (!dragged) return;
          
-         targetList.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = this._getDragAfterElement(targetList, e.clientY);
-            if (afterElement == null) {
-               targetList.appendChild(draggedElement);
-            } else {
-               targetList.insertBefore(draggedElement, afterElement);
-            }
-         });
+         const afterElement = this._getDragAfterElement(targetList, e.clientY);
+         if (afterElement == null) {
+            targetList.appendChild(dragged);
+         } else {
+            targetList.insertBefore(dragged, afterElement);
+         }
       });
    }
    
