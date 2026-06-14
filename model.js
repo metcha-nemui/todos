@@ -48,20 +48,14 @@ export class TodoModel {
       const storedDate = localStorage.getItem('mvp_current_date');
       this.currentDate = storedDate || getTodayDateString();
       // Notify UI after loading
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
-       // Utility methods
-    async _upsertTodo(todo) {
-       const { error } = await supabase.from('todos').upsert(todo, { returning: 'minimal' });
-       if (error) console.error('Supabase upsert error:', error);
-    }
-
-    async _commit() {
-       // Trigger UI update callback if present
-       if (this.onChangeCallback) this.onChangeCallback();
-    }
-    // 日付コントロール
+   _commit() {
+      if(this.onChangeCallback) this.onChangeCallback();
+   }
+   
+   // 日付コントロール
    setCurrentDate(newDateString) {
       this.currentDate = newDateString;
       this._commit();
@@ -91,13 +85,13 @@ export class TodoModel {
    // タスク操作
    async addTodo(title, dueDate = null) {
       const targetDate = dueDate;
-
-      // Determine max sort_order for the target date
+      
+      // 同一日付内の最大の sort_order を取得
       const sameDayTasks = this.todos.filter(t => t.due_date === targetDate);
       const maxOrder = sameDayTasks.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
-
-      const newTodo = {
-         id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
+      
+      // 1. まず Supabase に投げる用のオブジェクトを作成 (id は含めない)
+      const todoForSupabase = {
          title: title,
          is_done: false,
          due_date: targetDate,
@@ -105,10 +99,34 @@ export class TodoModel {
          created_at: new Date().toISOString(),
          sort_order: maxOrder + 1,
       };
-
-      this.todos.push(newTodo);
-      await this._upsertTodo(newTodo);
-      if (this.onChangeCallback) this.onChangeCallback();
+      
+      // 2. upsert ではなく insert を使い、新しく生成されたレコードを返してもらう
+      const { data, error } = await supabase
+         .from('todos')
+         .insert([todoForSupabase])
+         .select(); // 👈 これをつけることで、自動生成された UUID(id) を含むレコードが返ってきます
+      
+      if (error) {
+         console.error('Supabase add error:', error);
+         return; // エラーならローカル配列に追加しない
+      }
+      
+      if (data && data.length > 0) {
+         // 3. Supabase が生成した本物の ID を含んだオブジェクトをローカル配列に同期
+         const insertedTodo = {
+            id: data[0].id, // Supabaseが発行したUUID
+            title: data[0].title,
+            is_done: data[0].is_done,
+            due_date: data[0].due_date,
+            done_at: data[0].done_at,
+            created_at: data[0].created_at,
+            sort_order: data[0].sort_order,
+         };
+         
+         this.todos.push(insertedTodo);
+      }
+      
+      this._commit();
    }
    
    async editTodo(id, newTitle) {
@@ -117,14 +135,14 @@ export class TodoModel {
       );
       const { error } = await supabase.from('todos').update({ title: newTitle }).eq('id', id);
       if (error) console.error('Supabase edit error:', error);
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
    async deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id);
       const { error } = await supabase.from('todos').delete().eq('id', id);
       if (error) console.error('Supabase delete error:', error);
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
    async toggleTodo(id) {
@@ -142,7 +160,7 @@ export class TodoModel {
          }
          return todo;
       }));
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
    async changeTodoDate(id, targetDate) {
@@ -155,7 +173,7 @@ export class TodoModel {
       );
       const { error } = await supabase.from('todos').update({ due_date: targetDate, sort_order: maxOrder + 1 }).eq('id', id);
       if (error) console.error('Supabase change date error:', error);
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
    async updateSortOrder(orderedIds) {
@@ -168,7 +186,7 @@ export class TodoModel {
       }).filter(Boolean);
       const results = await Promise.all(updates);
       results.forEach(res => { if (res.error) console.error('Supabase sort update error:', res.error); });
-      if (this.onChangeCallback) this.onChangeCallback();
+      this._commit();
    }
    
    // ゲッター群
@@ -227,7 +245,7 @@ export class TodoModel {
        if (error) console.error('Supabase clear all error:', error);
        this.todos = [];
        this.currentDate = DEFAULT_DATE;
-       if (this.onChangeCallback) this.onChangeCallback();
+       this._commit();
     }
 
     async removeStorageKey(key) {
@@ -240,6 +258,6 @@ export class TodoModel {
        } else if (key === 'mvp_current_date') {
           this.currentDate = DEFAULT_DATE;
        }
-       if (this.onChangeCallback) this.onChangeCallback();
+       this._commit();
     }
  }
