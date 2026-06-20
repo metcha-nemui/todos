@@ -9,7 +9,6 @@ export class TodoView {
       // 今日ビュー
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputTodoTitle = document.getElementById('input-todo-title');
-      this.inputTodoDate  = document.getElementById('input-todo-date');
       this.listTodo = document.getElementById('list-todo');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
@@ -17,18 +16,16 @@ export class TodoView {
       
       // バックログビュー
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
-      
-      this.isInitTodoDate = true;
+      this.formAddBacklog = document.getElementById('form-add-backlog');
+      this.inputBacklogTitle = document.getElementById('input-backlog-title');
+      this.inputBacklogDate = document.getElementById('input-backlog-date');
    }
    
    render(data) {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-      if(this.isInitTodoDate && data.currentDate)
-      {  this.inputTodoDate.value = data.currentDate;
-         this.isInitTodoDate = false;
-      }
+      this.inputBacklogDate.value = data.currentDate;
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
@@ -44,7 +41,7 @@ export class TodoView {
    }
    
    setInitialDate(date) {
-      this.inputTodoDate.value = date;
+      this.inputBacklogDate.value = date;
    }
    
    _renderTaskList(element, tasks, isDone, showDateChanger = false) {
@@ -110,13 +107,25 @@ export class TodoView {
    }
    
    bindAddTodo(handler) {
+      // 1. 従来の「今日」のフォーム（自動的に選択中の今日の日付で登録）
       this.formAddTodo.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputTodoTitle.value.trim();
-         const date  = this.inputTodoDate.value || null;
+         const date  = this.datePicker.value || null;
          if(title) {
             handler(title, date);
             this.inputTodoTitle.value = '';
+         }
+      });
+      
+      // 2. 新設した「今後のタスク」のフォーム（datepickerの値を使用）
+      this.formAddBacklog.addEventListener('submit', (e) => {
+         e.preventDefault();
+         const title = this.inputBacklogTitle.value.trim();
+         const date  = this.inputBacklogDate.value || null; // 選択された日付、未選択ならnull
+         if(title) {
+            handler(title, date);
+            this.inputBacklogTitle.value = '';
          }
       });
    }
