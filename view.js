@@ -19,13 +19,18 @@ export class TodoView {
       this.formAddBacklog = document.getElementById('form-add-backlog');
       this.inputBacklogTitle = document.getElementById('input-backlog-title');
       this.inputBacklogDate = document.getElementById('input-backlog-date');
+      
+      this.doInputBacklogDateReset = true;
    }
    
    render(data) {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-      this.inputBacklogDate.value = data.currentDate;
+      if(this.doInputBacklogDateReset && data.currentDate)
+      {  this.inputBacklogDate.value = data.currentDate;
+         this.doInputBacklogDateReset = false;
+      }
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
@@ -103,7 +108,10 @@ export class TodoView {
    }
     
    bindDatePicker(handler) {
-      this.datePicker.addEventListener('change', (e) => handler(e.target.value));
+      this.datePicker.addEventListener('change', (e) => {
+         this.doInputBacklogDateReset = true;
+         handler(e.target.value);
+      });
    }
    
    bindAddTodo(handler) {
