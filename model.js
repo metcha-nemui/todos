@@ -22,14 +22,12 @@ const getTodayDateString = () => {
    return `${yyyy}-${mm}-${dd}`;
 };
 
-const DEFAULT_DATE = getTodayDateString();
-
 export class TodoModel {
    constructor() {
       this.todos = [];
       this.currentDate = null; // will be set after loading
       this.onChangeCallback = null;
-      // Load all todos from Supabase and set current date to today if not stored
+      // Load all todos from Supabase and set current date
       this._loadFromSupabase();
    }
    
@@ -44,7 +42,6 @@ export class TodoModel {
          console.error('Failed to load todos from Supabase:', error);
          this.todos = [];
       } else {
-         // Supabase returns rows matching the table definition
          this.todos = data.map(row => ({
             id: row.id,
             title: row.title,
@@ -55,7 +52,15 @@ export class TodoModel {
             sort_order: row.sort_order,
          }));
       }
-      this.currentDate = getTodayDateString();
+      
+      // 【修正】localStorage から保存された日付の復元を試みる
+      const savedDate = localStorage.getItem('todo_current_date');
+      if (savedDate) {
+         this.currentDate = savedDate;
+      } else {
+         this.currentDate = getTodayDateString();
+      }
+      
       // Notify UI after loading
       this._commit();
    }
@@ -67,6 +72,14 @@ export class TodoModel {
    // 日付コントロール
    setCurrentDate(newDateString) {
       this.currentDate = newDateString;
+      
+      // 【修正】日付が変更されたら localStorage に保存する
+      if (newDateString) {
+         localStorage.setItem('todo_current_date', newDateString);
+      } else {
+         localStorage.removeItem('todo_current_date');
+      }
+      
       this._commit();
    }
    
@@ -75,11 +88,9 @@ export class TodoModel {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
       
-      // 同一日付内の最大の sort_order を取得
       const sameDayTasks = this.todos.filter(t => t.due_date === targetDate);
       const maxOrder = sameDayTasks.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
       
-      // 1. まず Supabase に投げる用のオブジェクトを作成 (id は含めない)
       const todoForSupabase = {
          title: title,
          is_done: false,
@@ -89,21 +100,19 @@ export class TodoModel {
          sort_order: maxOrder + 1,
       };
       
-      // 2. upsert ではなく insert を使い、新しく生成されたレコードを返してもらう
       const { data, error } = await supabase
          .from('todos')
          .insert([todoForSupabase])
-         .select(); // 👈 これをつけることで、自動生成された UUID(id) を含むレコードが返ってきます
+         .select();
       
       if (error) {
          console.error('Supabase add error:', error);
-         return; // エラーならローカル配列に追加しない
+         return;
       }
       
       if (data && data.length > 0) {
-         // 3. Supabase が生成した本物の ID を含んだオブジェクトをローカル配列に同期
          const insertedTodo = {
-            id: data[0].id, // Supabaseが発行したUUID
+            id: data[0].id,
             title: data[0].title,
             is_done: data[0].is_done,
             due_date: data[0].due_date,
@@ -143,12 +152,10 @@ export class TodoModel {
             const updatedDone = !todo.is_done;
             
             let newOrder = todo.sort_order;
-            // 1. ToDo ➔ Done にする場合：今日の Done の中で最大の sort_order + 1 を計算
             if (updatedDone) {
                const todayDones = this.todos.filter(t => t.due_date === this.currentDate && t.is_done);
                const maxDoneOrder = todayDones.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
                newOrder = maxDoneOrder + 1;
-            // 2. Done ➔ ToDo に戻す場合：今日の ToDo の中で最大の sort_order + 1 を計算
             } else {
                const todayTodos = this.todos.filter(t => t.due_date === this.currentDate && !t.is_done);
                const maxTodoOrder = todayTodos.reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1);
@@ -219,29 +226,24 @@ export class TodoModel {
          .sort((a, b) => a.sort_order - b.sort_order);
    }
    getBacklogTodosGrouped() {
-      // 1. 未完了（!t.is_done）かつ、今後のタスク（日付なし、または明日以降）をフィルター
       const noDateTasks = this.todos.filter(t => !t.due_date && !t.is_done);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate && !t.is_done);
       
-      // 💡 日付なしタスクは、純粋に sort_order 順でOK
       noDateTasks.sort((a, b) => a.sort_order - b.sort_order);
       
-      // 💡 【ここを修正】未来のタスクは、まず「日付順」、日付が同じなら「sort_order 順」にソート
       futureTasks.sort((a, b) => {
          if (a.due_date !== b.due_date) {
-            return a.due_date.localeCompare(b.due_date); // 先に日付順（昇順）
+            return a.due_date.localeCompare(b.due_date);
          }
-         return a.sort_order - b.sort_order; // 日付が同じなら sort_order 順
+         return a.sort_order - b.sort_order;
       });
       
       const groups = {};
       
-      // 「日付なし」グループの作成
       if (noDateTasks.length > 0) {
          groups["日付なし"] = noDateTasks;
       }
       
-      // 日付ごとのグループに振り分け（すでに上できれいにソートされているので、順番通りに格納される）
       futureTasks.forEach(task => {
          if (!groups[task.due_date]) groups[task.due_date] = [];
          groups[task.due_date].push(task);
