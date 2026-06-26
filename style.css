@@ -222,4 +222,5 @@ button [data-lucide] {
    font-weight: bold;
    margin-bottom: 10px;
    color: var(--text-muted);
+   cursor: pointer;
 }
