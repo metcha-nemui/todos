@@ -13,6 +13,8 @@ export class TodoView {
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
       this.btnCopyDone = document.getElementById('btn-copy-done');
+      this.CountTodo = document.getElementById('list-count-todo');
+      this.CountDone = document.getElementById('list-count-done');
       
       // バックログビュー
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
@@ -34,8 +36,10 @@ export class TodoView {
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
+      this.CountTodo.textContent = data.todayTodos.length;
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
+      this.CountDone.textContent = data.todayDones.length;
       // バックログ描画
       this._renderBacklogTasks(data.backlogTodos);
       
@@ -342,14 +346,29 @@ export class TodoView {
    
    bindCopyButtons(getTodos, getDones) {
       this.btnCopyTodo.addEventListener('click', () => {
-         const md = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
-         this._copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
+         const date = this._formatDate(this.datePicker.value) + "\n";
+         const md   = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
+         this._copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
       });
       
       this.btnCopyDone.addEventListener('click', () => {
-         const md = getDones().map(t => `- [x] ${t.title}`).join('\n');
-         this._copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
+         const date = this._formatDate(this.datePicker.value) + "\n";
+         const md   = getDones().map(t => `- [x] ${t.title}`).join('\n');
+         this._copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
       });
+   }
+   
+   // yyyy-mm-dd → mm/dd(曜日)
+   _formatDate(dateString) {
+      const date = new Date(dateString);
+      
+      const formatter = new Intl.DateTimeFormat('ja-JP', {
+         month: '2-digit',
+         day:   '2-digit',
+         weekday: 'short'
+      });
+      
+      return formatter.format(date).replace(/\s+/g, '');
    }
    
    async _copyToClipboard(text) {

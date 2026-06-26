@@ -27,26 +27,28 @@
                
                <div id="container-today-tasks">
                   <!-- Done (完了) -->
-                  <div class="backlog-group" style="margin-top: 20px;">
-                     <div class="backlog-title">
+                  <details class="backlog-group" open style="margin-top: 20px;">
+                     <summary class="backlog-title">
                         <span>Done</span>
+                        <span id="list-count-done" class="list-count"></span>
                         <button id="btn-copy-done" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i></button>
-                     </div>
+                     </summary>
                      <ul class="task-list" id="list-done"></ul>
-                  </div>
+                  </details>
                   
                   <!-- ToDo (未完了) -->
-                  <div class="backlog-group">
-                     <div class="backlog-title">
+                  <details class="backlog-group" open>
+                     <summary class="backlog-title">
                         <span>ToDo</span>
+                        <span id="list-count-todo" class="list-count"></span>
                         <button id="btn-copy-todo" class="secondary" style="padding: 4px 8px; font-size: 0.8rem;"><i data-lucide="copy"></i></button>
-                     </div>
+                     </summary>
                      <form class="todo-input-form" id="form-add-todo" style="margin-bottom: 15px;">
                         <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
                         <button type="submit">追加</button>
                      </form>
                      <ul class="task-list" id="list-todo"></ul>
-                  </div>
+                  </details>
                </div>
             </div>
             
