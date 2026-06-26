@@ -93,17 +93,33 @@ export class TodoView {
          return;
       }
       
+      const storageKey = "todo_group_open_states";
+      const savedStates = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      
       for (const [date, tasks] of Object.entries(groupedTasks)) {
-         const div = document.createElement('div');
-         div.className = 'backlog-group';
-         div.innerHTML = `<div class="backlog-title">${date}</div>`;
+         const isNoDate = date === "日付なし";
+         const isOpen = isNoDate
+            ? (savedStates[date] !== undefined ? savedStates[date] : true)
+            : true;
          
-         const ul = document.createElement('ul');
-         ul.className = 'task-list';
+         const details = this._parseHtml(
+            `<details class="backlog-group" ${isOpen ? 'open' : ''}>
+               <summary class="backlog-title">${date}</summary>
+               <ul class="task-list"></ul>
+            </details>`
+         );
+         const ul = details.querySelector('.task-list');
          this._renderTaskList(ul, tasks, false, true);
          
-         div.appendChild(ul);
-         this.containerBacklogTasks.appendChild(div);
+         if (isNoDate) {
+            details.addEventListener('toggle', () => {
+               const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
+               states[date] = details.open;
+               localStorage.setItem(storageKey, JSON.stringify(states));
+            });
+         }
+         
+         this.containerBacklogTasks.appendChild(details);
       }
    }
     
@@ -387,5 +403,11 @@ export class TodoView {
    
    _escapeHtml(str) {
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+   }
+   
+   _parseHtml(htmlString) {
+      const template = document.createElement('template');
+      template.innerHTML = htmlString.trim();
+      return template.content.firstElementChild;
    }
 }
