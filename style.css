@@ -227,3 +227,16 @@ button [data-lucide] {
 summary.backlog-title {
    cursor: pointer;
 }
+
+.list-count {
+   font-size: 0.8rem;
+   margin-left: 2px;
+}
+
+.list-count::before {
+   content: "(";
+}
+
+.list-count::after {
+   content: ")";
+}

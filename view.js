@@ -13,6 +13,8 @@ export class TodoView {
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
       this.btnCopyDone = document.getElementById('btn-copy-done');
+      this.CountTodo = document.getElementById('list-count-todo');
+      this.CountDone = document.getElementById('list-count-done');
       
       // バックログビュー
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
@@ -34,8 +36,10 @@ export class TodoView {
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
+      this.CountTodo.textContent = data.todayTodos.length;
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
+      this.CountDone.textContent = data.todayDones.length;
       // バックログ描画
       this._renderBacklogTasks(data.backlogTodos);
       
