@@ -33,6 +33,10 @@
    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+html {
+   font-size: 62.5%;
+}
+
 body {
    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
    font-feature-settings: "palt";
@@ -40,6 +44,7 @@ body {
    color: var(--text-color);
    line-height: 1.6;
    padding: 20px;
+   font-size: 1.6rem;
 }
 
 input[type=date] {
@@ -69,7 +74,7 @@ header {
 }
 
 .date-display {
-   font-size: 1.2rem;
+   font-size: 2rem;
    font-weight: bold;
 }
 
@@ -106,7 +111,7 @@ button {
    padding: 8px 16px;
    border-radius: 4px;
    cursor: pointer;
-   font-size: 0.9rem;
+   font-size: 1.4rem;
    transition: opacity 0.2s;
    display: inline-flex;
    align-items: center;
@@ -211,7 +216,6 @@ button [data-lucide] {
 
 .task-actions button {
    padding: 4px;
-   font-size: 0.8rem;
 }
 
 .backlog-group {
@@ -229,7 +233,7 @@ summary.backlog-title {
 }
 
 .list-count {
-   font-size: 0.8rem;
+   font-size: 1.1rem;
    margin-left: 2px;
 }
 
@@ -239,4 +243,8 @@ summary.backlog-title {
 
 .list-count::after {
    content: ")";
+}
+
+.btn-copy {
+   padding: 4px 8px;
 }
