@@ -4,6 +4,11 @@
    <meta charset="UTF-8">
    <meta name="robots" content="noindex, nofollow, noarchive">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+   
    <link rel="stylesheet" href="style.css">
    <script src="https://unpkg.com/lucide@latest"></script>
    <title>ToDo App</title>
@@ -16,6 +21,7 @@
             <!-- 今日のタスクパネル -->
             <div class="panel">
                <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+                  <h2>本日のタスク</h2>
                   <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
                      <input type="date" id="date-picker" class="date-picker">
                      <i data-lucide="calendar-days"></i>
@@ -42,7 +48,7 @@
                         <button id="btn-copy-todo" class="secondary btn-copy"><i data-lucide="copy"></i></button>
                         <button id="btn-pip">PiP</button>
                      </summary>
-                     <form class="todo-input-form" id="form-add-todo" style="margin-bottom: 15px;">
+                     <form class="todo-input-form" id="form-add-todo">
                         <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
                         <button type="submit">追加</button>
                      </form>
@@ -56,7 +62,7 @@
                <div class="panel-header">
                   <h2>今後のタスク</h2>
                </div>
-               <form class="todo-input-form" id="form-add-backlog" style="margin-bottom: 15px;">
+               <form class="todo-input-form form-add-backlog" id="form-add-backlog">
                   <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力..." required>
                   <input type="date" id="input-backlog-date">
                   <button type="submit">追加</button>

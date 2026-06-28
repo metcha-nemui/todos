@@ -68,7 +68,7 @@ export class TodoView {
                   <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
                   <span class="task-title-text">${this._escapeHtml(task.title)}</span>
                </div>
-               <div class="task-actions" style="display: flex; align-items: center; gap: 5px;">
+               <div class="task-actions">
                   <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
                   ${showDateChanger ? `
                      <button class="secondary" style="position: relative;">

@@ -1,11 +1,36 @@
+/* ==========================================================================
+   1. Modern Reset & Variables
+   ========================================================================== */
 :root {
-   --bg-color: #f4f6f9;
-   --card-bg: #ffffff;
-   --text-color: #333333;
-   --text-muted: #777777;
-   --accent-color: #4a90e2;
-   --danger-color: #e05454;
-   --border-color: #e1e4e8;
+   /* Color Palette - Apple/Linear Style */
+   --bg-app: #f5f7fa;
+   --bg-card: #ffffff;
+   --bg-input: #f8fafc;
+   --bg-hover: #f1f5f9;
+   
+   --text-main: #0f172a;
+   --text-muted: #64748b;
+   --text-inverse: #ffffff;
+   
+   --accent: #4f46e5;
+   --accent-hover: #4338ca;
+   --accent-light: #eeebff;
+   
+   --danger: #ef4444;
+   --danger-hover: #dc2626;
+   --danger-light: #fee2e2;
+   
+   --border: #e2e8f0;
+   --border-focus: #6366f1;
+   
+   /* System Values */
+   --radius-sm: 6px;
+   --radius-md: 10px;
+   --radius-lg: 16px;
+   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -18,76 +43,104 @@
    display: none !important;
 }
 
-/* Modal styling */
-.modal {
-   position: fixed;
-   inset: 0;
-   background: rgba(0,0,0,0.5);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   z-index: 1000;
-}
-.modal-content {
-   background: #fff;
-   padding: 20px;
-   border-radius: 8px;
-   max-width: 400px;
-   width: 90%;
-   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
 html {
    font-size: 62.5%;
 }
 
 body {
-   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
    font-feature-settings: "palt";
-   background-color: var(--bg-color);
-   color: var(--text-color);
-   line-height: 1.6;
-   padding: 20px;
-   font-size: 1.6rem;
+   background-color: var(--bg-app);
+   color: var(--text-main);
+   line-height: 1.5;
+   padding: 40px 20px;
+   font-size: 1.5rem;
+   -webkit-font-smoothing: antialiased;
 }
 
-input[type=date] {
-   font-family: "Segoe UI", sans-serif;
-}
-
+/* ==========================================================================
+   2. Layout & Container
+   ========================================================================== */
 .container {
-   max-width: 800px;
+   max-width: 1040px;
    margin: 0 auto;
 }
 
-header {
+.main-layout {
+   display: flex;
+   flex-direction: column;
+   gap: 24px;;
+}
+
+@media (max-width: 768px) {
+   body {
+      padding: 16px 12px;
+   }
+}
+
+/* ==========================================================================
+   3. Panels & Cards
+   ========================================================================== */
+.panel {
+   background: var(--bg-card);
+   padding: 24px;
+   border-radius: var(--radius-lg);
+   box-shadow: var(--shadow-md);
+   border: 1px solid rgb(255 255 255 / 0.8);
+}
+
+.panel-header {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   background: var(--card-bg);
-   padding: 20px;
-   border-radius: 8px;
-   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
    margin-bottom: 20px;
+   padding-bottom: 14px;
+   border-bottom: 1px solid var(--border);
+
+   h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+   }
 }
 
+/* ==========================================================================
+   4. UI Controls & Forms
+   ========================================================================== */
 .date-control {
-   display: flex;
+   display: inline-flex;
    align-items: center;
-   gap: 10px;
+   gap: 8px;
    position: relative;
+   background: var(--bg-input);
+   padding: 6px 14px;
+   border-radius: var(--radius-sm);
+   border: 1px solid var(--border);
+   transition: var(--transition);
+
+   &:hover {
+      border-color: var(--text-muted);
+   }
+
+   svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+   }
 }
 
 .date-display {
-   font-size: 2rem;
-   font-weight: bold;
+   font-size: 1.6rem;
+   font-weight: 600;
+   color: var(--text-main);
+   font-family: "Inter", "Segoe UI", sans-serif;
 }
 
 .date-picker,
 .move-date-picker {
    position: absolute;
-   top: 0;
-   left: 0;
+   inset: 0;
    width: 100%;
    height: 100%;
    opacity: 0;
@@ -104,147 +157,376 @@ header {
    cursor: pointer;
 }
 
-button {
-   background-color: var(--accent-color);
-   color: white;
-   border: none;
-   padding: 8px 16px;
-   border-radius: 4px;
-   cursor: pointer;
-   font-size: 1.4rem;
-   transition: opacity 0.2s;
-   display: inline-flex;
-   align-items: center;
-}
-
-button:hover {
-   opacity: 0.9;
-}
-
-button.danger {
-   background-color: transparent;
-   color: var(--danger-color);
-}
-
-button.secondary {
-   background-color: transparent;
-   color: var(--text-color);
-}
-
-button [data-lucide] {
-   width: 16px;
-   height: 16px;
-   pointer-events: none;
-}
-
-.view-section {
-   display: none;
-}
-
-.view-section.active {
-   display: block;
-}
-
-.main-layout {
-   display: flex;
-   flex-direction: column;
-   gap: 20px;
-}
-
-.panel {
-   background: var(--card-bg);
-   padding: 20px;
-   border-radius: 8px;
-   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.panel-header {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   margin-bottom: 15px;
-   border-bottom: 1px solid var(--border-color);
-   padding-bottom: 10px;
-}
-
+/* Forms */
 .todo-input-form {
    display: flex;
-   gap: 10px;
-   margin-bottom: 15px;
+   gap: 8px;
+   margin: 16px 8px;
+
+   &.form-add-backlog {
+      margin-left: 0;
+      margin-right: 0;
+      flex-wrap: wrap;
+   }
+
+   input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-input);
+      font-size: 1.5rem;
+      color: var(--text-main);
+      transition: var(--transition);
+
+      &::placeholder {
+         color: var(--text-muted);
+         opacity: 0.7;
+      }
+
+      &:focus {
+         outline: none;
+         border-color: var(--border-focus);
+         background-color: var(--bg-card);
+         box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+      }
+   }
+
+   input[type="date"] {
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-input);
+      color: var(--text-main);
+      font-size: 1.3rem;
+      font-family: inherit;
+      
+      &:focus {
+         outline: none;
+         border-color: var(--border-focus);
+      }
+   }
 }
 
-.todo-input-form input[type="text"] {
-   flex: 1;
-   padding: 8px;
-   border: 1px solid var(--border-color);
-   border-radius: 4px;
+/* Buttons */
+button {
+   background-color: var(--accent);
+   color: var(--text-inverse);
+   border: none;
+   padding: 10px 16px;
+   border-radius: var(--radius-sm);
+   cursor: pointer;
+   font-size: 1.3rem;
+   font-weight: 500;
+   transition: var(--transition);
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 6px;
+   white-space: nowrap;
+
+   svg {
+      width: 16px;
+      height: 16px;
+   }
+
+   &:hover {
+      background-color: var(--accent-hover);
+   }
+
+   /* Secondary Button style */
+   &.secondary {
+      background-color: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+
+      &:hover {
+         background-color: var(--bg-hover);
+         color: var(--text-main);
+      }
+   }
+
+   /* Danger Button style */
+   &.danger {
+      background-color: transparent;
+      color: var(--text-muted);
+      padding: 6px;
+
+      &:hover {
+         background-color: var(--danger-light);
+         color: var(--danger);
+      }
+   }
+
+   &.btn-copy {
+      padding: 4px 8px;
+      margin-left: 4px;
+   }
+   
+   &#btn-pip {
+      background: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-left: auto;
+      
+      &:hover {
+         background: var(--bg-hover);
+         color: var(--text-main);
+      }
+   }
 }
 
+/* ==========================================================================
+   5. Task Groups (Details / Summary)
+   ========================================================================== */
+.backlog-group {
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   border-radius: var(--radius-md);
+   margin-bottom: 14px;
+   overflow: hidden;
+   transition: var(--transition);
+
+   &[open] {
+      /* box-shadow: var(--shadow-sm); */
+      
+      summary {
+         border-bottom: 1px solid var(--border);
+         background: rgb(248 250 252 / 0.5);
+      }
+   }
+}
+
+summary.backlog-title {
+   display: flex;
+   align-items: center;
+   padding: 12px 16px;
+   font-weight: 600;
+   font-size: 1.5rem;
+   color: var(--text-main);
+   cursor: pointer;
+   user-select: none;
+   list-style: none; /* Remove default triangle */
+   
+   &::-webkit-details-marker {
+      display: none; /* Safari default triangle removal */
+   }
+
+   &::before {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-right: 2px solid var(--text-muted);
+      border-bottom: 2px solid var(--text-muted);
+      transform: rotate(-45deg);
+      margin-right: 10px;
+      transition: transform 0.2s ease;
+   }
+
+   .backlog-group[open] &::before {
+      transform: rotate(45deg);
+   }
+   }
+
+   .list-count {
+   font-size: 1.2rem;
+   color: var(--text-muted);
+   background: var(--bg-hover);
+   padding: 1px 6px;
+   border-radius: 10px;
+   margin-left: 6px;
+   font-weight: 500;
+
+   &::before { content: ""; }
+   &::after { content: ""; }
+}
+
+/* ==========================================================================
+   6. Task Lists & Items
+   ========================================================================== */
 .task-list {
    list-style: none;
-   min-height: 100px;
+   min-height: 20px;
+   padding: 8px;
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
 }
 
 .task-item {
    display: flex;
    align-items: center;
    justify-content: space-between;
-   padding: 6px;
-   background: var(--bg-color);
-   margin-bottom: 6px;
-   border-radius: 4px;
-   border: 1px solid transparent;
+   padding: 10px 12px;
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   border-radius: var(--radius-sm);
    cursor: grab;
-}
+   transition: border-color 0.2s, box-shadow 0.2s;
 
-.task-item.dragging {
-   opacity: 0.5;
-   border: 1px dashed var(--accent-color);
+   &:hover {
+      border-color: cubic-bezier(0.4, 0, 0.2, 1);
+      /* box-shadow: var(--shadow-sm); */
+      background: var(--bg-input);
+   }
+
+   &.dragging {
+      opacity: 0.4;
+      border: 2px dashed var(--accent) !important;
+      background: var(--accent-light);
+      box-shadow: none;
+   }
 }
 
 .task-item-content {
    display: flex;
    align-items: center;
-   gap: 8px;
+   gap: 12px;
    flex: 1;
+
+   /* Checkbox styling */
+   input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      background: var(--bg-card);
+      flex-shrink: 0;
+
+      &:checked {
+         background-color: var(--accent);
+         border-color: var(--accent);
+
+         &::after {
+         content: "";
+         position: absolute;
+         left: 5px;
+         top: 2px;
+         width: 4px;
+         height: 8px;
+         border: solid var(--text-inverse);
+         border-width: 0 2px 2px 0;
+         transform: rotate(45deg);
+         }
+      }
+      
+      &:focus-visible {
+         box-shadow: 0 0 0 2px var(--border-focus);
+      }
+   }
+
+   .task-title-text {
+      font-size: 1.5rem;
+      color: var(--text-main);
+      transition: var(--transition);
+      word-break: break-all;
+   }
+
+   &.done {
+      input[type="checkbox"] {
+         background-color: var(--accent);
+         border-color: var(--accent);
+      }
+      .task-title-text {
+         color: var(--text-muted);
+         /* text-decoration: line-through; */
+         /* opacity: 0.7; */
+      }
+   }
 }
 
 .task-actions {
    display: flex;
-   gap: 5px;
+   align-items: center;
+   opacity: 0; /* Hover時のみ表示させてノイズを減らす */
+   transition: opacity 0.15s ease;
+
+   .task-item:hover & {
+      opacity: 1;
+   }
 }
 
-.task-actions button {
-   padding: 4px;
+@media (max-width: 768px) {
+   .task-actions {
+      opacity: 1; /* モバイルは常時表示 */
+   }
 }
 
-.backlog-group {
-   margin-bottom: 20px;
+/* ==========================================================================
+   7. Config Modal & Popups
+   ========================================================================== */
+.modal {
+   position: fixed;
+   inset: 0;
+   background: rgb(15 23 42 / 0.3);
+   backdrop-filter: blur(4px);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 1000;
+   animation: fadeIn 0.2s ease;
 }
 
-.backlog-title {
-   font-weight: bold;
-   margin-bottom: 10px;
-   color: var(--text-muted);
+.modal-content {
+   background: var(--bg-card);
+   padding: 28px;
+   border-radius: var(--radius-lg);
+   max-width: 420px;
+   width: 90%;
+   box-shadow: var(--shadow-lg);
+   border: 1px solid var(--border);
+
+   h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-main);
+   }
+
+   label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 14px;
+      color: var(--text-main);
+      font-size: 1.3rem;
+
+      input[type="text"] {
+         width: 100%;
+         margin-top: 6px;
+         padding: 10px 12px;
+         border: 1px solid var(--border);
+         border-radius: var(--radius-sm);
+         background: var(--bg-input);
+         font-size: 1.5rem;
+
+         &:focus {
+         outline: none;
+         border-color: var(--border-focus);
+         background: var(--bg-card);
+         }
+      }
+   }
+
+   button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 1.5rem;
+   }
 }
 
-summary.backlog-title {
-   cursor: pointer;
-}
-
-.list-count {
-   font-size: 1.1rem;
-   margin-left: 2px;
-}
-
-.list-count::before {
-   content: "(";
-}
-
-.list-count::after {
-   content: ")";
-}
-
-.btn-copy {
-   padding: 4px 8px;
+@keyframes fadeIn {
+   from { opacity: 0; }
+   to { opacity: 1; }
 }
