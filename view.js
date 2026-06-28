@@ -15,6 +15,7 @@ export class TodoView {
       this.btnCopyDone = document.getElementById('btn-copy-done');
       this.CountTodo = document.getElementById('list-count-todo');
       this.CountDone = document.getElementById('list-count-done');
+      this.btnPiP    = document.getElementById('btn-pip');
       
       // バックログビュー
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
@@ -418,6 +419,22 @@ export class TodoView {
       // 不要になった要素を削除
       document.body.removeChild(textArea);
       return success;
+   }
+   
+   bindPiPButton(getTodos) {
+      if (!('documentPictureInPicture' in window)) {
+         this.btnPiP.hidden = true;
+         console.log("true");
+         return;
+      }
+      this.btnPiP.addEventListener("click", async() => {
+         const pipWindow  = await window.documentPictureInPicture.requestWindow();
+         const pipContent = document.querySelector("#pip-content").content.cloneNode(true);
+         pipWindow.document.body.append(pipContent);
+         const tasks = getTodos();
+         const title = (tasks.length > 0) ? tasks[0].title : "";
+         pipWindow.document.querySelector("#pip-text").textContent = title;
+      });
    }
    
    _escapeHtml(str) {

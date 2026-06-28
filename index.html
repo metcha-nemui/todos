@@ -42,6 +42,7 @@
                         <span>ToDo</span>
                         <span id="list-count-todo" class="list-count"></span>
                         <button id="btn-copy-todo" class="secondary btn-copy"><i data-lucide="copy"></i></button>
+                        <button id="btn-pip">PiP</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-todo" style="margin-bottom: 15px;">
                         <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." required>
@@ -77,6 +78,23 @@
          <button id="save-config">保存</button>
       </div>
    </div>
+   
+   <!-- PiP -->
+   <template id="pip-content">
+      <style>
+         html {
+            height: 100%;
+         }
+         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100%;
+         }
+      </style>
+      <div id="pip-text"></div>
+   </template>
    
    <script>
       document.addEventListener('DOMContentLoaded', () => {

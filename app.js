@@ -35,6 +35,9 @@ class TodoPresenter {
          () => this.model.getTodayDones()
       );
       
+      // PiP起動ボタン
+      this.view.bindPiPButton(() => this.model.getTodayTodos());
+      
       // 3. アプリ起動時の初期レンダリング
       this.view.setInitialDate(this.model.currentDate);
       this.updateView();
