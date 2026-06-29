@@ -448,19 +448,63 @@ summary.backlog-title {
 }
 
 .task-actions {
+   position: relative;
    display: flex;
    align-items: center;
    opacity: 0; /* Hover時のみ表示させてノイズを減らす */
    transition: opacity 0.15s ease;
+}
 
-   .task-item:hover & {
-      opacity: 1;
-   }
+.task-item:hover .task-actions {
+   opacity: 1;
+}
+
+.actions-mobile {
+   display: none;
 }
 
 @media (max-width: 768px) {
    .task-actions {
       opacity: 1; /* モバイルは常時表示 */
+   }
+   .actions-desktop {
+      display: none;
+   }
+   .actions-mobile {
+      display: block;
+      position: relative;
+   }
+   
+   .action-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 10;
+      min-width: 120px;
+      flex-direction: column;
+      overflow: hidden;
+   }
+
+   .action-menu.show {
+      display: flex;
+   }
+
+   .action-menu button {
+      width: 100%;
+      justify-content: flex-start;
+      border-radius: 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.3rem;
+      padding: 8px 12px;
+   }
+
+   .action-menu button:last-child {
+      border-bottom: none;
    }
 }
 
