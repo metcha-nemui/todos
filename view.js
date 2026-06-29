@@ -69,15 +69,26 @@ export class TodoView {
                   <span class="task-title-text">${this._escapeHtml(task.title)}</span>
                </div>
                <div class="task-actions">
-                  <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
-                  ${showDateChanger ? `
-                     <button class="secondary" style="position: relative;">
-                        <input type="date" class="move-date-picker">
-                        <i data-lucide="calendar-days"></i>
-                     </button>
-                  ` : ''}
-                  <button class="edit-btn secondary"><i data-lucide="pencil"></i></button>
-                  <button class="delete-btn danger"><i data-lucide="trash-2"></i></button>
+                  <div class="actions-desktop">
+                     <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
+                     ${showDateChanger ? `
+                        <button class="secondary" style="position: relative;">
+                           <input type="date" class="move-date-picker">
+                           <i data-lucide="calendar-days"></i>
+                        </button>
+                     ` : ''}
+                     <button class="edit-btn secondary"><i data-lucide="pencil"></i></button>
+                     <button class="delete-btn danger"><i data-lucide="trash-2"></i></button>
+                  </div>
+                  <div class="actions-mobile">
+                     <button class="menu-btn secondary"><i data-lucide="more-vertical"></i></button>
+                     <div class="action-menu">
+                        <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
+                        ${showDateChanger ? `<button class="secondary move-date-trigger"><i data-lucide="calendar-days"></i> 日付変更</button>` : ''}
+                        <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
+                        <button class="delete-btn danger"><i data-lucide="trash-2"></i> 削除</button>
+                     </div>
+                  </div>
                </div>
             </div>
             
@@ -171,6 +182,19 @@ export class TodoView {
             const li = target.closest('.task-item');
             if (!li) return;
             const id = li.dataset.id;
+            
+            // モバイルメニューの開閉制御
+            const menuBtn = target.closest('.menu-btn');
+            if (menuBtn) {
+               const menu = menuBtn.nextElementSibling;
+               menu.classList.toggle('show');
+               const closeMenu = () => {
+                  menu.classList.remove('show');
+                  document.removeEventListener('click', closeMenu);
+               };
+               setTimeout(() => document.addEventListener('click', closeMenu), 0);
+               return;
+            }
             
             const viewMode = li.querySelector('.task-view-mode');
             const editMode = li.querySelector('.task-edit-mode');
