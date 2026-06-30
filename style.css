@@ -476,10 +476,8 @@ summary.backlog-title {
    }
    
    .action-menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 100%;
+      display: flex;
+      position: fixed;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -489,11 +487,7 @@ summary.backlog-title {
       flex-direction: column;
       overflow: hidden;
    }
-
-   .action-menu.show {
-      display: flex;
-   }
-
+   
    .action-menu button {
       width: 100%;
       justify-content: flex-start;
