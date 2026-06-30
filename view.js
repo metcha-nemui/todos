@@ -84,7 +84,12 @@ export class TodoView {
                      <button class="menu-btn secondary"><i data-lucide="more-vertical"></i></button>
                      <div class="action-menu" hidden>
                         <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
-                        ${showDateChanger ? `<button class="secondary move-date-trigger"><i data-lucide="calendar-days"></i> 日付変更</button>` : ''}
+                        ${showDateChanger ? `
+                           <button class="secondary" style="position: relative">
+                              <input type="date" class="move-date-picker">
+                              <i data-lucide="calendar-days"></i> 日付変更
+                           </button>`
+                        : ''}
                         <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
                         <button class="delete-btn danger"><i data-lucide="trash-2"></i> 削除</button>
                      </div>
