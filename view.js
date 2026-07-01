@@ -1,4 +1,11 @@
 // view.js - UI Representation Layer
+
+const _detailsKeyList = {
+   "details-todo"  : "TODO",
+   "details-done"  : "DONE",
+   "details-nodate": "NODATE",
+};
+
 export class TodoView {
    constructor() {
       // ヘッダー・共通
@@ -24,6 +31,22 @@ export class TodoView {
       this.inputBacklogDate = document.getElementById('input-backlog-date');
       
       this.doInputBacklogDateReset = true;
+      this._storageKey = "todo_group_open_states";
+      
+      this.bindUIEvents();
+   }
+   
+   bindUIEvents() {
+      // <details> 開閉状況保存
+      document.addEventListener("toggle", (e) => {
+         const key = _detailsKeyList[e.target.id] || "";
+         if(!key) return;
+         
+         const storageKey = this._storageKey;
+         const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
+         states[key] = e.target.open;
+         localStorage.setItem(storageKey, JSON.stringify(states));
+      }, { capture: true });
    }
    
    render(data) {
@@ -43,6 +66,17 @@ export class TodoView {
       this.CountDone.textContent = data.todayDones.length;
       // バックログ描画
       this._renderBacklogTasks(data.backlogTodos);
+      
+      // 開閉状況反映
+      const details = document.querySelectorAll("details");
+      for(const element of details) {
+         const key = _detailsKeyList[element.id];
+         if(!key) continue;
+         
+         const storageKey = this._storageKey;
+         const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
+         if(key in states) element.open = states[key];
+      }
       
       // 動的生成された要素のLucideアイコンを有効化
       if (typeof lucide !== 'undefined') {
@@ -119,26 +153,15 @@ export class TodoView {
       
       for (const [date, tasks] of Object.entries(groupedTasks)) {
          const isNoDate = date === "日付なし";
-         const isOpen = isNoDate
-            ? (savedStates[date] !== undefined ? savedStates[date] : true)
-            : true;
          
          const details = this._parseHtml(
-            `<details class="backlog-group" ${isOpen ? 'open' : ''}>
+            `<details ${isNoDate ? `id="details-nodate"` : ""} class="backlog-group" open>
                <summary class="backlog-title">${date}</summary>
                <ul class="task-list"></ul>
             </details>`
          );
          const ul = details.querySelector('.task-list');
          this._renderTaskList(ul, tasks, false, true);
-         
-         if (isNoDate) {
-            details.addEventListener('toggle', () => {
-               const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
-               states[date] = details.open;
-               localStorage.setItem(storageKey, JSON.stringify(states));
-            });
-         }
          
          this.containerBacklogTasks.appendChild(details);
       }
