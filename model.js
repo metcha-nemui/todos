@@ -22,10 +22,20 @@ const getTodayDateString = () => {
    return `${yyyy}-${mm}-${dd}`;
 };
 
+const getTomorrowDateString = () => {
+   const now = new Date();
+   const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+   const yyyy = tomorrow.getFullYear();
+   const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+   const dd = String(tomorrow.getDate()).padStart(2, '0');
+   return `${yyyy}-${mm}-${dd}`;
+};
+
 export class TodoModel {
    constructor() {
       this.todos = [];
       this.currentDate = null; // will be set after loading
+      this.tomorrowDate = getTomorrowDateString();
       this.onChangeCallback = null;
       // Load all todos from Supabase and set current date
       this._loadFromSupabase();

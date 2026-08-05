@@ -53,8 +53,8 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-      if(this.doInputBacklogDateReset && data.currentDate)
-      {  this.inputBacklogDate.value = data.currentDate;
+      if(this.doInputBacklogDateReset) {
+         this.inputBacklogDate.value = data.tomorrowDate;
          this.doInputBacklogDateReset = false;
       }
       
@@ -119,10 +119,10 @@ export class TodoView {
                      <div class="action-menu" hidden>
                         <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
                         ${showDateChanger ? `
-                           <button class="secondary" style="position: relative">
+                           <label class="secondary" style="position: relative">
                               <input type="date" class="move-date-picker">
                               <i data-lucide="calendar-days"></i> 日付変更
-                           </button>`
+                           </label>`
                         : ''}
                         <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
                         <button class="delete-btn danger"><i data-lucide="trash-2"></i> 削除</button>
