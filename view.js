@@ -119,10 +119,10 @@ export class TodoView {
                      <div class="action-menu" hidden>
                         <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
                         ${showDateChanger ? `
-                           <label class="secondary" style="position: relative">
+                           <button class="secondary" style="position: relative">
                               <input type="date" class="move-date-picker">
                               <i data-lucide="calendar-days"></i> 日付変更
-                           </label>`
+                           </button>`
                         : ''}
                         <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
                         <button class="delete-btn danger"><i data-lucide="trash-2"></i> 削除</button>
@@ -242,6 +242,13 @@ export class TodoView {
                   const titleText = li.querySelector('.task-title-text').textContent;
                   this._copyToClipboard(titleText);
                },
+               'move-date-picker': (e) => {
+                  if(e.target.closest(".actions-mobile")) {
+                     e.preventDefault();
+                     e.stopPropagation();
+                     e.target.showPicker();
+                  }
+               },
                'edit-btn'    : () => {
                   viewMode.style.display = 'none';
                   editMode.style.display = 'flex';
@@ -259,7 +266,7 @@ export class TodoView {
             
             for(const className of target.classList) {
                if(actionMap[className]) { 
-                  actionMap[className](); 
+                  actionMap[className](e); 
                   return; 
                }
             }
