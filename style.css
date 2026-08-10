@@ -613,3 +613,33 @@ summary.backlog-title {
    from { opacity: 0; }
    to { opacity: 1; }
 }
+
+/* ==========================================================================
+   8. Diary
+   ========================================================================== */
+.diary-content {
+   padding: 8px;
+
+   textarea {
+      display: block;
+      font-size: 1.5rem;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-input);
+      transition: var(--transition);
+      width: 100%;
+      height: 5lh;
+      resize: none;
+      font-family: inherit;
+
+      &:focus {
+         outline: none;
+         border-color: var(--border-focus);
+         background-color: var(--bg-card);
+         box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+      }
+   }
+
+   
+}

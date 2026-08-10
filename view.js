@@ -23,6 +23,7 @@ export class TodoView {
       this.CountTodo = document.getElementById('list-count-todo');
       this.CountDone = document.getElementById('list-count-done');
       this.btnPiP    = document.getElementById('btn-pip');
+      this.inputDiary = document.getElementById('input-diary');
       
       // バックログビュー
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
@@ -64,6 +65,8 @@ export class TodoView {
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
       this.CountDone.textContent = data.todayDones.length;
+      // 今日のDiary描画
+      this._renderDiary(data.todayDiary);
       // バックログ描画
       this._renderBacklogTasks(data.backlogTodos);
       
@@ -77,6 +80,8 @@ export class TodoView {
          const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
          if(key in states) element.open = states[key];
       }
+      const diaryDetails = this.inputDiary.closest("details");
+      diaryDetails.open = this.inputDiary.value !== "";
       
       // 動的生成された要素のLucideアイコンを有効化
       if (typeof lucide !== 'undefined') {
@@ -165,6 +170,10 @@ export class TodoView {
          
          this.containerBacklogTasks.appendChild(details);
       }
+   }
+   
+   _renderDiary(data) {
+      this.inputDiary.value = data?.content || "";
    }
     
    bindDatePicker(handler) {
@@ -496,6 +505,12 @@ export class TodoView {
          const tasks = getTodos();
          const title = (tasks.length > 0) ? tasks[0].title : "";
          pipWindow.document.querySelector("#pip-text").textContent = title;
+      });
+   }
+   
+   bindUpdateDiary(handler) {
+      this.inputDiary.addEventListener("blur", () => {
+         handler(this.datePicker.value, this.inputDiary.value.trim());
       });
    }
    
