@@ -38,14 +38,32 @@ export class TodoModel {
       this.tomorrowDate = getTomorrowDateString();
       this.onChangeCallback = null;
       // Load all todos from Supabase and set current date
-      this._loadFromSupabase();
+      this._loadTodosFromSupabase();
+      
+      this.diaries = [];
+      this._loadDiariesFromSupabase();
    }
    
    bindOnChange(callback) {
       this.onChangeCallback = callback;
    }
+
+   async _loadDiariesFromSupabase() {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      
+      const { data, error } = await supabase.from('diaries').select('*');
+      if (error) {
+         console.error('Failed to load todos from Supabase:', error);
+         this.diaries = [];
+      } else {
+         this.diaries = data.map(row => ({
+            date: row.entry_date,
+            content: row.content,
+         }));
+      }
+   }
    
-   async _loadFromSupabase() {
+   async _loadTodosFromSupabase() {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const { data, error } = await supabase.from('todos').select('*');
       if (error) {
@@ -222,6 +240,25 @@ export class TodoModel {
       results.forEach(res => { if (res.error) console.error('Supabase sort update error:', res.error); });
       this._commit();
    }
+   async updateDiary(date, content) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      
+      if(content === "") {
+         const { data, error } = await supabase
+            .from('diaries')
+            .delete()
+            .eq("entry_date", date);
+         return;
+      }
+      
+      const { data, error } = await supabase
+         .from('diaries')
+         .upsert({
+            entry_date: date,
+            content: content,
+         });
+      
+   }
    
    // ゲッター群
    getTodayTodos() {
@@ -260,5 +297,8 @@ export class TodoModel {
       });
       
       return groups;
+   }
+   getTodayDiary() {
+      return this.diaries.filter(d => d.date === this.currentDate)[0];
    }
 }

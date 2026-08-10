@@ -38,6 +38,9 @@ class TodoPresenter {
       // PiP起動ボタン
       this.view.bindPiPButton(() => this.model.getTodayTodos());
       
+      // Diary編集
+      this.view.bindUpdateDiary((date, content) => this.model.updateDiary(date, content));
+      
       // 3. アプリ起動時の初期レンダリング
       this.view.setInitialDate(this.model.currentDate);
       this.updateView();
@@ -50,7 +53,8 @@ class TodoPresenter {
          todayTodos:   this.model.getTodayTodos(),
          todayDones:   this.model.getTodayDones(),
          backlogTodos: this.model.getBacklogTodosGrouped(),
-         todos:        this.model.todos
+         todos:        this.model.todos,
+         todayDiary:   this.model.getTodayDiary(),
       });
    }
 }
