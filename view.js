@@ -53,8 +53,8 @@ export class TodoView {
       // 日付反映
       this.currentDateText.textContent = data.currentDate;
       this.datePicker.value = data.currentDate;
-      if(this.doInputBacklogDateReset && data.currentDate)
-      {  this.inputBacklogDate.value = data.currentDate;
+      if(this.doInputBacklogDateReset) {
+         this.inputBacklogDate.value = data.tomorrowDate;
          this.doInputBacklogDateReset = false;
       }
       
@@ -242,6 +242,13 @@ export class TodoView {
                   const titleText = li.querySelector('.task-title-text').textContent;
                   this._copyToClipboard(titleText);
                },
+               'move-date-picker': (e) => {
+                  if(e.target.closest(".actions-mobile")) {
+                     e.preventDefault();
+                     e.stopPropagation();
+                     e.target.showPicker();
+                  }
+               },
                'edit-btn'    : () => {
                   viewMode.style.display = 'none';
                   editMode.style.display = 'flex';
@@ -259,7 +266,7 @@ export class TodoView {
             
             for(const className of target.classList) {
                if(actionMap[className]) { 
-                  actionMap[className](); 
+                  actionMap[className](e); 
                   return; 
                }
             }
