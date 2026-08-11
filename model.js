@@ -243,13 +243,27 @@ export class TodoModel {
    async updateDiary(date, content) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       
+      // 変更ない場合は更新しない
+      const currentDiary = this.diaries.filter(d => d.date === date)[0];
+      if(currentDiary) {
+         if(currentDiary.content === content) return;
+      }
+      
+      // 空欄の場合、項目ごと削除
       if(content === "") {
+         this.diaries = this.diaries.filter(d => d.date !== date);
+         
          const { data, error } = await supabase
             .from('diaries')
             .delete()
             .eq("entry_date", date);
          return;
       }
+      
+      // 更新
+      const target = this.diaries.find(d => d.date === date);
+      if(target) target.content = content;
+      else       this.diaries.push({ date, content });
       
       const { data, error } = await supabase
          .from('diaries')
