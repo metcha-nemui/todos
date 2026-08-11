@@ -48,6 +48,10 @@ export class TodoView {
          states[key] = e.target.open;
          localStorage.setItem(storageKey, JSON.stringify(states));
       }, { capture: true });
+      
+      this.inputDiary.addEventListener("input", () => {
+         this._updateDiaryCounter();
+      });
    }
    
    render(data) {
@@ -174,6 +178,7 @@ export class TodoView {
    
    _renderDiary(data) {
       this.inputDiary.value = data?.content || "";
+      this._updateDiaryCounter();
    }
     
    bindDatePicker(handler) {
@@ -490,6 +495,11 @@ export class TodoView {
       // 不要になった要素を削除
       document.body.removeChild(textArea);
       return success;
+   }
+   
+   _updateDiaryCounter() {
+      const counter = document.querySelector("#diary-counter");
+      counter.textContent = this.inputDiary.value.length;
    }
    
    bindPiPButton(getTodos) {
