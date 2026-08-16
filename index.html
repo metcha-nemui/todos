@@ -144,7 +144,7 @@
             width: 16px;
             height: 16px;
          }
-         .task:not(.is-running):hover .delete {
+         .wrapper:not(.is-running) .task:hover .delete {
             display: revert;
          }
          .task.is-active {
@@ -176,13 +176,13 @@
             background-clip: text;
             color: transparent;
          }
-         /* .sec {
+         .sec {
             font-size: 45px;
-         } */
+         }
       </style>
       <div id="wrapper" class="wrapper"></div>
       <div class="footer">
-         <span id="timer" class="timer">00:00.00</span>
+         <span id="timer" class="timer">00:00.<span class="sec">00</span></span>
       </div>
       
       <script type="module">
@@ -254,7 +254,7 @@
             const cc = String(centiseconds).padStart(2, '0');
             
             // 画面に反映
-            timerDisplay.textContent = `${mm}:${ss}.${cc}`;
+            timerDisplay.innerHTML = `${mm}:${ss}.<span class="sec">${cc}</span>`;
             
             // 次のフレームの描画を予約
             timerInterval = requestAnimationFrame(updateTimer);
