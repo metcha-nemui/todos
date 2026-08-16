@@ -513,8 +513,13 @@ export class TodoView {
          const pipContent = document.querySelector("#pip-content").content.cloneNode(true);
          pipWindow.document.body.append(pipContent);
          const tasks = getTodos();
-         const title = (tasks.length > 0) ? tasks[0].title : "";
-         pipWindow.document.querySelector("#pip-text").textContent = title;
+         const wrapper = pipWindow.document.querySelector("#wrapper");
+         tasks.forEach(task => {
+            const div = document.createElement("div");
+            div.classList.add("task");
+            div.textContent = task.title;
+            wrapper.append(div);
+         });
       });
    }
    

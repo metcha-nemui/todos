@@ -103,13 +103,128 @@
          }
          body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             margin: 0;
             height: 100%;
+            color: white;
+            font-size: 14px;
+            background: oklch(13% 0.028 261.692);
          }
+         .wrapper {
+            width: 100%;
+            flex-grow: 1;
+         }
+         .task {
+            padding: 0.5em;
+            border-bottom: 1px solid oklch(27.8% 0.033 256.848);
+            box-sizing: border-box;
+         }
+         .task:nth-child(2n) {
+            background: oklch(21% 0.034 264.665);
+         }
+         .task.is-active {
+            background: linear-gradient(
+               to bottom,
+               oklch(54.6% 0.245 262.881),
+               oklch(37.9% 0.146 265.522)
+            );
+         }
+         .footer {
+            text-align: right;
+            padding-inline: 0.5em;
+         }
+         .timer {
+            font-size: 60px;
+            font-weight: bold;
+            font-family: "Calibri", sans-serif;
+            background: linear-gradient(to bottom, white, oklch(70.7% 0.022 261.325));
+            background-clip: text;
+            color: transparent;
+         }
+         .timer.is-active {
+            background: linear-gradient(to bottom, oklch(87.1% 0.15 154.449), oklch(72.3% 0.219 149.579));
+            background-clip: text;
+            color: transparent;
+         }
+         .timer.is-end {
+            background: linear-gradient(to bottom, oklch(80.9% 0.105 251.813), oklch(62.3% 0.214 259.815));
+            background-clip: text;
+            color: transparent;
+         }
+         /* .sec {
+            font-size: 45px;
+         } */
       </style>
-      <div id="pip-text"></div>
+      <div id="wrapper" class="wrapper"></div>
+      <div class="footer">
+         <span id="timer" class="timer">00:00.00</span>
+      </div>
+      
+      <script type="module">
+         let currentIndex = -1;
+         document.addEventListener("click", onClick);
+         
+         function  onClick() {
+            const tasks = document.querySelectorAll(".task");
+            const timer = document.querySelector("#timer");
+            if(currentIndex >= 0) {
+               const task = tasks[currentIndex];
+               task.classList.remove("is-active");
+            }
+            currentIndex++;
+            if(currentIndex < tasks.length) {
+               const task = tasks[currentIndex];
+               task.classList.add("is-active");
+               timer.classList.add("is-active");
+               startTimer();
+            } else {
+               stopTimer();
+               timer.classList.remove("is-active");
+               timer.classList.add("is-end");
+               document.removeEventListener("click", onclick);
+            }
+         }
+         
+         let startTime = 0;
+         let elapsedTime = 0;
+         let timerInterval = null;
+         let isRunning = false;
+         
+         const timerDisplay = document.getElementById('timer');
+         
+         function startTimer() {
+            isRunning = true;
+            startTime = performance.now() - elapsedTime;
+            timerInterval = requestAnimationFrame(updateTimer);
+         }
+         function stopTimer() {
+            isRunning = false;
+            cancelAnimationFrame(timerInterval);
+         }
+         function updateTimer() {
+            if (!isRunning) return;
+            
+            // 現在時刻と開始時刻の差分から正確な経過時間を計算
+            elapsedTime = performance.now() - startTime;
+            
+            // 分・秒・ミリ秒（2桁）の計算
+            const minutes = Math.floor(elapsedTime / 60000);
+            const seconds = Math.floor((elapsedTime % 60000) / 1000);
+            // 10ミリ秒単位（小数点以下2桁）にするため1000で割った余りを10で割る
+            const centiseconds = Math.floor((elapsedTime % 1000) / 10);
+            
+            // 桁数を2桁に揃える (例: 1秒 -> "01")
+            const mm = String(minutes).padStart(2, '0');
+            const ss = String(seconds).padStart(2, '0');
+            const cc = String(centiseconds).padStart(2, '0');
+            
+            // 画面に反映
+            timerDisplay.textContent = `${mm}:${ss}.${cc}`;
+            
+            // 次のフレームの描画を予約
+            timerInterval = requestAnimationFrame(updateTimer);
+         }
+      </script>
    </template>
    
    <script>
