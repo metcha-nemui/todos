@@ -98,6 +98,12 @@
    <!-- PiP -->
    <template id="pip-content">
       <style>
+         :root {
+            --background: oklch(13% 0.028 261.692);
+         }
+         [hidden] {
+            display: none !important;
+         }
          html {
             height: 100%;
          }
@@ -108,7 +114,7 @@
             height: 100%;
             color: white;
             font-size: 14px;
-            background: oklch(13% 0.028 261.692);
+            background: var(--background);
          }
          .wrapper {
             width: 100%;
@@ -118,9 +124,28 @@
             padding: 0.5em;
             border-bottom: 1px solid oklch(27.8% 0.033 256.848);
             box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
          }
          .task:nth-child(2n) {
             background: oklch(21% 0.034 264.665);
+         }
+         .task .delete {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: inherit;
+            padding-inline: 0.5em;
+            cursor: pointer;
+         }
+         .task .delete svg {
+            width: 16px;
+            height: 16px;
+         }
+         .task:not(.is-running):hover .delete {
+            display: revert;
          }
          .task.is-active {
             background: linear-gradient(
@@ -161,10 +186,17 @@
       </div>
       
       <script type="module">
+         const wrapper = document.querySelector("#wrapper");
+         
          let currentIndex = -1;
          document.addEventListener("click", onClick);
          
-         function  onClick() {
+         function  onClick(e) {
+            if(e.target.closest(".delete")) {
+               e.target.closest(".task").remove();
+               return;
+            }
+            
             const tasks = document.querySelectorAll(".task");
             const timer = document.querySelector("#timer");
             if(currentIndex >= 0) {
@@ -172,16 +204,19 @@
                task.classList.remove("is-active");
             }
             currentIndex++;
+            
             if(currentIndex < tasks.length) {
                const task = tasks[currentIndex];
                task.classList.add("is-active");
                timer.classList.add("is-active");
                startTimer();
+               wrapper.classList.add("is-running");
             } else {
                stopTimer();
                timer.classList.remove("is-active");
                timer.classList.add("is-end");
                document.removeEventListener("click", onclick);
+               wrapper.classList.remove("is-running");
             }
          }
          
