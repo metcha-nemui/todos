@@ -63,6 +63,11 @@ export class TodoView {
          this.doInputBacklogDateReset = false;
       }
       
+      // オートコンプリート
+      const mediaQuery = window.matchMedia('(max-width: 768px)');
+      this.inputTodoTitle   .setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
+      this.inputBacklogTitle.setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
+      
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
       this.CountTodo.textContent = data.todayTodos.length;
