@@ -14,7 +14,9 @@ export class TodoView {
       this.sections = document.querySelectorAll('.view-section');
       
       // 今日ビュー
+      this.formAddDone = document.getElementById('form-add-done');
       this.formAddTodo = document.getElementById('form-add-todo');
+      this.inputDoneTitle = document.getElementById('input-done-title');
       this.inputTodoTitle = document.getElementById('input-todo-title');
       this.listTodo = document.getElementById('list-todo');
       this.listDone = document.getElementById('list-done');
@@ -65,6 +67,7 @@ export class TodoView {
       
       // オートコンプリート
       const mediaQuery = window.matchMedia('(max-width: 768px)');
+      this.inputDoneTitle   .setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
       this.inputTodoTitle   .setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
       this.inputBacklogTitle.setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
       
@@ -194,24 +197,35 @@ export class TodoView {
    }
    
    bindAddTodo(handler) {
-      // 1. 従来の「今日」のフォーム（自動的に選択中の今日の日付で登録）
+      // 「今日」のDoneフォーム（自動的に選択中の今日の日付で登録）
+      this.formAddDone.addEventListener('submit', (e) => {
+         e.preventDefault();
+         const title = this.inputDoneTitle.value.trim();
+         const date  = this.datePicker.value || null;
+         if(title) {
+            handler(title, date, true);
+            this.inputDoneTitle.value = '';
+         }
+      });
+      
+      // 「今日」のToDoフォーム（自動的に選択中の今日の日付で登録）
       this.formAddTodo.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputTodoTitle.value.trim();
          const date  = this.datePicker.value || null;
          if(title) {
-            handler(title, date);
+            handler(title, date, false);
             this.inputTodoTitle.value = '';
          }
       });
       
-      // 2. 新設した「今後のタスク」のフォーム（datepickerの値を使用）
+      // 「今後のタスク」のフォーム（datepickerの値を使用）
       this.formAddBacklog.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputBacklogTitle.value.trim();
          const date  = this.inputBacklogDate.value || null; // 選択された日付、未選択ならnull
          if(title) {
-            handler(title, date);
+            handler(title, date, false);
             this.inputBacklogTitle.value = '';
          }
       });

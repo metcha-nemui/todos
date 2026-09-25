@@ -112,7 +112,7 @@ export class TodoModel {
    }
    
    // タスク操作
-   async addTodo(title, dueDate = null) {
+   async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
       
@@ -121,7 +121,7 @@ export class TodoModel {
       
       const todoForSupabase = {
          title: title,
-         is_done: false,
+         is_done: isDone,
          due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
