@@ -75,6 +75,7 @@ export class TodoModel {
          this.templates = [];
       } else {
          this.templates = data.map(row => row.name);
+         this.templates.sort((a,b) => a.localeCompare(b, 'ja'));
       }
    }
    
