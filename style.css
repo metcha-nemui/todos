@@ -69,7 +69,7 @@ body {
 .main-layout {
    display: flex;
    flex-direction: column;
-   gap: 24px;;
+   gap: 24px;
 }
 
 @media (max-width: 768px) {
@@ -208,6 +208,46 @@ body {
    }
 }
 
+/* Autocomplete Custom Dropdown */
+.autocomplete-wrapper {
+   position: relative;
+   flex: 1;
+
+   input[type="text"] {
+      width: 100%;
+   }
+}
+
+.suggest-list {
+   position: absolute;
+   top: calc(100% + 4px);
+   left: 0;
+   right: 0;
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   border-radius: var(--radius-sm);
+   box-shadow: var(--shadow-lg);
+   z-index: 100;
+   max-height: 200px;
+   overflow-y: auto;
+   display: flex;
+   flex-direction: column;
+}
+
+.suggest-item {
+   padding: 10px 14px;
+   font-size: 1.4rem;
+   color: var(--text-main);
+   cursor: pointer;
+   transition: background-color 0.15s ease;
+   word-break: break-all;
+
+   &:hover {
+      background-color: var(--bg-hover);
+      color: var(--accent);
+   }
+}
+
 /* Buttons */
 button {
    background-color: var(--accent);
@@ -299,7 +339,6 @@ button {
       gap: 6px;
       white-space: nowrap;
       
-      /* Secondary Button style */
       &.secondary {
          background-color: transparent;
          color: var(--text-muted);
@@ -329,8 +368,6 @@ button {
    transition: var(--transition);
 
    &[open] {
-      /* box-shadow: var(--shadow-sm); */
-      
       summary {
          border-bottom: 1px solid var(--border);
          background: rgb(248 250 252 / 0.5);
@@ -347,10 +384,10 @@ summary.backlog-title {
    color: var(--text-main);
    cursor: pointer;
    user-select: none;
-   list-style: none; /* Remove default triangle */
+   list-style: none;
    
    &::-webkit-details-marker {
-      display: none; /* Safari default triangle removal */
+      display: none;
    }
 
    &::before {
@@ -368,9 +405,9 @@ summary.backlog-title {
    .backlog-group[open] &::before {
       transform: rotate(45deg);
    }
-   }
+}
 
-   .list-count {
+.list-count {
    font-size: 1.2rem;
    color: var(--text-muted);
    background: var(--bg-hover);
@@ -408,7 +445,6 @@ summary.backlog-title {
 
    &:hover {
       border-color: cubic-bezier(0.4, 0, 0.2, 1);
-      /* box-shadow: var(--shadow-sm); */
       background: var(--bg-input);
    }
 
@@ -426,7 +462,6 @@ summary.backlog-title {
    gap: 12px;
    flex: 1;
 
-   /* Checkbox styling */
    input[type="checkbox"] {
       appearance: none;
       width: 18px;
@@ -445,15 +480,15 @@ summary.backlog-title {
          border-color: var(--accent);
 
          &::after {
-         content: "";
-         position: absolute;
-         left: 5px;
-         top: 2px;
-         width: 4px;
-         height: 8px;
-         border: solid var(--text-inverse);
-         border-width: 0 2px 2px 0;
-         transform: rotate(45deg);
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 8px;
+            border: solid var(--text-inverse);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
          }
       }
       
@@ -476,8 +511,6 @@ summary.backlog-title {
       }
       .task-title-text {
          color: var(--text-muted);
-         /* text-decoration: line-through; */
-         /* opacity: 0.7; */
       }
    }
 }
@@ -486,7 +519,7 @@ summary.backlog-title {
    position: relative;
    display: flex;
    align-items: center;
-   opacity: 0; /* Hover時のみ表示させてノイズを減らす */
+   opacity: 0;
    transition: opacity 0.15s ease;
 }
 
@@ -500,7 +533,7 @@ summary.backlog-title {
 
 @media (max-width: 768px) {
    .task-actions {
-      opacity: 1; /* モバイルは常時表示 */
+      opacity: 1;
    }
    .actions-desktop {
       display: none;
@@ -523,15 +556,7 @@ summary.backlog-title {
       overflow: hidden;
    }
    
-   .action-menu button {
-      width: 100%;
-      justify-content: flex-start;
-      border-radius: 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 1.3rem;
-      padding: 8px 12px;
-   }
-
+   .action-menu button,
    .action-menu label {
       width: 100%;
       justify-content: flex-start;
@@ -594,9 +619,9 @@ summary.backlog-title {
          font-size: 1.5rem;
 
          &:focus {
-         outline: none;
-         border-color: var(--border-focus);
-         background: var(--bg-card);
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--bg-card);
          }
       }
    }
@@ -640,6 +665,4 @@ summary.backlog-title {
          box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
       }
    }
-
-   
 }

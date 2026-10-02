@@ -18,7 +18,12 @@ export class TodoView {
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputDoneTitle = document.getElementById('input-done-title');
       this.inputTodoTitle = document.getElementById('input-todo-title');
-      this.taskTemplates  = document.getElementById('task-templates');
+      
+      // カスタムサジェスト要素
+      this.suggestDone = document.getElementById('suggest-done-title');
+      this.suggestTodo = document.getElementById('suggest-todo-title');
+      this.taskTemplatesData = []; // テンプレートリストデータ保持
+
       this.listTodo = document.getElementById('list-todo');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
@@ -38,6 +43,7 @@ export class TodoView {
       this._storageKey = "todo_group_open_states";
       
       this.bindUIEvents();
+      this.setupCustomSuggest();
    }
    
    bindUIEvents() {
@@ -56,6 +62,61 @@ export class TodoView {
          this._updateDiaryCounter();
       });
    }
+
+   // カスタムサジェスト制御
+   setupCustomSuggest() {
+      const targets = [
+         { input: this.inputDoneTitle, list: this.suggestDone },
+         { input: this.inputTodoTitle, list: this.suggestTodo }
+      ];
+
+      targets.forEach(({ input, list }) => {
+         if (!input || !list) return;
+
+         input.addEventListener('input', () => {
+            const val = input.value.trim().toLowerCase();
+            // if (!val || this.taskTemplatesData.length === 0) {
+            if (this.taskTemplatesData.length === 0) {
+               list.hidden = true;
+               return;
+            }
+
+            let matches = this.taskTemplatesData.filter(t => t.toLowerCase().includes(val));
+            if (val && matches.length === 0) {
+               list.hidden = true;
+               return;
+            }
+            
+            list.innerHTML = '';
+            matches.forEach(item => {
+               const div = document.createElement('div');
+               div.className = 'suggest-item';
+               div.textContent = item;
+               div.addEventListener('mousedown', (e) => {
+                  e.preventDefault();
+                  input.value = item;
+                  list.hidden = true;
+               });
+               list.appendChild(div);
+            });
+            list.hidden = false;
+         });
+
+         input.addEventListener('focus', () => {
+            input.dispatchEvent(new Event('input'));
+         });
+
+         input.addEventListener('blur', () => {
+            setTimeout(() => { list.hidden = true; }, 150);
+         });
+
+         input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+               list.hidden = true;
+            }
+         });
+      });
+   }
    
    render(data) {
       // 日付反映
@@ -65,12 +126,6 @@ export class TodoView {
          this.inputBacklogDate.value = data.tomorrowDate;
          this.doInputBacklogDateReset = false;
       }
-      
-      // オートコンプリート
-      const mediaQuery = window.matchMedia('(max-width: 768px)');
-      this.inputDoneTitle   .setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
-      this.inputTodoTitle   .setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
-      this.inputBacklogTitle.setAttribute("autocomplete", (mediaQuery.matches) ? "on" : "off");
       
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
@@ -96,13 +151,8 @@ export class TodoView {
       const diaryDetails = this.inputDiary.closest("details");
       diaryDetails.open = this.inputDiary.value !== "";
       
-      // タスクテンプレート
-      this.taskTemplates.innerHTML = "";
-      for(const task of data.taskTemplates) {
-         const option = document.createElement("option");
-         option.value = task;
-         this.taskTemplates.append(option);
-      }
+      // サジェスト用のテンプレート保持
+      this.taskTemplatesData = data.taskTemplates || [];
       
       // 動的生成された要素のLucideアイコンを有効化
       if (typeof lucide !== 'undefined') {
@@ -174,9 +224,6 @@ export class TodoView {
          return;
       }
       
-      const storageKey = "todo_group_open_states";
-      const savedStates = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      
       for (const [date, tasks] of Object.entries(groupedTasks)) {
          const isNoDate = date === "日付なし";
          
@@ -206,7 +253,6 @@ export class TodoView {
    }
    
    bindAddTodo(handler) {
-      // 「今日」のDoneフォーム（自動的に選択中の今日の日付で登録）
       this.formAddDone.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputDoneTitle.value.trim();
@@ -217,7 +263,6 @@ export class TodoView {
          }
       });
       
-      // 「今日」のToDoフォーム（自動的に選択中の今日の日付で登録）
       this.formAddTodo.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputTodoTitle.value.trim();
@@ -228,11 +273,10 @@ export class TodoView {
          }
       });
       
-      // 「今後のタスク」のフォーム（datepickerの値を使用）
       this.formAddBacklog.addEventListener('submit', (e) => {
          e.preventDefault();
          const title = this.inputBacklogTitle.value.trim();
-         const date  = this.inputBacklogDate.value || null; // 選択された日付、未選択ならnull
+         const date  = this.inputBacklogDate.value || null;
          if(title) {
             handler(title, date, false);
             this.inputBacklogTitle.value = '';
@@ -246,14 +290,12 @@ export class TodoView {
       lists.forEach(listContainer => {
          if(!listContainer) return;
          
-         // 1. 通常のアクション（クリックイベント）
          listContainer.addEventListener('click', (e) => {
             const target = e.target;
             const li = target.closest('.task-item');
             if (!li) return;
             const id = li.dataset.id;
             
-            // モバイルメニューの開閉制御
             const menuBtn = target.closest('.menu-btn');
             if (menuBtn) {
                const menu = menuBtn.nextElementSibling;
@@ -314,20 +356,17 @@ export class TodoView {
             }
          });
          
-         // 2. 日付変更（datepicker）の変更イベントをキャッチするリスナーを追加
          listContainer.addEventListener('input', (e) => {
             const target = e.target;
-            // 変更されたのが日付選択（move-date-picker）の場合のみ処理
             if (target.classList.contains('move-date-picker')) {
                const li = target.closest('.task-item');
                if (!li) return;
                const id = li.dataset.id;
-               const chosenDate = target.value || null; // 選択された日付 (YYYY-MM-DD)
+               const chosenDate = target.value || null;
                handleMoveToday(id, chosenDate); 
             }
          });
          
-         // 3. 編集フォームのSubmit
          listContainer.addEventListener('submit', (e) => {
             e.preventDefault();
             const targetForm = e.target.closest('.task-edit-mode');
@@ -347,32 +386,26 @@ export class TodoView {
    
    bindDragAndDrop(handleSortUpdate) {
       let draggedElement = null;
-      let sourceList = null; // ドラッグを開始したリストを保持
+      let sourceList = null;
 
-      // 1. 固定のリスト（今日ToDo、今日Done）のイベント設定
       const staticTargets = [this.listTodo, this.listDone];
       staticTargets.forEach(targetList => {
          if (!targetList) return;
          this._setupDragEventsForList(targetList, () => draggedElement, (el) => draggedElement = el, handleSortUpdate);
       });
 
-      // 2. 「今後のタスク」コンテナ全体のイベント設定（動的に生成されるリストに対応）
       if (this.containerBacklogTasks) {
-         // dragstart: バックログ内のタスクがドラッグされたとき
          this.containerBacklogTasks.addEventListener('dragstart', (e) => {
             draggedElement = e.target.closest('.task-item');
             if (draggedElement) {
                draggedElement.classList.add('dragging');
-               sourceList = draggedElement.closest('.task-list'); // どのグループからドラッグしたか記録
+               sourceList = draggedElement.closest('.task-list');
             }
          });
 
-         // dragover: バックログ内のいずれかのリスト上でドラッグしているとき
          this.containerBacklogTasks.addEventListener('dragover', (e) => {
             e.preventDefault();
             const currentList = e.target.closest('.task-list');
-            
-            // 💡 安全策: 別のグループ（別の日付）への移動を防ぎ、同じグループ内だけの並び替えにする場合
             if (!currentList || currentList !== sourceList) return; 
 
             const afterElement = this._getDragAfterElement(currentList, e.clientY);
@@ -383,17 +416,13 @@ export class TodoView {
             }
          });
 
-         // dragend: ドラッグが終了したとき
          this.containerBacklogTasks.addEventListener('dragend', () => {
             if (draggedElement) {
                draggedElement.classList.remove('dragging');
-               
-               // ドラッグが終了したリスト内の最新の並び順を取得して保存
                if (sourceList) {
                   const orderedIds = [...sourceList.querySelectorAll('.task-item')].map(li => li.dataset.id);
                   handleSortUpdate(orderedIds);
                }
-               
                draggedElement = null;
                sourceList = null;
             }
@@ -401,7 +430,6 @@ export class TodoView {
       }
    }
 
-   // 💡 共通のイベントを設定するためのヘルパーメソッド（コードの重複を避けるため）
    _setupDragEventsForList(targetList, getDragged, setDragged, handleSortUpdate) {
       targetList.addEventListener('dragstart', (e) => {
          const el = e.target.closest('.task-item');
@@ -463,21 +491,17 @@ export class TodoView {
       });
    }
    
-   // yyyy-mm-dd → mm/dd(曜日)
    _formatDate(dateString) {
       const date = new Date(dateString);
-      
       const formatter = new Intl.DateTimeFormat('ja-JP', {
          month: '2-digit',
          day:   '2-digit',
          weekday: 'short'
       });
-      
       return formatter.format(date).replace(/\s+/g, '');
    }
    
    async _copyToClipboard(text) {
-      // 1. モダンな Clipboard API が使える（かつセキュアコンテキストである）場合
       if (navigator.clipboard && window.isSecureContext) {
          try {
             await navigator.clipboard.writeText(text);
@@ -487,40 +511,27 @@ export class TodoView {
             console.error('Clipboard API でのエラー:', err);
          }
       }
-      
-      // 2. フォールバック: 古いブラウザや非HTTPS環境の場合
       return this._fallbackCopyToClipboard(text);
    }
    
    _fallbackCopyToClipboard(text) {
-      // 一時的な textarea 要素を作成
       const textArea = document.createElement('textarea');
       textArea.value = text;
-      
-      // 画面の外に配置してユーザーに見えないようにする
       textArea.style.position = 'fixed';
       textArea.style.top = '-9999px';
       textArea.style.left = '-9999px';
       document.body.appendChild(textArea);
       
-      // テキストを選択状態にする
       textArea.focus();
       textArea.select();
       
       let success = false;
       try {
-         // 選択されたテキストをクリップボードにコピー
          success = document.execCommand('copy');
-         if (success) {
-            console.log('フォールバック（execCommand）でコピー成功');
-         } else {
-            console.error('フォールバックでのコピーに失敗しました');
-         }
       } catch (err) {
          console.error('フォールバック実行中にエラーが発生:', err);
       }
       
-      // 不要になった要素を削除
       document.body.removeChild(textArea);
       return success;
    }
@@ -533,7 +544,6 @@ export class TodoView {
    bindPiPButton(getTodos) {
       if (!('documentPictureInPicture' in window)) {
          this.btnPiP.hidden = true;
-         console.log("true");
          return;
       }
       this.btnPiP.addEventListener("click", async() => {

@@ -38,7 +38,10 @@
                         <button id="btn-copy-done" class="secondary btn-copy"><i data-lucide="copy"></i></button>
                      </summary>
                      <form class="todo-input-form" id="form-add-done">
-                        <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." list="task-templates" required>
+                        <div class="autocomplete-wrapper">
+                           <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." autocomplete="off" required>
+                           <div id="suggest-done-title" class="suggest-list" hidden></div>
+                        </div>
                         <button type="submit">追加</button>
                      </form>
                      <ul class="task-list" id="list-done"></ul>
@@ -53,15 +56,14 @@
                         <button id="btn-pip">PiP</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-todo">
-                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." list="task-templates" required>
+                        <div class="autocomplete-wrapper">
+                           <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required>
+                           <div id="suggest-todo-title" class="suggest-list" hidden></div>
+                        </div>
                         <button type="submit">追加</button>
                      </form>
                      <ul class="task-list" id="list-todo"></ul>
                   </details>
-                  
-                  <datalist id="task-templates">
-                     <!-- <option value="test1"></option> -->
-                  </datalist>
                </div>
                
                <div>
@@ -250,24 +252,18 @@
          function updateTimer() {
             if (!isRunning) return;
             
-            // 現在時刻と開始時刻の差分から正確な経過時間を計算
             elapsedTime = performance.now() - startTime;
             
-            // 分・秒・ミリ秒（2桁）の計算
             const minutes = Math.floor(elapsedTime / 60000);
             const seconds = Math.floor((elapsedTime % 60000) / 1000);
-            // 10ミリ秒単位（小数点以下2桁）にするため1000で割った余りを10で割る
             const centiseconds = Math.floor((elapsedTime % 1000) / 10);
             
-            // 桁数を2桁に揃える (例: 1秒 -> "01")
             const mm = String(minutes).padStart(2, '0');
             const ss = String(seconds).padStart(2, '0');
             const cc = String(centiseconds).padStart(2, '0');
             
-            // 画面に反映
             timerDisplay.innerHTML = `${mm}:${ss}.<span class="sec">${cc}</span>`;
             
-            // 次のフレームの描画を予約
             timerInterval = requestAnimationFrame(updateTimer);
          }
       </script>
@@ -295,7 +291,6 @@
    </script>
    <script type="module" src="app.js"></script>
    <script>
-      // 初回アイコンレンダリング
       lucide.createIcons();
    </script>
 </body>
