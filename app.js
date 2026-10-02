@@ -48,13 +48,14 @@ class TodoPresenter {
    
    updateView() {
       this.view.render({
-         currentDate:  this.model.currentDate,
-         tomorrowDate: this.model.tomorrowDate,
-         todayTodos:   this.model.getTodayTodos(),
-         todayDones:   this.model.getTodayDones(),
-         backlogTodos: this.model.getBacklogTodosGrouped(),
-         todos:        this.model.todos,
-         todayDiary:   this.model.getTodayDiary(),
+         currentDate:   this.model.currentDate,
+         tomorrowDate:  this.model.tomorrowDate,
+         todayTodos:    this.model.getTodayTodos(),
+         todayDones:    this.model.getTodayDones(),
+         backlogTodos:  this.model.getBacklogTodosGrouped(),
+         todos:         this.model.todos,
+         todayDiary:    this.model.getTodayDiary(),
+         taskTemplates: this.model.getTaskTemplates(),
       });
    }
 }

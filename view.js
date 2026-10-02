@@ -18,6 +18,7 @@ export class TodoView {
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputDoneTitle = document.getElementById('input-done-title');
       this.inputTodoTitle = document.getElementById('input-todo-title');
+      this.taskTemplates  = document.getElementById('task-templates');
       this.listTodo = document.getElementById('list-todo');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
@@ -94,6 +95,14 @@ export class TodoView {
       }
       const diaryDetails = this.inputDiary.closest("details");
       diaryDetails.open = this.inputDiary.value !== "";
+      
+      // タスクテンプレート
+      this.taskTemplates.innerHTML = "";
+      for(const task of data.taskTemplates) {
+         const option = document.createElement("option");
+         option.value = task;
+         this.taskTemplates.append(option);
+      }
       
       // 動的生成された要素のLucideアイコンを有効化
       if (typeof lucide !== 'undefined') {
