@@ -42,6 +42,9 @@ export class TodoModel {
       
       this.diaries = [];
       this._loadDiariesFromSupabase();
+      
+      this.templates = [];
+      this._loadTemplatesFromSupabase();
    }
    
    bindOnChange(callback) {
@@ -53,13 +56,26 @@ export class TodoModel {
       
       const { data, error } = await supabase.from('diaries').select('*');
       if (error) {
-         console.error('Failed to load todos from Supabase:', error);
+         console.error('Failed to load diaries from Supabase:', error);
          this.diaries = [];
       } else {
          this.diaries = data.map(row => ({
             date: row.entry_date,
             content: row.content,
          }));
+      }
+   }
+   
+   async _loadTemplatesFromSupabase() {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      
+      const { data, error } = await supabase.from('templates').select('*');
+      if (error) {
+         console.error('Failed to load templates from Supabase:', error);
+         this.templates = [];
+      } else {
+         this.templates = data.map(row => row.name);
+         this.templates.sort((a,b) => a.localeCompare(b, 'ja'));
       }
    }
    
@@ -112,7 +128,7 @@ export class TodoModel {
    }
    
    // タスク操作
-   async addTodo(title, dueDate = null) {
+   async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
       
@@ -121,7 +137,7 @@ export class TodoModel {
       
       const todoForSupabase = {
          title: title,
-         is_done: false,
+         is_done: isDone,
          due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
@@ -314,5 +330,8 @@ export class TodoModel {
    }
    getTodayDiary() {
       return this.diaries.filter(d => d.date === this.currentDate)[0];
+   }
+   getTaskTemplates() {
+      return structuredClone(this.templates);
    }
 }

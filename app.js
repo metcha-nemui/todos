@@ -16,7 +16,7 @@ class TodoPresenter {
       this.view.bindDatePicker((newDate) => this.model.setCurrentDate(newDate));
       
       // タスク追加
-      this.view.bindAddTodo((title, date) => this.model.addTodo(title, date));
+      this.view.bindAddTodo((title, date, isDone) => this.model.addTodo(title, date, isDone));
       
       // タスクに対する各種アクション（チェック、物理削除、編集、今日へ移動）
       this.view.bindTaskActions(
@@ -48,13 +48,14 @@ class TodoPresenter {
    
    updateView() {
       this.view.render({
-         currentDate:  this.model.currentDate,
-         tomorrowDate: this.model.tomorrowDate,
-         todayTodos:   this.model.getTodayTodos(),
-         todayDones:   this.model.getTodayDones(),
-         backlogTodos: this.model.getBacklogTodosGrouped(),
-         todos:        this.model.todos,
-         todayDiary:   this.model.getTodayDiary(),
+         currentDate:   this.model.currentDate,
+         tomorrowDate:  this.model.tomorrowDate,
+         todayTodos:    this.model.getTodayTodos(),
+         todayDones:    this.model.getTodayDones(),
+         backlogTodos:  this.model.getBacklogTodosGrouped(),
+         todos:         this.model.todos,
+         todayDiary:    this.model.getTodayDiary(),
+         taskTemplates: this.model.getTaskTemplates(),
       });
    }
 }
