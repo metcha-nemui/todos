@@ -69,19 +69,18 @@ export class TodoView {
          { input: this.inputDoneTitle, list: this.suggestDone },
          { input: this.inputTodoTitle, list: this.suggestTodo }
       ];
-
+      
       targets.forEach(({ input, list }) => {
          if (!input || !list) return;
-
+         
          input.addEventListener('input', () => {
             const val = input.value.trim().toLowerCase();
-            // if (!val || this.taskTemplatesData.length === 0) {
             if (this.taskTemplatesData.length === 0) {
                list.hidden = true;
                return;
             }
-
-            let matches = this.taskTemplatesData.filter(t => t.toLowerCase().includes(val));
+            
+            const matches = this.taskTemplatesData.filter(t => t.toLowerCase().includes(val));
             if (val && matches.length === 0) {
                list.hidden = true;
                return;
@@ -100,16 +99,20 @@ export class TodoView {
                list.appendChild(div);
             });
             list.hidden = false;
+            
+            const rect = input.getBoundingClientRect();
+            list.style.top = rect.bottom + "px";
+            list.style.width = rect.width + "px";
          });
-
+         
          input.addEventListener('focus', () => {
             input.dispatchEvent(new Event('input'));
          });
-
+         
          input.addEventListener('blur', () => {
             setTimeout(() => { list.hidden = true; }, 150);
          });
-
+         
          input.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                list.hidden = true;

@@ -219,10 +219,8 @@ body {
 }
 
 .suggest-list {
-   position: absolute;
-   top: calc(100% + 4px);
-   left: 0;
-   right: 0;
+   position: fixed;
+   inset: unset;
    background: var(--bg-card);
    border: 1px solid var(--border);
    border-radius: var(--radius-sm);
