@@ -76,13 +76,13 @@ export class TodoView {
          input.addEventListener('input', () => {
             const val = input.value.trim().toLowerCase();
             if (this.taskTemplatesData.length === 0) {
-               list.hidden = true;
+               list.hidePopover();
                return;
             }
             
             const matches = this.taskTemplatesData.filter(t => t.toLowerCase().includes(val));
             if (val && matches.length === 0) {
-               list.hidden = true;
+               list.hidePopover();
                return;
             }
             
@@ -94,14 +94,13 @@ export class TodoView {
                div.addEventListener('mousedown', (e) => {
                   e.preventDefault();
                   input.value = item;
-                  list.hidden = true;
+                  list.hidePopover();
                });
                list.appendChild(div);
             });
-            list.hidden = false;
+            list.showPopover();
             
             const rect = input.getBoundingClientRect();
-            list.style.top = rect.bottom + "px";
             list.style.width = rect.width + "px";
          });
          
@@ -110,12 +109,12 @@ export class TodoView {
          });
          
          input.addEventListener('blur', () => {
-            setTimeout(() => { list.hidden = true; }, 150);
+            setTimeout(() => { list.hidePopover(); }, 150);
          });
          
          input.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-               list.hidden = true;
+               list.hidePopover();
             }
          });
       });

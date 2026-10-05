@@ -39,8 +39,8 @@
                      </summary>
                      <form class="todo-input-form" id="form-add-done">
                         <div class="autocomplete-wrapper">
-                           <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." autocomplete="off" required>
-                           <div id="suggest-done-title" class="suggest-list" hidden></div>
+                           <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." autocomplete="off" required style="anchor-name:--input-done-anchor">
+                           <div id="suggest-done-title" class="suggest-list" popover="manual" style="position-anchor:--input-done-anchor"></div>
                         </div>
                         <button type="submit">追加</button>
                      </form>
@@ -57,8 +57,8 @@
                      </summary>
                      <form class="todo-input-form" id="form-add-todo">
                         <div class="autocomplete-wrapper">
-                           <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required>
-                           <div id="suggest-todo-title" class="suggest-list" hidden></div>
+                           <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required style="anchor-name:--input-todo-anchor">
+                           <div id="suggest-todo-title" class="suggest-list" popover="manual" style="position-anchor:--input-todo-anchor"></div>
                         </div>
                         <button type="submit">追加</button>
                      </form>

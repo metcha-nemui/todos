@@ -219,8 +219,9 @@ body {
 }
 
 .suggest-list {
-   position: fixed;
-   inset: unset;
+   position: absolute;
+   top: anchor(bottom);
+   left: anchor(left);
    background: var(--bg-card);
    border: 1px solid var(--border);
    border-radius: var(--radius-sm);
@@ -228,6 +229,9 @@ body {
    z-index: 100;
    max-height: 300px;
    overflow-y: auto;
+}
+
+.suggest-list:popover-open {
    display: flex;
    flex-direction: column;
 }
