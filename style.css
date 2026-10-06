@@ -361,7 +361,7 @@ button {
 /* ==========================================================================
    5. Task Groups (Details / Summary)
    ========================================================================== */
-.backlog-group {
+.collapse {
    background: var(--bg-card);
    border: 1px solid var(--border);
    border-radius: var(--radius-md);
@@ -404,7 +404,7 @@ summary.backlog-title {
       transition: transform 0.2s ease;
    }
 
-   .backlog-group[open] &::before {
+   .collapse[open] &::before {
       transform: rotate(45deg);
    }
 }

@@ -129,14 +129,17 @@ export class TodoView {
          this.doInputBacklogDateReset = false;
       }
       
-      // 今日のToDo描画
-      this._renderTaskList(this.listTodo, data.todayTodos, false, true);
-      this.CountTodo.textContent = data.todayTodos.length;
       // 今日のDone描画
       this._renderTaskList(this.listDone, data.todayDones, true);
       this.CountDone.textContent = data.todayDones.length;
+      
+      // 今日のToDo描画
+      this._renderTaskList(this.listTodo, data.todayTodos, false, true);
+      this.CountTodo.textContent = data.todayTodos.length;
+      
       // 今日のDiary描画
       this._renderDiary(data.todayDiary);
+      
       // バックログ描画
       this._renderBacklogTasks(data.backlogTodos);
       

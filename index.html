@@ -30,8 +30,8 @@
                </div>
                
                <div id="container-today-tasks">
-                  <!-- Done (完了) -->
-                  <details id="details-done" class="backlog-group" open style="margin-top: 20px;">
+                  <!-- Done (今日) -->
+                  <details id="details-done" class="collapse" open style="margin-top: 20px;">
                      <summary class="backlog-title">
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
@@ -47,8 +47,8 @@
                      <ul class="task-list" id="list-done"></ul>
                   </details>
                   
-                  <!-- ToDo (未完了) -->
-                  <details id="details-todo" class="backlog-group" open>
+                  <!-- ToDo (今日) -->
+                  <details id="details-todo" class="collapse" open>
                      <summary class="backlog-title">
                         <span>ToDo</span>
                         <span id="list-count-todo" class="list-count"></span>
@@ -67,7 +67,7 @@
                </div>
                
                <div>
-                  <details id="details-diary" class="backlog-group">
+                  <details id="details-diary" class="collapse">
                      <summary class="backlog-title">Diary</summary>
                      <div class="diary-content">
                         <textarea id="input-diary"></textarea>
