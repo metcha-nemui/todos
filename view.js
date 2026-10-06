@@ -257,7 +257,7 @@ export class TodoView {
          const isNoDate = date === "日付なし";
          
          const details = this._parseHtml(
-            `<details ${isNoDate ? `id="details-nodate"` : ""} class="backlog-group" open>
+            `<details ${isNoDate ? `id="details-nodate"` : ""} class="collapse" open>
                <summary class="backlog-title">${date}</summary>
                <ul class="task-list"></ul>
             </details>`
