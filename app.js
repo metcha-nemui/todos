@@ -40,10 +40,6 @@ class TodoPresenter {
       
       // Diary編集
       this.view.bindUpdateDiary((date, content) => this.model.updateDiary(date, content));
-      
-      // 3. アプリ起動時の初期レンダリング
-      this.view.setInitialDate(this.model.currentDate);
-      this.updateView();
    }
    
    updateView() {

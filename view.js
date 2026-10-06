@@ -162,10 +162,6 @@ export class TodoView {
       }
    }
    
-   setInitialDate(date) {
-      this.inputBacklogDate.value = date;
-   }
-   
    _renderTaskList(element, tasks, isDone, showDateChanger = false) {
       element.innerHTML = '';
       tasks.forEach(task => {

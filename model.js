@@ -37,8 +37,12 @@ export class TodoModel {
       this.currentDate = null; // will be set after loading
       this.tomorrowDate = getTomorrowDateString();
       this.onChangeCallback = null;
-      // Load all todos from Supabase and set current date
+      
       this._loadTodosFromSupabase();
+      
+      const savedDate = localStorage.getItem('todo_current_date');
+      if(savedDate) this.currentDate = savedDate;
+      else          this.currentDate = getTodayDateString();
       
       this.diaries = [];
       this._loadDiariesFromSupabase();
@@ -97,14 +101,6 @@ export class TodoModel {
          }));
       }
       
-      // 【修正】localStorage から保存された日付の復元を試みる
-      const savedDate = localStorage.getItem('todo_current_date');
-      if (savedDate) {
-         this.currentDate = savedDate;
-      } else {
-         this.currentDate = getTodayDateString();
-      }
-      
       // Notify UI after loading
       this._commit();
    }
@@ -113,16 +109,12 @@ export class TodoModel {
       if(this.onChangeCallback) this.onChangeCallback();
    }
    
-   // 日付コントロール
+   // 日付変更 (localStorageに保存)
    setCurrentDate(newDateString) {
       this.currentDate = newDateString;
       
-      // 【修正】日付が変更されたら localStorage に保存する
-      if (newDateString) {
-         localStorage.setItem('todo_current_date', newDateString);
-      } else {
-         localStorage.removeItem('todo_current_date');
-      }
+      if (newDateString) localStorage.setItem   ('todo_current_date', newDateString);
+      else               localStorage.removeItem('todo_current_date');
       
       this._commit();
    }
