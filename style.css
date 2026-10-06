@@ -422,6 +422,20 @@ summary.backlog-title {
    &::after { content: ""; }
 }
 
+.toggle-todo-ellipsis > div {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 0.5em 1em;
+   cursor: pointer;
+   
+   svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+   }
+}
+
 /* ==========================================================================
    6. Task Lists & Items
    ========================================================================== */

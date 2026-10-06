@@ -18,6 +18,8 @@ export class TodoView {
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputDoneTitle = document.getElementById('input-done-title');
       this.inputTodoTitle = document.getElementById('input-todo-title');
+      this.toggleToDoEllipsis = document.getElementById('toggle-todo-ellipsis');
+      this._todoIsEllipsis = true;
       
       // カスタムサジェスト要素
       this.suggestDone = document.getElementById('suggest-done-title');
@@ -60,6 +62,25 @@ export class TodoView {
       
       this.inputDiary.addEventListener("input", () => {
          this._updateDiaryCounter();
+      });
+      
+      this.toggleToDoEllipsis.addEventListener("click", () => {
+         this._todoIsEllipsis = !this._todoIsEllipsis;
+         if(this._todoIsEllipsis) {
+            this.toggleToDoEllipsis.querySelector("#todo-ellipsis-on") .hidden = false;
+            this.toggleToDoEllipsis.querySelector("#todo-ellipsis-off").hidden = true;
+            const todoItems = this.listTodo.querySelectorAll(".task-item");
+            todoItems.forEach((d, i) => {
+               if(i >= 5) d.hidden = true;
+            });
+         } else {
+            this.toggleToDoEllipsis.querySelector("#todo-ellipsis-on") .hidden = true;
+            this.toggleToDoEllipsis.querySelector("#todo-ellipsis-off").hidden = false;
+            const todoItems = this.listTodo.querySelectorAll(".task-item");
+            todoItems.forEach((d, i) => {
+               d.hidden = false;
+            });
+         }
       });
    }
 
@@ -136,6 +157,13 @@ export class TodoView {
       // 今日のToDo描画
       this._renderTaskList(this.listTodo, data.todayTodos, false, true);
       this.CountTodo.textContent = data.todayTodos.length;
+      
+      if(this._todoIsEllipsis) {
+         const todoItems = this.listTodo.querySelectorAll(".task-item");
+         todoItems.forEach((d, i) => {
+            if(i >= 5) d.hidden = true;
+         });
+      }
       
       // 今日のDiary描画
       this._renderDiary(data.todayDiary);
