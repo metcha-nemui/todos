@@ -57,12 +57,18 @@ export class TodoModel {
    
    async _loadTodosFromSupabase() {
       if (!supabase) { console.warn('Supabase not configured'); return; }
-      const { data, error } = await supabase.from('todos').select('*');
-      if (error) {
-         console.error('Failed to load todos from Supabase:', error);
+      
+      const [res1, res2] = await Promise.all([
+         supabase.from('todos').select('*').range(   0,  999).order('created_at', { ascending: true }),
+         supabase.from('todos').select('*').range(1000, 1999).order('created_at', { ascending: true })
+      ]);
+      
+      if (res1.error || res2.error) {
+         console.error('Failed to load todos from Supabase:', res1.error || res2.error);
          this.todos = [];
       } else {
-         this.todos = data.map(row => ({
+         const allData = [...(res1.data || []), ...(res2.data || [])];
+         this.todos = allData.map(row => ({
             id: row.id,
             title: row.title,
             is_done: row.is_done,
