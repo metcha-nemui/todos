@@ -54,7 +54,29 @@ export class TodoModel {
    bindOnChange(callback) {
       this.onChangeCallback = callback;
    }
-
+   
+   async _loadTodosFromSupabase() {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const { data, error } = await supabase.from('todos').select('*');
+      if (error) {
+         console.error('Failed to load todos from Supabase:', error);
+         this.todos = [];
+      } else {
+         this.todos = data.map(row => ({
+            id: row.id,
+            title: row.title,
+            is_done: row.is_done,
+            due_date: row.due_date,
+            done_at: row.done_at,
+            created_at: row.created_at,
+            sort_order: row.sort_order,
+         }));
+      }
+      
+      // Notify UI after loading
+      this._commit();
+   }
+   
    async _loadDiariesFromSupabase() {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       
@@ -81,28 +103,6 @@ export class TodoModel {
          this.templates = data.map(row => row.name);
          this.templates.sort((a,b) => a.localeCompare(b, 'ja'));
       }
-   }
-   
-   async _loadTodosFromSupabase() {
-      if (!supabase) { console.warn('Supabase not configured'); return; }
-      const { data, error } = await supabase.from('todos').select('*');
-      if (error) {
-         console.error('Failed to load todos from Supabase:', error);
-         this.todos = [];
-      } else {
-         this.todos = data.map(row => ({
-            id: row.id,
-            title: row.title,
-            is_done: row.is_done,
-            due_date: row.due_date,
-            done_at: row.done_at,
-            created_at: row.created_at,
-            sort_order: row.sort_order,
-         }));
-      }
-      
-      // Notify UI after loading
-      this._commit();
    }
    
    _commit() {
