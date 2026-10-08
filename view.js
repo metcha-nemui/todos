@@ -24,6 +24,7 @@ export class TodoView {
       // カスタムサジェスト要素
       this.suggestDone = document.getElementById('suggest-done-title');
       this.suggestTodo = document.getElementById('suggest-todo-title');
+      this.suggestBacklog = document.getElementById('suggest-backlog-title');
       this.taskTemplatesData = []; // テンプレートリストデータ保持
 
       this.listTodo = document.getElementById('list-todo');
@@ -88,7 +89,8 @@ export class TodoView {
    setupCustomSuggest() {
       const targets = [
          { input: this.inputDoneTitle, list: this.suggestDone },
-         { input: this.inputTodoTitle, list: this.suggestTodo }
+         { input: this.inputTodoTitle, list: this.suggestTodo },
+         { input: this.inputBacklogTitle, list: this.suggestBacklog }
       ];
       
       targets.forEach(({ input, list }) => {

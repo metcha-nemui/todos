@@ -89,7 +89,10 @@
                   <h2>今後のタスク</h2>
                </div>
                <form class="todo-input-form form-add-backlog" id="form-add-backlog">
-                  <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力..." required>
+                  <div class="autocomplete-wrapper">
+                     <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力..." required style="anchor-name:--input-backlog-anchor">
+                     <div id="suggest-backlog-title" class="suggest-list" popover="manual" style="position-anchor:--input-backlog-anchor"></div>
+                  </div>
                   <input type="date" id="input-backlog-date">
                   <button type="submit">追加</button>
                </form>
