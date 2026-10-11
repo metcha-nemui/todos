@@ -4,14 +4,12 @@ import { escapeHtml } from './taskList.js';
 export class TemplateModal {
    constructor() {
       this.modal     = document.getElementById('template-modal');
-      this.btnOpen   = document.getElementById('btn-settings');
       this.btnClose  = document.getElementById('btn-template-close');
       this.formAdd   = document.getElementById('form-add-template');
       this.inputName = document.getElementById('input-template-name');
       this.list      = document.getElementById('list-template');
       this.emptyText = document.getElementById('template-empty');
 
-      this.btnOpen.addEventListener('click', () => this.open());
       this.btnClose.addEventListener('click', () => this.close());
 
       // 背景クリックで閉じる。入力欄からのドラッグが背景で終わった場合は閉じない
