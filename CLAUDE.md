@@ -20,4 +20,3 @@
 ## 既知の暫定事項
 - `this.todos` は 1000件ずつ2回の `range` 取得で上限2000件 (暫定)。
 - 「先頭5個を残して折りたたむ」は仮実装。
-- `.gitignore` の `config.js` は旧方式の名残 (現行は localStorage)。
