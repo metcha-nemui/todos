@@ -54,6 +54,9 @@ export class TodoModel {
       } else {
          this.diaries = data;
       }
+      
+      // 読み込み順に関わらず画面へ反映する
+      this._commit();
    }
 
    async _loadTemplatesFromSupabase() {
@@ -66,6 +69,9 @@ export class TodoModel {
       } else {
          this.templates = data;
       }
+      
+      // 読み込み順に関わらず画面へ反映する
+      this._commit();
    }
 
    _commit() {
