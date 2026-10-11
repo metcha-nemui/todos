@@ -14,10 +14,16 @@ export class BacklogPanel {
       ];
 
       this._doInputDateReset = true;
+      this._tomorrowDate = null;
    }
 
    // groupedTasks: { グループ名(日付): タスク配列 }
    render({ tomorrowDate, groupedTasks }) {
+      // 日をまたいで「明日」が変わったら、初期値も合わせ直す
+      if(tomorrowDate !== this._tomorrowDate) {
+         this._tomorrowDate = tomorrowDate;
+         this._doInputDateReset = true;
+      }
       if(this._doInputDateReset) {
          this.inputBacklogDate.value = tomorrowDate;
          this._doInputDateReset = false;

@@ -3,6 +3,7 @@ import { TodayPanel } from './view/todayPanel.js';
 import { DiaryPanel } from './view/diaryPanel.js';
 import { BacklogPanel } from './view/backlogPanel.js';
 import { TemplateModal } from './view/templateModal.js';
+import { StatusBanner } from './view/statusBanner.js';
 import { setupCustomSuggest } from './view/suggest.js';
 import { bindDragAndDrop } from './view/dragSort.js';
 import { bindTaskActions } from './view/taskList.js';
@@ -14,6 +15,7 @@ export class TodoView {
       this.diaryPanel   = new DiaryPanel();
       this.backlogPanel = new BacklogPanel();
       this.templateModal = new TemplateModal();
+      this.statusBanner  = new StatusBanner();
 
       this.taskTemplatesData = [];
 
@@ -48,6 +50,19 @@ export class TodoView {
       this.templateModal.render(this.taskTemplatesData);
    }
    
+   renderStatus(data) {
+      this.statusBanner.render(data);
+   }
+   
+   // 入力の途中かどうか。途中なら描き直しで入力が消えるので、読み直しを見送る判断に使う
+   isEditing() {
+      if (document.querySelector('.is-editing')) return true;
+
+      const el = document.activeElement;
+      const isTextField = el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && el.type === 'text'));
+      return !!isTextField && el.value !== '';
+   }
+   
    // 描画後の共通処理
    _afterRender() {
       // 開閉状況反映
@@ -57,6 +72,21 @@ export class TodoView {
       if (typeof lucide !== 'undefined') {
          lucide.createIcons();
       }
+   }
+
+   // 画面に戻ってきたとき (タブ・アプリの切替、ページの復元、接続の回復) に handler を呼ぶ
+   bindResume(handler) {
+      document.addEventListener('visibilitychange', () => {
+         if (document.visibilityState === 'visible') handler();
+      });
+      window.addEventListener('pageshow', (e) => {
+         if (e.persisted) handler();
+      });
+      window.addEventListener('online', () => handler());
+   }
+
+   bindRetryLoad(handler) {
+      this.statusBanner.bindRetry(handler);
    }
 
    bindDatePicker(handler) {

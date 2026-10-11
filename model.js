@@ -8,25 +8,27 @@ import * as templateTable from './model/templates.js';
 export class TodoModel {
    constructor() {
       this.todos = [];
+      this.diaries = [];
+      this.templates = [];
       this.currentDate = null; // will be set after loading
       this.tomorrowDate = getTomorrowDateString();
       this.onChangeCallback = null;
       this.onErrorCallback = null;
 
-      this._loadTodosFromSupabase();
+      // 読み込みの状態。loadFailed は直近の読み込みで1つでも失敗したら true
+      this.loadFailed = false;
+      this.lastLoadStartedAt = 0;
+      // 種別ごとの変更回数。読み直し中に手元が変わったことを検知するために使う
+      this._revisions = { todos: 0, diaries: 0, templates: 0 };
 
       const savedDate = localStorage.getItem('todo_current_date');
       if(savedDate) this.currentDate = savedDate;
       else          this.currentDate = getTodayDateString();
 
-      this.diaries = [];
-      this._loadDiariesFromSupabase();
-
-      this.templates = [];
-      this._loadTemplatesFromSupabase();
+      this.reload();
    }
 
-   // callback には変更の種別 ('todos' | 'diaries' | 'templates' | 'date') が渡る
+   // callback には変更の種別 ('todos' | 'diaries' | 'templates' | 'date' | 'status') が渡る
    bindOnChange(callback) {
       this.onChangeCallback = callback;
    }
@@ -36,52 +38,53 @@ export class TodoModel {
       this.onErrorCallback = callback;
    }
 
-   async _loadTodosFromSupabase() {
+   // 全データをDBから読み直す。起動時と、画面に戻ってきたときに呼ぶ
+   async reload() {
       if (!supabase) { console.warn('Supabase not configured'); return; }
+      this.lastLoadStartedAt = Date.now();
+      this.tomorrowDate = getTomorrowDateString();
 
-      const { data, error } = await todoTable.fetchTodos();
-      if (error) {
-         console.error('Failed to load todos from Supabase:', error);
-         this.todos = [];
-      } else {
-         this.todos = data;
+      const results = await Promise.all([
+         this._load('todos',     todoTable.fetchTodos),
+         this._load('diaries',   diaryTable.fetchDiaries),
+         this._load('templates', templateTable.fetchTemplates),
+      ]);
+
+      const failed = results.includes(false);
+      if (failed !== this.loadFailed) {
+         this.loadFailed = failed;
+         this._commit('status');
       }
-
-      // Notify UI after loading
-      this._commit('todos');
    }
 
-   async _loadDiariesFromSupabase() {
-      if (!supabase) { console.warn('Supabase not configured'); return; }
+   // kind は this のプロパティ名を兼ねる。成功したら true を返す
+   // 失敗しても手元のデータは消さない
+   async _load(kind, fetchRows) {
+      // 取得中に手元が書き換わったら、古い内容で上書きしないよう取り直す
+      for (let attempt = 0; attempt < 3; attempt++) {
+         const revision = this._revisions[kind];
+         const { data, error } = await fetchRows();
+         if (error) {
+            console.error(`Failed to load ${kind} from Supabase:`, error);
+            this._commit(kind);
+            return false;
+         }
+         if (this._revisions[kind] !== revision) continue;
 
-      const { data, error } = await diaryTable.fetchDiaries();
-      if (error) {
-         console.error('Failed to load diaries from Supabase:', error);
-         this.diaries = [];
-      } else {
-         this.diaries = data;
+         this[kind] = data;
+         this._commit(kind);
+         return true;
       }
-      
-      // 読み込み順に関わらず画面へ反映する
-      this._commit('diaries');
+      return true;
    }
 
-   async _loadTemplatesFromSupabase() {
-      if (!supabase) { console.warn('Supabase not configured'); return; }
-
-      const { data, error } = await templateTable.fetchTemplates();
-      if (error) {
-         console.error('Failed to load templates from Supabase:', error);
-         this.templates = [];
-      } else {
-         this.templates = data;
-      }
-      
-      // 読み込み順に関わらず画面へ反映する
-      this._commit('templates');
+   // 手元のデータを変えたことを記録する
+   _touch(kind) {
+      if (kind in this._revisions) this._revisions[kind]++;
    }
 
    _commit(kind) {
+      this._touch(kind);
       if(this.onChangeCallback) this.onChangeCallback(kind);
    }
    
@@ -227,6 +230,7 @@ export class TodoModel {
          if (error) return this._reportError('日記の削除', error);
          
          this.diaries = this.diaries.filter(d => d.date !== date);
+         this._touch('diaries');
          return;
       }
       
@@ -237,6 +241,7 @@ export class TodoModel {
       const target = this.diaries.find(d => d.date === date);
       if(target) target.content = content;
       else       this.diaries.push({ date, content });
+      this._touch('diaries');
    }
    
    // サジェスト候補 (テンプレート) 操作

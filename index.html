@@ -14,6 +14,15 @@
    <title>ToDo App</title>
 </head>
 <body>
+   <!-- 画面上部の通知 (動作は view/statusBanner.js) -->
+   <div id="status-banner" class="status-banner" role="status" hidden>
+      <span id="status-banner-text"></span>
+      <span id="status-banner-actions" class="status-banner-actions">
+         <button type="button" id="btn-status-retry">再読み込み</button>
+         <button type="button" data-open-config>接続設定</button>
+      </span>
+   </div>
+   
    <div class="container">
       <!-- 今日ビュー -->
       <div id="view-today">
@@ -104,15 +113,20 @@
             </div>
          </div>
       </div>
+      
+      <div class="app-footer">
+         <button type="button" class="secondary" data-open-config>接続設定</button>
+      </div>
    </div>
    
-   <!-- Config Modal -->
+   <!-- Config Modal (動作は view/configModal.js) -->
    <div id="config-modal" class="modal" hidden>
       <div class="modal-content">
          <h2>Supabase 設定</h2>
          <label>URL: <input type="text" id="supabase-url" placeholder="https://xxxx.supabase.co"></label><br>
          <label>Anon Key: <input type="text" id="supabase-key" placeholder="anon key"></label><br>
          <button id="save-config">保存</button>
+         <button type="button" id="cancel-config" class="secondary" hidden>キャンセル</button>
       </div>
    </div>
    
@@ -140,26 +154,7 @@
       </div>
    </template>
    
-   <script>
-      document.addEventListener('DOMContentLoaded', () => {
-         const cfg = localStorage.getItem('supabaseConfig');
-         if(!cfg) {
-            const modal = document.getElementById('config-modal');
-            modal.hidden = false;
-            document.getElementById('save-config').addEventListener('click', () => {
-               const url = document.getElementById('supabase-url').value.trim();
-               const key = document.getElementById('supabase-key').value.trim();
-               if (url && key) {
-                  const stored = { SUPABASE_URL: url, SUPABASE_ANON_KEY: key };
-                  localStorage.setItem('supabaseConfig', JSON.stringify(stored));
-                  window.location.reload();
-               } else {
-                  alert('URL とキーを入力してください');
-               }
-            });
-         }
-      });
-   </script>
+   <script type="module" src="view/configModal.js"></script>
    <script type="module" src="app.js"></script>
    <script>
       lucide.createIcons();

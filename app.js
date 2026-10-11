@@ -8,7 +8,11 @@ const RENDER_TARGETS = {
    diaries:   ['diary'],
    templates: ['templates'],
    date:      ['today', 'diary', 'backlog'],
+   status:    ['status'],
 };
+
+// 画面復帰時の読み直しを、この間隔 (ミリ秒) より短くは繰り返さない
+const RELOAD_MIN_INTERVAL = 5000;
 
 class TodoPresenter {
    constructor(model, view) {
@@ -20,6 +24,10 @@ class TodoPresenter {
       
       // 保存失敗時の通知
       this.model.bindOnError((message) => this.view.showError(message));
+      
+      // 画面に戻ってきたときの読み直しと、失敗時の手動読み直し
+      this.view.bindResume(() => this.reloadIfIdle());
+      this.view.bindRetryLoad(() => this.model.reload());
       
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
@@ -60,6 +68,13 @@ class TodoPresenter {
       });
    }
    
+   // 読み直した直後と入力の途中は見送る (描き直しで入力が消えるため)
+   reloadIfIdle() {
+      if (Date.now() - this.model.lastLoadStartedAt < RELOAD_MIN_INTERVAL) return;
+      if (this.view.isEditing()) return;
+      this.model.reload();
+   }
+   
    // 変更の種別に応じて、該当する対象だけ描き直す
    updateView(kind) {
       const model = this.model;
@@ -78,6 +93,7 @@ class TodoPresenter {
             groupedTasks: model.getBacklogTodosGrouped(),
          }),
          templates: () => this.view.setTemplates(model.getTaskTemplates()),
+         status: () => this.view.renderStatus({ loadFailed: model.loadFailed }),
       };
       
       RENDER_TARGETS[kind].forEach(target => renderers[target]());
