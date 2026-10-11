@@ -1,0 +1,124 @@
+// view/todayPanel.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
+import { copyToClipboard } from './clipboard.js';
+import { bindPiPButton } from './pip.js';
+import { renderTaskList } from './taskList.js';
+
+// 折りたたみ時に表示するToDoの件数
+const ELLIPSIS_VISIBLE_COUNT = 5;
+
+export class TodayPanel {
+   constructor() {
+      this.currentDateText = document.getElementById('current-date-text');
+      this.datePicker = document.getElementById('date-picker');
+
+      this.formAddDone = document.getElementById('form-add-done');
+      this.formAddTodo = document.getElementById('form-add-todo');
+      this.inputDoneTitle = document.getElementById('input-done-title');
+      this.inputTodoTitle = document.getElementById('input-todo-title');
+      this.toggleToDoEllipsis = document.getElementById('toggle-todo-ellipsis');
+      this._todoIsEllipsis = true;
+
+      this.listTodo = document.getElementById('list-todo');
+      this.listDone = document.getElementById('list-done');
+      this.btnCopyTodo = document.getElementById('btn-copy-todo');
+      this.btnCopyDone = document.getElementById('btn-copy-done');
+      this.CountTodo = document.getElementById('list-count-todo');
+      this.CountDone = document.getElementById('list-count-done');
+      this.btnPiP    = document.getElementById('btn-pip');
+
+      // サジェストを付ける入力欄
+      this.suggestTargets = [
+         { input: this.inputDoneTitle, list: document.getElementById('suggest-done-title') },
+         { input: this.inputTodoTitle, list: document.getElementById('suggest-todo-title') },
+      ];
+
+      // 最後に描画した日付 (追加・コピー時に使う)
+      this._currentDate = null;
+
+      this.toggleToDoEllipsis.addEventListener("click", () => {
+         this._todoIsEllipsis = !this._todoIsEllipsis;
+         this.toggleToDoEllipsis.querySelector("#todo-ellipsis-on") .hidden = !this._todoIsEllipsis;
+         this.toggleToDoEllipsis.querySelector("#todo-ellipsis-off").hidden =  this._todoIsEllipsis;
+         this._applyEllipsis();
+      });
+   }
+
+   render({ currentDate, todos, dones }) {
+      // 日付反映
+      this._currentDate = currentDate;
+      this.currentDateText.textContent = currentDate;
+      this.datePicker.value = currentDate;
+
+      // 今日のDone描画
+      renderTaskList(this.listDone, dones, true);
+      this.CountDone.textContent = dones.length;
+
+      // 今日のToDo描画
+      renderTaskList(this.listTodo, todos, false, true);
+      this.CountTodo.textContent = todos.length;
+      this._applyEllipsis();
+   }
+
+   _applyEllipsis() {
+      const todoItems = this.listTodo.querySelectorAll(".task-item");
+      todoItems.forEach((d, i) => {
+         d.hidden = this._todoIsEllipsis && i >= ELLIPSIS_VISIBLE_COUNT;
+      });
+   }
+
+   bindDatePicker(handler) {
+      this.datePicker.addEventListener('change', (e) => {
+         handler(e.target.value);
+      });
+   }
+
+   bindAddTodo(handler) {
+      this.formAddDone.addEventListener('submit', (e) => {
+         e.preventDefault();
+         const title = this.inputDoneTitle.value.trim();
+         const date  = this._currentDate || null;
+         if(title) {
+            handler(title, date, true);
+            this.inputDoneTitle.value = '';
+         }
+      });
+
+      this.formAddTodo.addEventListener('submit', (e) => {
+         e.preventDefault();
+         const title = this.inputTodoTitle.value.trim();
+         const date  = this._currentDate || null;
+         if(title) {
+            handler(title, date, false);
+            this.inputTodoTitle.value = '';
+         }
+      });
+   }
+
+   bindCopyButtons(getTodos, getDones) {
+      this.btnCopyTodo.addEventListener('click', () => {
+         const date = formatDate(this._currentDate) + "\n";
+         const md   = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
+         copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
+      });
+
+      this.btnCopyDone.addEventListener('click', () => {
+         const date = formatDate(this._currentDate) + "\n";
+         const md   = getDones().map(t => `- [x] ${t.title}`).join('\n');
+         copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
+      });
+   }
+
+   bindPiPButton(getTodos) {
+      bindPiPButton(this.btnPiP, getTodos);
+   }
+}
+
+function formatDate(dateString) {
+   const date = new Date(dateString);
+   const formatter = new Intl.DateTimeFormat('ja-JP', {
+      month: '2-digit',
+      day:   '2-digit',
+      weekday: 'short'
+   });
+   return formatter.format(date).replace(/\s+/g, '');
+}
