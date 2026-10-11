@@ -2,13 +2,21 @@
 import { TodoModel } from './model.js';
 import { TodoView  } from './view.js';
 
+// Modelの変更種別 → 描き直す対象
+const RENDER_TARGETS = {
+   todos:     ['today', 'backlog'],
+   diaries:   ['diary'],
+   templates: ['templates'],
+   date:      ['today', 'diary', 'backlog'],
+};
+
 class TodoPresenter {
    constructor(model, view) {
       this.model = model;
       this.view  = view;
       
       // 1. Modelデータ変更時の自動描画をバインド
-      this.model.bindOnChange(() => this.updateView());
+      this.model.bindOnChange((kind) => this.updateView(kind));
       
       // 保存失敗時の通知
       this.model.bindOnError((message) => this.view.showError(message));
@@ -45,17 +53,27 @@ class TodoPresenter {
       this.view.bindUpdateDiary((date, content) => this.model.updateDiary(date, content));
    }
    
-   updateView() {
-      this.view.render({
-         currentDate:   this.model.currentDate,
-         tomorrowDate:  this.model.tomorrowDate,
-         todayTodos:    this.model.getTodayTodos(),
-         todayDones:    this.model.getTodayDones(),
-         backlogTodos:  this.model.getBacklogTodosGrouped(),
-         todos:         this.model.todos,
-         todayDiary:    this.model.getTodayDiary(),
-         taskTemplates: this.model.getTaskTemplates(),
-      });
+   // 変更の種別に応じて、該当する対象だけ描き直す
+   updateView(kind) {
+      const model = this.model;
+      const renderers = {
+         today: () => this.view.renderToday({
+            currentDate: model.currentDate,
+            todos:       model.getTodayTodos(),
+            dones:       model.getTodayDones(),
+         }),
+         diary: () => this.view.renderDiary({
+            currentDate: model.currentDate,
+            diary:       model.getTodayDiary(),
+         }),
+         backlog: () => this.view.renderBacklog({
+            tomorrowDate: model.tomorrowDate,
+            groupedTasks: model.getBacklogTodosGrouped(),
+         }),
+         templates: () => this.view.setTemplates(model.getTaskTemplates()),
+      };
+      
+      RENDER_TARGETS[kind].forEach(target => renderers[target]());
    }
 }
 

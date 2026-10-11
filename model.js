@@ -26,6 +26,7 @@ export class TodoModel {
       this._loadTemplatesFromSupabase();
    }
 
+   // callback には変更の種別 ('todos' | 'diaries' | 'templates' | 'date') が渡る
    bindOnChange(callback) {
       this.onChangeCallback = callback;
    }
@@ -47,7 +48,7 @@ export class TodoModel {
       }
 
       // Notify UI after loading
-      this._commit();
+      this._commit('todos');
    }
 
    async _loadDiariesFromSupabase() {
@@ -62,7 +63,7 @@ export class TodoModel {
       }
       
       // 読み込み順に関わらず画面へ反映する
-      this._commit();
+      this._commit('diaries');
    }
 
    async _loadTemplatesFromSupabase() {
@@ -77,11 +78,11 @@ export class TodoModel {
       }
       
       // 読み込み順に関わらず画面へ反映する
-      this._commit();
+      this._commit('templates');
    }
 
-   _commit() {
-      if(this.onChangeCallback) this.onChangeCallback();
+   _commit(kind) {
+      if(this.onChangeCallback) this.onChangeCallback(kind);
    }
    
    _reportError(label, error) {
@@ -91,7 +92,7 @@ export class TodoModel {
    
    // タスクの書き込み失敗時。データは変えていないので、描き直して画面を操作前に戻す
    _fail(label, error) {
-      this._commit();
+      this._commit('todos');
       this._reportError(label, error);
    }
 
@@ -102,7 +103,7 @@ export class TodoModel {
       if (newDateString) localStorage.setItem   ('todo_current_date', newDateString);
       else               localStorage.removeItem('todo_current_date');
 
-      this._commit();
+      this._commit('date');
    }
 
    // タスク操作
@@ -123,7 +124,7 @@ export class TodoModel {
       
       if (data) this.todos.push(data);
       
-      this._commit();
+      this._commit('todos');
    }
    
    async editTodo(id, newTitle) {
@@ -134,7 +135,7 @@ export class TodoModel {
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, title: newTitle } : todo
       );
-      this._commit();
+      this._commit('todos');
    }
    
    async deleteTodo(id) {
@@ -143,7 +144,7 @@ export class TodoModel {
       if (error) return this._fail('タスクの削除', error);
       
       this.todos = this.todos.filter(todo => todo.id !== id);
-      this._commit();
+      this._commit('todos');
    }
    
    // 完了状態を反転し、表示中の日付の該当リスト末尾へ移す
@@ -166,7 +167,7 @@ export class TodoModel {
       this.todos = this.todos.map(t =>
          t.id === id ? { ...t, ...changes } : t
       );
-      this._commit();
+      this._commit('todos');
    }
    
    async changeTodoDate(id, targetDate) {
@@ -182,7 +183,7 @@ export class TodoModel {
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, ...changes } : todo
       );
-      this._commit();
+      this._commit('todos');
    }
    
    async updateSortOrder(orderedIds) {
@@ -207,7 +208,7 @@ export class TodoModel {
       const failed = results.find(res => res.error);
       if (failed) return this._fail('並び替えの保存', failed.error);
       
-      this._commit();
+      this._commit('todos');
    }
    
    // 失敗しても再描画はしない (入力中の本文を消さないため)

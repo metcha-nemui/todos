@@ -13,7 +13,7 @@ export class TodoView {
       this.diaryPanel   = new DiaryPanel();
       this.backlogPanel = new BacklogPanel();
 
-      this.taskTemplatesData = []; // テンプレートリストデータ保持
+      this.taskTemplatesData = [];
 
       bindDetailsStateSave();
 
@@ -24,26 +24,26 @@ export class TodoView {
       );
    }
 
-   render(data) {
-      this.todayPanel.render({
-         currentDate: data.currentDate,
-         todos:       data.todayTodos,
-         dones:       data.todayDones,
-      });
-      this.diaryPanel.render({
-         currentDate: data.currentDate,
-         diary:       data.todayDiary,
-      });
-      this.backlogPanel.render({
-         tomorrowDate: data.tomorrowDate,
-         groupedTasks: data.backlogTodos,
-      });
+   // 以下の render* はパネル単位。変更があったパネルだけ呼ぶ
+   renderToday(data) {
+      this.todayPanel.render(data);
       this._afterRender();
-
-      // サジェスト用のテンプレート保持
-      this.taskTemplatesData = data.taskTemplates || [];
    }
-
+   
+   renderDiary(data) {
+      this.diaryPanel.render(data);
+   }
+   
+   renderBacklog(data) {
+      this.backlogPanel.render(data);
+      this._afterRender();
+   }
+   
+   // サジェスト用のテンプレート保持
+   setTemplates(templates) {
+      this.taskTemplatesData = templates || [];
+   }
+   
    // 描画後の共通処理
    _afterRender() {
       // 開閉状況反映
