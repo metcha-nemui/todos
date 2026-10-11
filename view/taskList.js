@@ -55,7 +55,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
 }
 
 // lists: タスク行 (.task-item) を内包する要素群。イベント委譲で処理する
-export function bindTaskActions(lists, handleToggle, handleDelete, handleEdit, handleMoveToday) {
+export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDate }) {
    lists.forEach(listContainer => {
       if(!listContainer) return;
 
@@ -85,10 +85,10 @@ export function bindTaskActions(lists, handleToggle, handleDelete, handleEdit, h
          const editInput = li.querySelector('.edit-input');
 
          const actionMap = {
-            'toggle-check': () => handleToggle(id),
+            'toggle-check': () => onToggle(id),
             'delete-btn'  : () => {
                const ret = confirm('このタスクを削除しますか？');
-               if(ret) handleDelete(id);
+               if(ret) onDelete(id);
                else    e.preventDefault();
             },
             'copy-btn'    : () => {
@@ -132,7 +132,7 @@ export function bindTaskActions(lists, handleToggle, handleDelete, handleEdit, h
             if (!li) return;
             const id = li.dataset.id;
             const chosenDate = target.value || null;
-            handleMoveToday(id, chosenDate);
+            onChangeDate(id, chosenDate);
          }
       });
 
@@ -147,7 +147,7 @@ export function bindTaskActions(lists, handleToggle, handleDelete, handleEdit, h
          const newTitle = editInput.value.trim();
 
          if (newTitle) {
-            handleEdit(id, newTitle);
+            onEdit(id, newTitle);
          }
       });
    });

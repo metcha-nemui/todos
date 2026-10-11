@@ -18,13 +18,13 @@ class TodoPresenter {
       // タスク追加
       this.view.bindAddTodo((title, date, isDone) => this.model.addTodo(title, date, isDone));
       
-      // タスクに対する各種アクション（チェック、物理削除、編集、今日へ移動）
-      this.view.bindTaskActions(
-         (id) => this.model.toggleTodo(id),
-         (id) => this.model.deleteTodo(id),
-         (id, newTitle) => this.model.editTodo(id, newTitle),
-         (id, date) => this.model.changeTodoDate(id, date)
-      );
+      // タスクに対する各種アクション（チェック、物理削除、編集、日付変更）
+      this.view.bindTaskActions({
+         onToggle:     (id) => this.model.toggleTodo(id),
+         onDelete:     (id) => this.model.deleteTodo(id),
+         onEdit:       (id, newTitle) => this.model.editTodo(id, newTitle),
+         onChangeDate: (id, date) => this.model.changeTodoDate(id, date),
+      });
       
       // ドラッグ＆ドロップによる並び替え順序の同期
       this.view.bindDragAndDrop((orderedIds) => this.model.updateSortOrder(orderedIds));

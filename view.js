@@ -215,9 +215,10 @@ export class TodoView {
       });
    }
 
-   bindTaskActions(handleToggle, handleDelete, handleEdit, handleMoveToday) {
+   // handlers: { onToggle, onDelete, onEdit, onChangeDate }
+   bindTaskActions(handlers) {
       const lists = [this.listTodo, this.listDone, this.containerBacklogTasks];
-      bindTaskActions(lists, handleToggle, handleDelete, handleEdit, handleMoveToday);
+      bindTaskActions(lists, handlers);
    }
 
    bindDragAndDrop(handleSortUpdate) {
