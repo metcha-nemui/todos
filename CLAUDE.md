@@ -18,7 +18,7 @@
       - `taskList.js` — タスク行の描画と行内アクション。
       - `dragSort.js` / `suggest.js` / `pip.js` / `detailsState.js` — 並び替え / サジェスト / PiP / 折りたたみの開閉状況の保存。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
-- `lib/supabase.js` — Supabase クライアント初期化。`lib/date.js` — 日付ヘルパ。
+- `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/parts/pip.js` が読み込む)。
 - PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。

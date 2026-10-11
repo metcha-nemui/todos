@@ -1,5 +1,5 @@
 // model/todos.js - todos テーブルの読み書きと並び順ルール
-import { supabase } from '../lib/supabase.js';
+import { supabase, fetchAllRows } from '../lib/supabase.js';
 
 // DBの行 → アプリ内で扱うタスク
 const rowToTodo = (row) => ({
@@ -16,18 +16,12 @@ const rowToTodo = (row) => ({
 export const nextSortOrder = (todos, predicate) =>
    todos.filter(predicate).reduce((max, t) => t.sort_order > max ? t.sort_order : max, -1) + 1;
 
-// 1リクエスト1000件までのため2回に分けて取得
+// 全タスクを作成順に返す
 export async function fetchTodos() {
-   const [res1, res2] = await Promise.all([
-      supabase.from('todos').select('*').range(   0,  999).order('created_at', { ascending: true }),
-      supabase.from('todos').select('*').range(1000, 1999).order('created_at', { ascending: true })
-   ]);
-
-   const error = res1.error || res2.error;
+   const { data, error } = await fetchAllRows('todos', ['created_at', 'id']);
    if (error) return { data: null, error };
 
-   const allData = [...(res1.data || []), ...(res2.data || [])];
-   return { data: allData.map(rowToTodo), error: null };
+   return { data: data.map(rowToTodo), error: null };
 }
 
 // 追加されたタスクを data で返す

@@ -1,8 +1,8 @@
 // model/diaries.js - diaries テーブルの読み書き
-import { supabase } from '../lib/supabase.js';
+import { supabase, fetchAllRows } from '../lib/supabase.js';
 
 export async function fetchDiaries() {
-   const { data, error } = await supabase.from('diaries').select('*');
+   const { data, error } = await fetchAllRows('diaries', ['entry_date']);
    if (error) return { data: null, error };
 
    return {
