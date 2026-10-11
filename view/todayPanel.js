@@ -1,4 +1,5 @@
 // view/todayPanel.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
+import { getTodayDateString, shiftDateString } from '../lib/date.js';
 import { copyToClipboard } from './clipboard.js';
 import { bindPiPButton } from './pip.js';
 import { renderTaskList } from './taskList.js';
@@ -10,6 +11,8 @@ export class TodayPanel {
    constructor() {
       this.currentDateText = document.getElementById('current-date-text');
       this.datePicker = document.getElementById('date-picker');
+      this.btnDatePrev = document.getElementById('btn-date-prev');
+      this.btnDateNext = document.getElementById('btn-date-next');
 
       this.formAddDone = document.getElementById('form-add-done');
       this.formAddTodo = document.getElementById('form-add-todo');
@@ -70,6 +73,13 @@ export class TodayPanel {
       this.datePicker.addEventListener('change', (e) => {
          handler(e.target.value);
       });
+      
+      // 前日 / 翌日ボタン (日付未選択のときは今日を基準にする)
+      const shiftDate = (days) => {
+         handler(shiftDateString(this._currentDate || getTodayDateString(), days));
+      };
+      this.btnDatePrev.addEventListener('click', () => shiftDate(-1));
+      this.btnDateNext.addEventListener('click', () => shiftDate(+1));
    }
 
    bindAddTodo(handler) {
