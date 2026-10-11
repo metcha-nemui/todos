@@ -105,4 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
    const model = new TodoModel();
    const view  = new TodoView();
    new TodoPresenter(model, view);
+   
+   // オフライン時の表示用 (sw.js)。登録の失敗はアプリの動作に影響しない
+   if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker registration failed:', e));
+   }
 });
