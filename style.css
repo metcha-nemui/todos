@@ -96,6 +96,8 @@ body {
    margin-bottom: 20px;
    padding-bottom: 14px;
    border-bottom: 1px solid var(--border);
+   flex-wrap: wrap;
+   gap: 10px;
 
    h2 {
       font-size: 1.8rem;
@@ -109,9 +111,9 @@ body {
    4. UI Controls & Forms
    ========================================================================== */
 .date-control {
-   display: inline-flex;
+   display: flex;
    align-items: center;
-   gap: 8px;
+   gap: 10px;
    position: relative;
    background: var(--bg-input);
    padding: 6px 14px;
@@ -155,6 +157,11 @@ body {
    width: 100%;
    height: 100%;
    cursor: pointer;
+}
+
+/* 透明な日付入力 (.move-date-picker) を重ねるボタン */
+.move-date-btn {
+   position: relative;
 }
 
 /* Forms */
@@ -409,6 +416,14 @@ summary.backlog-title {
    }
 }
 
+#container-today-tasks {
+   margin-top: 20px;
+}
+
+.backlog-empty {
+   color: var(--text-muted);
+}
+
 .list-count {
    font-size: 1.2rem;
    color: var(--text-muted);
@@ -469,6 +484,36 @@ summary.backlog-title {
       border: 2px dashed var(--accent) !important;
       background: var(--accent-light);
       box-shadow: none;
+   }
+}
+
+/* 表示モード / 編集モード (編集中は .task-item に .is-editing が付く) */
+.task-view-mode {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   width: 100%;
+}
+
+.task-edit-mode {
+   display: none;
+   width: 100%;
+   gap: 10px;
+
+   .edit-input {
+      flex: 1;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+   }
+}
+
+.task-item.is-editing {
+   .task-view-mode {
+      display: none;
+   }
+   .task-edit-mode {
+      display: flex;
    }
 }
 
@@ -660,6 +705,12 @@ summary.backlog-title {
    ========================================================================== */
 .diary-content {
    padding: 8px;
+
+   .diary-count {
+      font-size: 1.2rem;
+      text-align: right;
+      color: var(--text-muted);
+   }
 
    textarea {
       display: block;

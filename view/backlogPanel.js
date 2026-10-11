@@ -25,7 +25,7 @@ export class BacklogPanel {
 
       this.containerBacklogTasks.innerHTML = '';
       if (Object.keys(groupedTasks).length === 0) {
-         this.containerBacklogTasks.innerHTML = '<p style="color: var(--text-muted);">今後のタスク予定はありません</p>';
+         this.containerBacklogTasks.innerHTML = '<p class="backlog-empty">今後のタスク予定はありません</p>';
          return;
       }
 

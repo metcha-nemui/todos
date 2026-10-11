@@ -16,13 +16,13 @@
 <body>
    <div class="container">
       <!-- 今日ビュー -->
-      <div id="view-today" class="view-section active">
+      <div id="view-today">
          <div class="main-layout">
             <!-- 今日のタスクパネル -->
             <div class="panel">
-               <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+               <div class="panel-header">
                   <h2>本日のタスク</h2>
-                  <div class="date-control" style="display: flex; align-items: center; gap: 10px;">
+                  <div class="date-control">
                      <input type="date" id="date-picker" class="date-picker">
                      <i data-lucide="calendar-days"></i>
                      <span class="date-display" id="current-date-text"></span>
@@ -31,7 +31,7 @@
                
                <div id="container-today-tasks">
                   <!-- Done (今日) -->
-                  <details id="details-done" class="collapse" open style="margin-top: 20px;">
+                  <details id="details-done" class="collapse" open>
                      <summary class="backlog-title">
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
@@ -75,7 +75,7 @@
                      <summary class="backlog-title">Diary</summary>
                      <div class="diary-content">
                         <textarea id="input-diary"></textarea>
-                        <div style="font-size:1.2rem; text-align:right; color:var(--text-muted)">
+                        <div class="diary-count">
                            <span id="diary-counter"></span> / 140
                         </div>
                      </div>
@@ -103,7 +103,7 @@
    </div>
    
    <!-- Config Modal -->
-   <div id="config-modal" class="modal" style="display:none;">
+   <div id="config-modal" class="modal" hidden>
       <div class="modal-content">
          <h2>Supabase 設定</h2>
          <label>URL: <input type="text" id="supabase-url" placeholder="https://xxxx.supabase.co"></label><br>
@@ -281,7 +281,7 @@
          const cfg = localStorage.getItem('supabaseConfig');
          if(!cfg) {
             const modal = document.getElementById('config-modal');
-            modal.style.display = 'flex';
+            modal.hidden = false;
             document.getElementById('save-config').addEventListener('click', () => {
                const url = document.getElementById('supabase-url').value.trim();
                const key = document.getElementById('supabase-key').value.trim();

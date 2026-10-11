@@ -10,7 +10,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
       li.setAttribute('draggable', 'true');
 
       li.innerHTML = `
-         <div class="task-view-mode" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+         <div class="task-view-mode">
             <div class="task-item-content ${isDone ? 'done' : ''}">
                <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
                <span class="task-title-text">${escapeHtml(task.title)}</span>
@@ -19,7 +19,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
                <div class="actions-desktop">
                   <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
                   ${showDateChanger ? `
-                     <button class="secondary" style="position: relative;">
+                     <button class="secondary move-date-btn">
                         <input type="date" class="move-date-picker">
                         <i data-lucide="calendar-days"></i>
                      </button>
@@ -32,7 +32,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
                   <div class="action-menu" hidden>
                      <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
                      ${showDateChanger ? `
-                        <button class="secondary" style="position: relative">
+                        <button class="secondary move-date-btn">
                            <input type="date" class="move-date-picker">
                            <i data-lucide="calendar-days"></i> 日付変更
                         </button>`
@@ -44,8 +44,8 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
             </div>
          </div>
 
-         <form class="task-edit-mode" style="display: none; width: 100%; gap: 10px;">
-            <input type="text" class="edit-input" value="${escapeHtml(task.title)}" required style="flex: 1; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+         <form class="task-edit-mode">
+            <input type="text" class="edit-input" value="${escapeHtml(task.title)}" required>
             <button type="submit" class="save-btn">保存</button>
             <button type="button" class="cancel-btn secondary">キャンセル</button>
          </form>
@@ -79,9 +79,6 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
             setTimeout(() => document.addEventListener('click', closeMenu), 0);
             return;
          }
-
-         const viewMode = li.querySelector('.task-view-mode');
-         const editMode = li.querySelector('.task-edit-mode');
          const editInput = li.querySelector('.edit-input');
 
          const actionMap = {
@@ -103,8 +100,7 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                }
             },
             'edit-btn'    : () => {
-               viewMode.style.display = 'none';
-               editMode.style.display = 'flex';
+               li.classList.add('is-editing');
                editInput.focus();
                const val = editInput.value;
                editInput.value = '';
@@ -112,8 +108,7 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
             },
             'cancel-btn'  : () => {
                editInput.value = li.querySelector('.task-title-text').textContent;
-               editMode.style.display = 'none';
-               viewMode.style.display = 'flex';
+               li.classList.remove('is-editing');
             }
          };
 
