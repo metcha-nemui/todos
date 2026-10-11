@@ -264,6 +264,10 @@ export class TodoView {
       });
    }
 
+   showError(message) {
+      alert(message);
+   }
+   
    _parseHtml(htmlString) {
       const template = document.createElement('template');
       template.innerHTML = htmlString.trim();

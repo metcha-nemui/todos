@@ -11,6 +11,7 @@ export class TodoModel {
       this.currentDate = null; // will be set after loading
       this.tomorrowDate = getTomorrowDateString();
       this.onChangeCallback = null;
+      this.onErrorCallback = null;
 
       this._loadTodosFromSupabase();
 
@@ -27,6 +28,11 @@ export class TodoModel {
 
    bindOnChange(callback) {
       this.onChangeCallback = callback;
+   }
+   
+   // 書き込み失敗時に、ユーザー向けメッセージを受け取るコールバック
+   bindOnError(callback) {
+      this.onErrorCallback = callback;
    }
 
    async _loadTodosFromSupabase() {
@@ -77,6 +83,17 @@ export class TodoModel {
    _commit() {
       if(this.onChangeCallback) this.onChangeCallback();
    }
+   
+   _reportError(label, error) {
+      console.error(`${label}に失敗:`, error);
+      if(this.onErrorCallback) this.onErrorCallback(`${label}に失敗しました`);
+   }
+   
+   // タスクの書き込み失敗時。データは変えていないので、描き直して画面を操作前に戻す
+   _fail(label, error) {
+      this._commit();
+      this._reportError(label, error);
+   }
 
    // 日付変更 (localStorageに保存)
    setCurrentDate(newDateString) {
@@ -89,10 +106,11 @@ export class TodoModel {
    }
 
    // タスク操作
+   // いずれもDBへの書き込みが成功してから手元のデータに反映する
    async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
-
+      
       const { data, error } = await todoTable.insertTodo({
          title: title,
          is_done: isDone,
@@ -101,41 +119,39 @@ export class TodoModel {
          created_at: new Date().toISOString(),
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
       });
-
-      if (error) {
-         console.error('Supabase add error:', error);
-         return;
-      }
-
+      if (error) return this._fail('タスクの追加', error);
+      
       if (data) this.todos.push(data);
-
+      
       this._commit();
    }
-
+   
    async editTodo(id, newTitle) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
+      const { error } = await todoTable.updateTodo(id, { title: newTitle });
+      if (error) return this._fail('タスクの編集', error);
+      
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, title: newTitle } : todo
       );
-      const { error } = await todoTable.updateTodo(id, { title: newTitle });
-      if (error) console.error('Supabase edit error:', error);
       this._commit();
    }
-
+   
    async deleteTodo(id) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
-      this.todos = this.todos.filter(todo => todo.id !== id);
       const { error } = await todoTable.deleteTodo(id);
-      if (error) console.error('Supabase delete error:', error);
+      if (error) return this._fail('タスクの削除', error);
+      
+      this.todos = this.todos.filter(todo => todo.id !== id);
       this._commit();
    }
-
+   
    // 完了状態を反転し、表示中の日付の該当リスト末尾へ移す
    async toggleTodo(id) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const todo = this.todos.find(t => t.id === id);
       if (!todo) return;
-
+      
       const updatedDone = !todo.is_done;
       const changes = {
          is_done: updatedDone,
@@ -143,69 +159,85 @@ export class TodoModel {
          due_date: this.currentDate,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === this.currentDate && !!t.is_done === updatedDone),
       };
-
+      
       const { error } = await todoTable.updateTodo(id, changes);
-      if (error) console.error('Supabase toggle error:', error);
-
+      if (error) return this._fail('タスクの更新', error);
+      
       this.todos = this.todos.map(t =>
          t.id === id ? { ...t, ...changes } : t
       );
       this._commit();
    }
-
+   
    async changeTodoDate(id, targetDate) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const changes = {
          due_date: targetDate,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
       };
-
+      
+      const { error } = await todoTable.updateTodo(id, changes);
+      if (error) return this._fail('日付の変更', error);
+      
       this.todos = this.todos.map(todo =>
          todo.id === id ? { ...todo, ...changes } : todo
       );
-      const { error } = await todoTable.updateTodo(id, changes);
-      if (error) console.error('Supabase change date error:', error);
       this._commit();
    }
-
+   
    async updateSortOrder(orderedIds) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
-      const updates = orderedIds.map((id, index) => {
-         const todo = this.todos.find(t => t.id === id);
-         if (todo) {
-            todo.sort_order = index;
-            return todoTable.updateTodo(id, { sort_order: index });
-         }
-      }).filter(Boolean);
-      const results = await Promise.all(updates);
-      results.forEach(res => { if (res.error) console.error('Supabase sort update error:', res.error); });
+      const targets = orderedIds
+         .map((id, index) => ({ id, index }))
+         .filter(({ id }) => this.todos.some(t => t.id === id));
+      
+      const results = await Promise.all(
+         targets.map(({ id, index }) => todoTable.updateTodo(id, { sort_order: index }))
+      );
+      
+      // 一部だけ失敗した場合も、成功した分はDBと揃える
+      const newOrders = new Map();
+      results.forEach((res, i) => {
+         if (!res.error) newOrders.set(targets[i].id, targets[i].index);
+      });
+      this.todos = this.todos.map(todo =>
+         newOrders.has(todo.id) ? { ...todo, sort_order: newOrders.get(todo.id) } : todo
+      );
+      
+      const failed = results.find(res => res.error);
+      if (failed) return this._fail('並び替えの保存', failed.error);
+      
       this._commit();
    }
-
+   
+   // 失敗しても再描画はしない (入力中の本文を消さないため)
    async updateDiary(date, content) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
-
+      
       // 変更ない場合は更新しない
       const currentDiary = this.diaries.filter(d => d.date === date)[0];
       if(currentDiary) {
          if(currentDiary.content === content) return;
       }
-
+      
       // 空欄の場合、項目ごと削除
       if(content === "") {
+         const { error } = await diaryTable.deleteDiary(date);
+         if (error) return this._reportError('日記の削除', error);
+         
          this.diaries = this.diaries.filter(d => d.date !== date);
-         await diaryTable.deleteDiary(date);
          return;
       }
-
+      
       // 更新
+      const { error } = await diaryTable.upsertDiary(date, content);
+      if (error) return this._reportError('日記の保存', error);
+      
       const target = this.diaries.find(d => d.date === date);
       if(target) target.content = content;
       else       this.diaries.push({ date, content });
-
-      await diaryTable.upsertDiary(date, content);
    }
-
+   
    // ゲッター群
    getTodayTodos() {
       return this.todos

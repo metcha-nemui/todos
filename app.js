@@ -10,6 +10,9 @@ class TodoPresenter {
       // 1. Modelデータ変更時の自動描画をバインド
       this.model.bindOnChange(() => this.updateView());
       
+      // 保存失敗時の通知
+      this.model.bindOnError((message) => this.view.showError(message));
+      
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
       // 日付コントロール
