@@ -1,4 +1,4 @@
-// view/dragSort.js - ドラッグ＆ドロップによる並び替え
+// view/parts/dragSort.js - ドラッグ＆ドロップによる並び替え
 
 // staticLists: それ自体が1つのリストである要素群
 // groupedContainer: 内部に複数の .task-list を持つ要素 (同一リスト内でのみ並び替え可)

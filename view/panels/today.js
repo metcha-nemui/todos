@@ -1,8 +1,8 @@
-// view/todayPanel.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
-import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../lib/date.js';
-import { copyToClipboard } from './clipboard.js';
-import { bindPiPButton } from './pip.js';
-import { renderTaskList } from './taskList.js';
+// view/panels/today.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
+import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../../lib/date.js';
+import { copyToClipboard } from '../util/clipboard.js';
+import { bindPiPButton } from '../parts/pip.js';
+import { renderTaskList } from '../parts/taskList.js';
 
 // 折りたたみ時に表示するToDoの件数
 const ELLIPSIS_VISIBLE_COUNT = 5;

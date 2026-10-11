@@ -1,7 +1,7 @@
-// view/diaryListModal.js - 過去の日記の一覧 (モーダル)
-import { formatDateWithWeekday } from '../lib/date.js';
-import { escapeHtml, parseHtml } from './html.js';
-import { bindModalClose } from './modal.js';
+// view/modals/diaryList.js - 過去の日記の一覧 (モーダル)
+import { formatDateWithWeekday } from '../../lib/date.js';
+import { escapeHtml, parseHtml } from '../util/html.js';
+import { bindModalClose } from './close.js';
 
 export class DiaryListModal {
    constructor() {

@@ -1,14 +1,14 @@
 // view.js - UI Representation Layer (各パネルを束ねる窓口)
-import { TodayPanel } from './view/todayPanel.js';
-import { DiaryPanel } from './view/diaryPanel.js';
-import { BacklogPanel } from './view/backlogPanel.js';
-import { TemplateModal } from './view/templateModal.js';
-import { DiaryListModal } from './view/diaryListModal.js';
-import { StatusBanner } from './view/statusBanner.js';
-import { setupCustomSuggest } from './view/suggest.js';
-import { bindDragAndDrop } from './view/dragSort.js';
-import { bindTaskActions } from './view/taskList.js';
-import { bindDetailsStateSave, restoreDetailsState } from './view/detailsState.js';
+import { TodayPanel } from './view/panels/today.js';
+import { DiaryPanel } from './view/panels/diary.js';
+import { BacklogPanel } from './view/panels/backlog.js';
+import { TemplateModal } from './view/modals/template.js';
+import { DiaryListModal } from './view/modals/diaryList.js';
+import { StatusBanner } from './view/panels/statusBanner.js';
+import { setupCustomSuggest } from './view/parts/suggest.js';
+import { bindDragAndDrop } from './view/parts/dragSort.js';
+import { bindTaskActions } from './view/parts/taskList.js';
+import { bindDetailsStateSave, restoreDetailsState } from './view/parts/detailsState.js';
 
 export class TodoView {
    constructor() {

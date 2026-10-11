@@ -1,4 +1,4 @@
-// view/clipboard.js - クリップボードへのコピー
+// view/util/clipboard.js - クリップボードへのコピー
 
 export async function copyToClipboard(text) {
    if (navigator.clipboard && window.isSecureContext) {

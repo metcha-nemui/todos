@@ -1,4 +1,4 @@
-// view/statusBanner.js - 画面上部の通知 (オフライン / 読み込み失敗)
+// view/panels/statusBanner.js - 画面上部の通知 (オフライン / 読み込み失敗)
 
 export class StatusBanner {
    constructor() {

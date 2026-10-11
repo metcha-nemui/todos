@@ -1,4 +1,4 @@
-// view/configModal.js - Supabase 接続設定の入力画面
+// view/modals/config.js - Supabase 接続設定の入力画面
 // app.js とは別に読み込む (Supabase を読み込めない状態でも設定できるようにするため)
 
 const STORAGE_KEY = 'supabaseConfig';

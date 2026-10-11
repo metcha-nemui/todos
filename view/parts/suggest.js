@@ -1,4 +1,4 @@
-// view/suggest.js - 入力欄のカスタムサジェスト
+// view/parts/suggest.js - 入力欄のカスタムサジェスト
 
 // targets: [{ input, list }]、getTemplates: 候補文字列の配列を返す関数
 // onManage: 末尾の「候補を編集…」が選ばれたときに呼ぶ関数 (省略時は行を出さない)

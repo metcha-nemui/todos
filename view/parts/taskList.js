@@ -1,6 +1,6 @@
-// view/taskList.js - タスク行の描画と行内アクション
-import { copyToClipboard } from './clipboard.js';
-import { escapeHtml } from './html.js';
+// view/parts/taskList.js - タスク行の描画と行内アクション
+import { copyToClipboard } from '../util/clipboard.js';
+import { escapeHtml } from '../util/html.js';
 
 export function renderTaskList(element, tasks, isDone, showDateChanger = false) {
    element.innerHTML = '';

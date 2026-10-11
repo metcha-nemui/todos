@@ -1,4 +1,4 @@
-// view/modal.js - モーダル (.modal) 共通の閉じる操作
+// view/modals/close.js - モーダル (.modal) 共通の閉じる操作
 
 // 背景クリックと Escape で close を呼ぶ
 export function bindModalClose(modal, close) {

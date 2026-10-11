@@ -1,6 +1,6 @@
-// view/backlogPanel.js - 「今後のタスク」パネル
-import { renderTaskList } from './taskList.js';
-import { parseHtml } from './html.js';
+// view/panels/backlog.js - 「今後のタスク」パネル
+import { renderTaskList } from '../parts/taskList.js';
+import { parseHtml } from '../util/html.js';
 
 export class BacklogPanel {
    constructor() {

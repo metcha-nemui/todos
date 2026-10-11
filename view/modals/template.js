@@ -1,6 +1,6 @@
-// view/templateModal.js - サジェスト候補 (テンプレート) の登録画面
-import { escapeHtml } from './html.js';
-import { bindModalClose } from './modal.js';
+// view/modals/template.js - サジェスト候補 (テンプレート) の登録画面
+import { escapeHtml } from '../util/html.js';
+import { bindModalClose } from './close.js';
 
 export class TemplateModal {
    constructor() {

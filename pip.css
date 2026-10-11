@@ -1,4 +1,4 @@
-/* Picture-in-Picture ウィンドウ用スタイル (view/pip.js が読み込む) */
+/* Picture-in-Picture ウィンドウ用スタイル (view/parts/pip.js が読み込む) */
 :root {
    --background: oklch(13% 0.028 261.692);
 }

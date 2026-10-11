@@ -1,4 +1,4 @@
-// view/diaryPanel.js - 「Diary」パネル
+// view/panels/diary.js - 「Diary」パネル
 
 export class DiaryPanel {
    constructor() {

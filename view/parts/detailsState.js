@@ -1,4 +1,4 @@
-// view/detailsState.js - <details> の開閉状況を localStorage に保存・復元
+// view/parts/detailsState.js - <details> の開閉状況を localStorage に保存・復元
 
 const STORAGE_KEY = "todo_group_open_states";
 
