@@ -3,16 +3,19 @@
 ビルド不要・依存なしの素の ES Modules 製 ToDo アプリ。バックエンドは Supabase。UI・コメントは日本語。
 
 ## 構成 (MVP)
-- `model.js` — `TodoModel`。データ保持と操作の窓口。書き込みは成功後に手元へ反映し、失敗は `bindOnError` で通知する。
+- `model.js` — `TodoModel`。データ保持と操作の窓口。書き込みは成功後に手元へ反映し、失敗は `bindOnError` で通知する。読み込みは `reload()` に集約し、起動時と画面復帰時に呼ぶ。
    - `model/todos.js` / `diaries.js` / `templates.js` — テーブルごとの Supabase 読み書き。`templates` (サジェスト候補) の主キーは `name`。
 - `view.js` — `TodoView`。パネルを束ねる窓口。パネル単位の `render*` とイベントの `bind*` メソッド。
    - `view/todayPanel.js` / `diaryPanel.js` / `backlogPanel.js` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
    - `view/taskList.js` — タスク行の描画と行内アクション。
    - `view/templateModal.js` — サジェスト候補の登録画面 (モーダル)。
+   - `view/statusBanner.js` — 画面上部の通知 (オフライン / 読み込み失敗)。
+   - `view/configModal.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
    - `view/dragSort.js` / `suggest.js` / `clipboard.js` / `pip.js` / `detailsState.js` — 独立した UI 部品。
 - `lib/supabase.js` — Supabase クライアント初期化。`lib/date.js` — 日付ヘルパ。
-- `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
+- `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/pip.js` が読み込む)。
+- PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。
 
 ## 実行・確認
 - ビルド・テストなし。ES Modules のため `file://` では動かない。ローカルサーバで配信して確認する (例: `python -m http.server`)。
@@ -22,6 +25,7 @@
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
+- `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。
 - コミットメッセージは日本語の短い要約 (例: `CSS適用漏れ修正`)。
 
