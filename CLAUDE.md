@@ -11,7 +11,7 @@
    - `view/dragSort.js` / `suggest.js` / `clipboard.js` / `pip.js` / `detailsState.js` — 独立した UI 部品。
 - `lib/supabase.js` — Supabase クライアント初期化。`lib/date.js` — 日付ヘルパ。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
-- `index.html` / `style.css` — 画面とスタイル。
+- `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/pip.js` が読み込む)。
 
 ## 実行・確認
 - ビルド・テストなし。ES Modules のため `file://` では動かない。ローカルサーバで配信して確認する (例: `python -m http.server`)。
@@ -20,6 +20,7 @@
 ## コード規約
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
+- スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。
 - コミットメッセージは日本語の短い要約 (例: `CSS適用漏れ修正`)。
 
