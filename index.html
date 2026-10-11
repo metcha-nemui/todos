@@ -53,7 +53,7 @@
                <div id="container-today-tasks">
                   <!-- Done (今日) -->
                   <details id="details-done" class="collapse" open>
-                     <summary class="backlog-title">
+                     <summary class="collapse-title">
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
                         <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
@@ -70,11 +70,11 @@
                   
                   <!-- ToDo (今日) -->
                   <details id="details-todo" class="collapse" open>
-                     <summary class="backlog-title">
+                     <summary class="collapse-title">
                         <span>ToDo</span>
                         <span id="list-count-todo" class="list-count"></span>
                         <button id="btn-copy-todo" class="secondary summary-btn"><i data-lucide="copy"></i></button>
-                        <button id="btn-pip">PiP</button>
+                        <button id="btn-pip" class="summary-action">PiP</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-todo">
                         <div class="autocomplete-wrapper">
@@ -93,9 +93,9 @@
                
                <div>
                   <details id="details-diary" class="collapse">
-                     <summary class="backlog-title">
+                     <summary class="collapse-title">
                         <span>Diary</span>
-                        <button type="button" id="btn-diary-list" class="secondary summary-btn" title="過去の日記" aria-label="過去の日記"><i data-lucide="list"></i></button>
+                        <button type="button" id="btn-diary-list" class="summary-action"><i data-lucide="list"></i>過去の日記</button>
                      </summary>
                      <div class="diary-content">
                         <textarea id="input-diary"></textarea>
