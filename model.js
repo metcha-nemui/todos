@@ -239,6 +239,52 @@ export class TodoModel {
       else       this.diaries.push({ date, content });
    }
    
+   // サジェスト候補 (テンプレート) 操作
+   // 失敗や重複のときは再描画しない (編集中の入力を消さないため)
+   async addTemplate(name) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const newName = name.trim();
+      if (!newName) return;
+      if (this.templates.includes(newName)) return this._reportDuplicateTemplate();
+
+      const { error } = await templateTable.insertTemplate(newName);
+      if (error) return this._reportError('候補の追加', error);
+
+      this.templates = templateTable.sortTemplateNames([...this.templates, newName]);
+      this._commit('templates');
+   }
+
+   async renameTemplate(oldName, name) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const newName = name.trim();
+      if (!newName) return;
+
+      // 変更ない場合は更新せず、編集状態だけ戻す
+      if (newName === oldName) return this._commit('templates');
+      if (this.templates.includes(newName)) return this._reportDuplicateTemplate();
+
+      const { error } = await templateTable.renameTemplate(oldName, newName);
+      if (error) return this._reportError('候補の修正', error);
+
+      this.templates = templateTable.sortTemplateNames(
+         this.templates.map(t => t === oldName ? newName : t)
+      );
+      this._commit('templates');
+   }
+
+   async deleteTemplate(name) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const { error } = await templateTable.deleteTemplate(name);
+      if (error) return this._reportError('候補の削除', error);
+
+      this.templates = this.templates.filter(t => t !== name);
+      this._commit('templates');
+   }
+
+   _reportDuplicateTemplate() {
+      if(this.onErrorCallback) this.onErrorCallback('同じ名前の候補が既にあります');
+   }
+
    // ゲッター群
    getTodayTodos() {
       return this.todos
