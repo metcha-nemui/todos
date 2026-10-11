@@ -4,6 +4,7 @@ export class DiaryPanel {
    constructor() {
       this.inputDiary = document.getElementById('input-diary');
       this.counter = document.getElementById('diary-counter');
+      this.btnList = document.getElementById('btn-diary-list');
       this.details = this.inputDiary.closest("details");
 
       // 最後に描画した日付 (保存時に使う)
@@ -32,5 +33,10 @@ export class DiaryPanel {
       this.inputDiary.addEventListener("blur", () => {
          handler(this._currentDate, this.inputDiary.value.trim());
       });
+   }
+
+   // 過去の日記の一覧を開くボタン
+   bindOpenList(handler) {
+      this.btnList.addEventListener('click', () => handler());
    }
 }

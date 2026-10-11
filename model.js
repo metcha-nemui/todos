@@ -331,6 +331,12 @@ export class TodoModel {
    getTodayDiary() {
       return this.diaries.filter(d => d.date === this.currentDate)[0];
    }
+   // 全日記を新しい順に返す
+   getDiariesSorted() {
+      return this.diaries
+         .map(d => ({ ...d }))
+         .sort((a, b) => b.date.localeCompare(a.date));
+   }
    getTaskTemplates() {
       return structuredClone(this.templates);
    }

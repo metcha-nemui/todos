@@ -1,5 +1,6 @@
 // view/templateModal.js - サジェスト候補 (テンプレート) の登録画面
-import { escapeHtml } from './taskList.js';
+import { escapeHtml } from './html.js';
+import { bindModalClose } from './modal.js';
 
 export class TemplateModal {
    constructor() {
@@ -11,19 +12,7 @@ export class TemplateModal {
       this.emptyText = document.getElementById('template-empty');
 
       this.btnClose.addEventListener('click', () => this.close());
-
-      // 背景クリックで閉じる。入力欄からのドラッグが背景で終わった場合は閉じない
-      let pressedOnBackdrop = false;
-      this.modal.addEventListener('mousedown', (e) => {
-         pressedOnBackdrop = e.target === this.modal;
-      });
-      this.modal.addEventListener('click', (e) => {
-         if (pressedOnBackdrop && e.target === this.modal) this.close();
-      });
-
-      document.addEventListener('keydown', (e) => {
-         if (e.key === 'Escape' && !this.modal.hidden) this.close();
-      });
+      bindModalClose(this.modal, () => this.close());
 
       // 行内の編集開始・キャンセル
       this.list.addEventListener('click', (e) => {

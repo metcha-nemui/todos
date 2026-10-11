@@ -327,7 +327,8 @@ button {
       }
    }
 
-   &.btn-copy {
+   /* 折りたたみ見出し (summary) の中に置くボタン */
+   &.summary-btn {
       padding: 4px 8px;
       margin-left: 4px;
    }
@@ -437,7 +438,8 @@ summary.backlog-title {
    margin-top: 20px;
 }
 
-.backlog-empty {
+/* 一覧が空のときの案内文 */
+.empty-text {
    color: var(--text-muted);
 }
 
@@ -754,8 +756,8 @@ summary.backlog-title {
    }
 }
 
-/* サジェスト候補の登録画面 */
-.template-modal {
+/* 一覧を載せるモーダルの枠 (サジェスト候補の登録画面 / 過去の日記) */
+.modal-dialog {
    display: flex;
    flex-direction: column;
    background: var(--bg-card);
@@ -768,14 +770,19 @@ summary.backlog-title {
    border: 1px solid var(--border);
 
    .todo-input-form {
-      margin: 16px 0;
+      margin: 0 0 16px;
+   }
+
+   .empty-text {
+      font-size: 1.4rem;
    }
 }
 
-.template-modal-header {
+.modal-header {
    display: flex;
    justify-content: space-between;
    align-items: center;
+   margin-bottom: 16px;
 
    h2 {
       font-size: 1.8rem;
@@ -785,7 +792,7 @@ summary.backlog-title {
 }
 
 /* 一覧だけをスクロールさせる */
-.template-list {
+.modal-list {
    list-style: none;
    display: flex;
    flex-direction: column;
@@ -794,10 +801,7 @@ summary.backlog-title {
    min-height: 0;
 }
 
-.template-empty {
-   color: var(--text-muted);
-   font-size: 1.4rem;
-}
+/* サジェスト候補の登録画面 */
 
 /* 表示モード / 編集モード (編集中は .template-item に .is-editing が付く) */
 .template-item {
@@ -890,4 +894,53 @@ summary.backlog-title {
          box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
       }
    }
+}
+
+/* 過去の日記の一覧 (モーダル内) */
+.diary-list-month {
+   padding: 8px 4px 2px;
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: var(--text-muted);
+
+   &:first-child {
+      padding-top: 0;
+   }
+}
+
+/* 1件が丸ごとボタン (押すとその日付へ移動する) */
+.diary-list-item button {
+   display: flex;
+   flex-direction: column;
+   align-items: stretch;
+   gap: 4px;
+   width: 100%;
+   padding: 8px 12px;
+   background-color: transparent;
+   color: var(--text-main);
+   border: 1px solid var(--border);
+   font-weight: 400;
+   text-align: left;
+   white-space: normal;
+
+   &:hover {
+      background-color: var(--bg-input);
+   }
+}
+
+.diary-list-item.is-current button {
+   border-color: var(--border-focus);
+   background-color: var(--accent-light);
+}
+
+.diary-list-date {
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: var(--text-muted);
+}
+
+.diary-list-text {
+   font-size: 1.4rem;
+   white-space: pre-wrap;
+   word-break: break-all;
 }

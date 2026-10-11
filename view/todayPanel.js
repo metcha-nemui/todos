@@ -1,5 +1,5 @@
 // view/todayPanel.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
-import { getTodayDateString, shiftDateString } from '../lib/date.js';
+import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../lib/date.js';
 import { copyToClipboard } from './clipboard.js';
 import { bindPiPButton } from './pip.js';
 import { renderTaskList } from './taskList.js';
@@ -106,13 +106,13 @@ export class TodayPanel {
 
    bindCopyButtons(getTodos, getDones) {
       this.btnCopyTodo.addEventListener('click', () => {
-         const date = formatDate(this._currentDate) + "\n";
+         const date = formatDateWithWeekday(this._currentDate) + "\n";
          const md   = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
          copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
       });
 
       this.btnCopyDone.addEventListener('click', () => {
-         const date = formatDate(this._currentDate) + "\n";
+         const date = formatDateWithWeekday(this._currentDate) + "\n";
          const md   = getDones().map(t => `- [x] ${t.title}`).join('\n');
          copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
       });
@@ -121,14 +121,4 @@ export class TodayPanel {
    bindPiPButton(getTodos) {
       bindPiPButton(this.btnPiP, getTodos);
    }
-}
-
-function formatDate(dateString) {
-   const date = new Date(dateString);
-   const formatter = new Intl.DateTimeFormat('ja-JP', {
-      month: '2-digit',
-      day:   '2-digit',
-      weekday: 'short'
-   });
-   return formatter.format(date).replace(/\s+/g, '');
 }

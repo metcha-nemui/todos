@@ -56,7 +56,7 @@
                      <summary class="backlog-title">
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
-                        <button id="btn-copy-done" class="secondary btn-copy"><i data-lucide="copy"></i></button>
+                        <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
                      </summary>
                      <form class="todo-input-form" id="form-add-done">
                         <div class="autocomplete-wrapper">
@@ -73,7 +73,7 @@
                      <summary class="backlog-title">
                         <span>ToDo</span>
                         <span id="list-count-todo" class="list-count"></span>
-                        <button id="btn-copy-todo" class="secondary btn-copy"><i data-lucide="copy"></i></button>
+                        <button id="btn-copy-todo" class="secondary summary-btn"><i data-lucide="copy"></i></button>
                         <button id="btn-pip">PiP</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-todo">
@@ -93,7 +93,10 @@
                
                <div>
                   <details id="details-diary" class="collapse">
-                     <summary class="backlog-title">Diary</summary>
+                     <summary class="backlog-title">
+                        <span>Diary</span>
+                        <button type="button" id="btn-diary-list" class="secondary summary-btn" title="過去の日記" aria-label="過去の日記"><i data-lucide="list"></i></button>
+                     </summary>
                      <div class="diary-content">
                         <textarea id="input-diary"></textarea>
                         <div class="diary-count">
@@ -140,8 +143,8 @@
    
    <!-- サジェスト候補の登録画面 (動作は view/templateModal.js) -->
    <div id="template-modal" class="modal" hidden>
-      <div class="template-modal" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
-         <div class="template-modal-header">
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
+         <div class="modal-header">
             <h2 id="template-modal-title">サジェスト候補</h2>
             <button type="button" id="btn-template-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
          </div>
@@ -149,8 +152,20 @@
             <input type="text" id="input-template-name" placeholder="新しい候補を入力..." autocomplete="off" required>
             <button type="submit">追加</button>
          </form>
-         <ul class="template-list" id="list-template"></ul>
-         <p class="template-empty" id="template-empty" hidden>候補はまだありません</p>
+         <ul class="modal-list" id="list-template"></ul>
+         <p class="empty-text" id="template-empty" hidden>候補はまだありません</p>
+      </div>
+   </div>
+
+   <!-- 過去の日記の一覧 (動作は view/diaryListModal.js) -->
+   <div id="diary-list-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="diary-list-modal-title">
+         <div class="modal-header">
+            <h2 id="diary-list-modal-title">過去の日記</h2>
+            <button type="button" id="btn-diary-list-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <ul class="modal-list" id="list-diary"></ul>
+         <p class="empty-text" id="diary-list-empty" hidden>日記はまだありません</p>
       </div>
    </div>
 

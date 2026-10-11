@@ -3,6 +3,7 @@ import { TodayPanel } from './view/todayPanel.js';
 import { DiaryPanel } from './view/diaryPanel.js';
 import { BacklogPanel } from './view/backlogPanel.js';
 import { TemplateModal } from './view/templateModal.js';
+import { DiaryListModal } from './view/diaryListModal.js';
 import { StatusBanner } from './view/statusBanner.js';
 import { setupCustomSuggest } from './view/suggest.js';
 import { bindDragAndDrop } from './view/dragSort.js';
@@ -15,6 +16,7 @@ export class TodoView {
       this.diaryPanel   = new DiaryPanel();
       this.backlogPanel = new BacklogPanel();
       this.templateModal = new TemplateModal();
+      this.diaryListModal = new DiaryListModal();
       this.statusBanner  = new StatusBanner();
 
       this.taskTemplatesData = [];
@@ -38,7 +40,12 @@ export class TodoView {
    renderDiary(data) {
       this.diaryPanel.render(data);
    }
-   
+
+   // 過去の日記の一覧 (モーダル) の描き直し
+   renderDiaryList(data) {
+      this.diaryListModal.render(data);
+   }
+
    renderBacklog(data) {
       this.backlogPanel.render(data);
       this._afterRender();
@@ -125,6 +132,15 @@ export class TodoView {
 
    bindUpdateDiary(handler) {
       this.diaryPanel.bindUpdateDiary(handler);
+   }
+
+   // 過去の日記の一覧。日記を選ぶと onSelect にその日付が渡る
+   bindDiaryList(onSelect) {
+      this.diaryPanel.bindOpenList(() => this.diaryListModal.open());
+      this.diaryListModal.bindSelect((date) => {
+         this.backlogPanel.resetInputDate();
+         onSelect(date);
+      });
    }
 
    // handlers: { onAdd, onRename, onDelete }

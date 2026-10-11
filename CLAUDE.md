@@ -9,6 +9,8 @@
    - `view/todayPanel.js` / `diaryPanel.js` / `backlogPanel.js` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
    - `view/taskList.js` — タスク行の描画と行内アクション。
    - `view/templateModal.js` — サジェスト候補の登録画面 (モーダル)。
+   - `view/diaryListModal.js` — 過去の日記の一覧 (モーダル)。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
+   - `view/modal.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。`view/html.js` — HTML 文字列のヘルパ (`escapeHtml` / `parseHtml`)。
    - `view/statusBanner.js` — 画面上部の通知 (オフライン / 読み込み失敗)。
    - `view/configModal.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
    - `view/dragSort.js` / `suggest.js` / `clipboard.js` / `pip.js` / `detailsState.js` — 独立した UI 部品。
@@ -24,6 +26,7 @@
 ## コード規約
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
+- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list`、空のときの案内文 `.empty-text`、見出し内のボタン `.summary-btn`)。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。

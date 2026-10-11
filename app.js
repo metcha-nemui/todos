@@ -5,9 +5,9 @@ import { TodoView  } from './view.js';
 // Modelの変更種別 → 描き直す対象
 const RENDER_TARGETS = {
    todos:     ['today', 'backlog'],
-   diaries:   ['diary'],
+   diaries:   ['diary', 'diaryList'],
    templates: ['templates'],
-   date:      ['today', 'diary', 'backlog'],
+   date:      ['today', 'diary', 'backlog', 'diaryList'],
    status:    ['status'],
 };
 
@@ -58,7 +58,14 @@ class TodoPresenter {
       this.view.bindPiPButton(() => this.model.getTodayTodos());
       
       // Diary編集
-      this.view.bindUpdateDiary((date, content) => this.model.updateDiary(date, content));
+      // Modelは入力中の本文を消さないよう変更を通知しないので、一覧だけここで描き直す
+      this.view.bindUpdateDiary(async (date, content) => {
+         await this.model.updateDiary(date, content);
+         this.renderDiaryList();
+      });
+
+      // 過去の日記の一覧 (選んだ日付へ移動)
+      this.view.bindDiaryList((date) => this.model.setCurrentDate(date));
 
       // サジェスト候補の登録画面
       this.view.bindTemplateActions({
@@ -74,7 +81,14 @@ class TodoPresenter {
       if (this.view.isEditing()) return;
       this.model.reload();
    }
-   
+
+   renderDiaryList() {
+      this.view.renderDiaryList({
+         currentDate: this.model.currentDate,
+         diaries:     this.model.getDiariesSorted(),
+      });
+   }
+
    // 変更の種別に応じて、該当する対象だけ描き直す
    updateView(kind) {
       const model = this.model;
@@ -88,6 +102,7 @@ class TodoPresenter {
             currentDate: model.currentDate,
             diary:       model.getTodayDiary(),
          }),
+         diaryList: () => this.renderDiaryList(),
          backlog: () => this.view.renderBacklog({
             tomorrowDate: model.tomorrowDate,
             groupedTasks: model.getBacklogTodosGrouped(),

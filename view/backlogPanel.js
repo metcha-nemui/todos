@@ -1,5 +1,6 @@
 // view/backlogPanel.js - 「今後のタスク」パネル
 import { renderTaskList } from './taskList.js';
+import { parseHtml } from './html.js';
 
 export class BacklogPanel {
    constructor() {
@@ -31,7 +32,7 @@ export class BacklogPanel {
 
       this.containerBacklogTasks.innerHTML = '';
       if (Object.keys(groupedTasks).length === 0) {
-         this.containerBacklogTasks.innerHTML = '<p class="backlog-empty">今後のタスク予定はありません</p>';
+         this.containerBacklogTasks.innerHTML = '<p class="empty-text">今後のタスク予定はありません</p>';
          return;
       }
 
@@ -67,10 +68,4 @@ export class BacklogPanel {
          }
       });
    }
-}
-
-function parseHtml(htmlString) {
-   const template = document.createElement('template');
-   template.innerHTML = htmlString.trim();
-   return template.content.firstElementChild;
 }

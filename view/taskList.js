@@ -1,5 +1,6 @@
 // view/taskList.js - タスク行の描画と行内アクション
 import { copyToClipboard } from './clipboard.js';
+import { escapeHtml } from './html.js';
 
 export function renderTaskList(element, tasks, isDone, showDateChanger = false) {
    element.innerHTML = '';
@@ -146,8 +147,4 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
          }
       });
    });
-}
-
-export function escapeHtml(str) {
-   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
