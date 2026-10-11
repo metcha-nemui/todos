@@ -15,6 +15,9 @@
 </head>
 <body>
    <div class="container">
+      <div class="app-toolbar">
+         <button type="button" id="btn-settings" class="secondary" title="サジェスト候補の編集" aria-label="サジェスト候補の編集"><i data-lucide="settings"></i></button>
+      </div>
       <!-- 今日ビュー -->
       <div id="view-today">
          <div class="main-layout">
@@ -116,6 +119,22 @@
       </div>
    </div>
    
+   <!-- サジェスト候補の登録画面 (動作は view/templateModal.js) -->
+   <div id="template-modal" class="modal" hidden>
+      <div class="template-modal" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
+         <div class="template-modal-header">
+            <h2 id="template-modal-title">サジェスト候補</h2>
+            <button type="button" id="btn-template-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <form class="todo-input-form" id="form-add-template">
+            <input type="text" id="input-template-name" placeholder="新しい候補を入力..." autocomplete="off" required>
+            <button type="submit">追加</button>
+         </form>
+         <ul class="template-list" id="list-template"></ul>
+         <p class="template-empty" id="template-empty" hidden>候補はまだありません</p>
+      </div>
+   </div>
+
    <!-- PiP (スタイルは pip.css、動作は view/pip.js) -->
    <template id="pip-content">
       <div id="wrapper" class="wrapper"></div>

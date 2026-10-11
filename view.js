@@ -2,6 +2,7 @@
 import { TodayPanel } from './view/todayPanel.js';
 import { DiaryPanel } from './view/diaryPanel.js';
 import { BacklogPanel } from './view/backlogPanel.js';
+import { TemplateModal } from './view/templateModal.js';
 import { setupCustomSuggest } from './view/suggest.js';
 import { bindDragAndDrop } from './view/dragSort.js';
 import { bindTaskActions } from './view/taskList.js';
@@ -12,6 +13,7 @@ export class TodoView {
       this.todayPanel   = new TodayPanel();
       this.diaryPanel   = new DiaryPanel();
       this.backlogPanel = new BacklogPanel();
+      this.templateModal = new TemplateModal();
 
       this.taskTemplatesData = [];
 
@@ -20,7 +22,8 @@ export class TodoView {
       // カスタムサジェスト制御
       setupCustomSuggest(
          [...this.todayPanel.suggestTargets, ...this.backlogPanel.suggestTargets],
-         () => this.taskTemplatesData
+         () => this.taskTemplatesData,
+         () => this.templateModal.open()
       );
    }
 
@@ -39,9 +42,10 @@ export class TodoView {
       this._afterRender();
    }
    
-   // サジェスト用のテンプレート保持
+   // サジェスト用のテンプレート保持と、登録画面の一覧の描き直し
    setTemplates(templates) {
       this.taskTemplatesData = templates || [];
+      this.templateModal.render(this.taskTemplatesData);
    }
    
    // 描画後の共通処理
@@ -91,6 +95,13 @@ export class TodoView {
 
    bindUpdateDiary(handler) {
       this.diaryPanel.bindUpdateDiary(handler);
+   }
+
+   // handlers: { onAdd, onRename, onDelete }
+   bindTemplateActions({ onAdd, onRename, onDelete }) {
+      this.templateModal.bindAdd(onAdd);
+      this.templateModal.bindRename(onRename);
+      this.templateModal.bindDelete(onDelete);
    }
 
    showError(message) {

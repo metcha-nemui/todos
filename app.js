@@ -51,6 +51,13 @@ class TodoPresenter {
       
       // Diary編集
       this.view.bindUpdateDiary((date, content) => this.model.updateDiary(date, content));
+
+      // サジェスト候補の登録画面
+      this.view.bindTemplateActions({
+         onAdd:    (name) => this.model.addTemplate(name),
+         onRename: (oldName, newName) => this.model.renameTemplate(oldName, newName),
+         onDelete: (name) => this.model.deleteTemplate(name),
+      });
    }
    
    // 変更の種別に応じて、該当する対象だけ描き直す
