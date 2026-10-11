@@ -1,0 +1,97 @@
+/* Picture-in-Picture ウィンドウ用スタイル (view/pip.js が読み込む) */
+:root {
+   --background: oklch(13% 0.028 261.692);
+}
+
+[hidden] {
+   display: none !important;
+}
+
+html {
+   height: 100%;
+}
+
+body {
+   display: flex;
+   flex-direction: column;
+   margin: 0;
+   height: 100%;
+   color: white;
+   font-size: 14px;
+   background: var(--background);
+}
+
+.wrapper {
+   width: 100%;
+   flex-grow: 1;
+}
+
+.task {
+   padding: 0.5em;
+   border-bottom: 1px solid oklch(27.8% 0.033 256.848);
+   box-sizing: border-box;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   position: relative;
+}
+
+.task:nth-child(2n) {
+   background: oklch(21% 0.034 264.665);
+}
+
+.task .delete {
+   display: none;
+   position: absolute;
+   right: 0;
+   background: inherit;
+   padding-inline: 0.5em;
+   cursor: pointer;
+}
+
+.task .delete svg {
+   width: 16px;
+   height: 16px;
+}
+
+.wrapper:not(.is-running) .task:hover .delete {
+   display: revert;
+}
+
+.task.is-active {
+   background: linear-gradient(
+      to bottom,
+      oklch(54.6% 0.245 262.881),
+      oklch(37.9% 0.146 265.522)
+   );
+}
+
+.footer {
+   text-align: right;
+   padding-inline: 0.5em;
+}
+
+.timer {
+   font-size: 60px;
+   font-weight: bold;
+   font-family: "Calibri", sans-serif;
+   background: linear-gradient(to bottom, white, oklch(70.7% 0.022 261.325));
+   background-clip: text;
+   color: transparent;
+}
+
+.timer.is-active {
+   background: linear-gradient(to bottom, oklch(87.1% 0.15 154.449), oklch(72.3% 0.219 149.579));
+   background-clip: text;
+   color: transparent;
+}
+
+.timer.is-end {
+   background: linear-gradient(to bottom, oklch(80.9% 0.105 251.813), oklch(62.3% 0.214 259.815));
+   background-clip: text;
+   color: transparent;
+}
+
+.sec {
+   font-size: 45px;
+}
