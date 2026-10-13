@@ -302,6 +302,14 @@ export class TodoModel {
          .filter(t => t.due_date === this.currentDate && t.is_done)
          .sort((a, b) => a.sort_order - b.sort_order);
    }
+   // 日付ごとの Done の件数を { 'YYYY-MM-DD': 件数 } で返す
+   getDoneCountsByDate() {
+      const counts = {};
+      this.todos.forEach(t => {
+         if (t.is_done && t.due_date) counts[t.due_date] = (counts[t.due_date] || 0) + 1;
+      });
+      return counts;
+   }
    getBacklogTodosGrouped() {
       const noDateTasks = this.todos.filter(t => !t.due_date && !t.is_done);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate && !t.is_done);

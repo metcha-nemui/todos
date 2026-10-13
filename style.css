@@ -22,6 +22,13 @@
    
    --border: #e2e8f0;
    --border-focus: #6366f1;
+
+   /* ヒートマップの濃さ (0件 → 多い) */
+   --heat-0: #ebedf0;
+   --heat-1: #9be9a8;
+   --heat-2: #40c463;
+   --heat-3: #30a14e;
+   --heat-4: #216e39;
    
    /* System Values */
    --radius-sm: 6px;
@@ -785,6 +792,11 @@ summary.collapse-title {
    }
 }
 
+/* 横に広い内容を載せるときの枠 */
+.modal-dialog-wide {
+   max-width: 960px;
+}
+
 .modal-header {
    display: flex;
    justify-content: space-between;
@@ -867,6 +879,77 @@ summary.collapse-title {
 @keyframes fadeIn {
    from { opacity: 0; }
    to { opacity: 1; }
+}
+
+/* 日ごとの Done 件数のヒートマップ (モーダル内) */
+
+/* 月ごとのかたまりを横に並べる。幅が足りなければ折り返し、縦にあふれたらここだけスクロールさせる */
+.heatmap-months {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 14px 10px;
+   padding: 2px;
+   overflow-y: auto;
+   min-height: 0;
+}
+
+.heatmap-month-label {
+   margin-bottom: 4px;
+   font-size: 1.1rem;
+   font-weight: 600;
+   color: var(--text-muted);
+   white-space: nowrap;
+}
+
+/* 列が週、行が曜日 (日〜土) */
+.heatmap-grid {
+   display: grid;
+   grid-template-rows: repeat(7, 10px);
+   grid-auto-columns: 10px;
+   grid-auto-flow: column;
+   gap: 2px;
+}
+
+/* 1マス (一覧では button、凡例では span) */
+.heatmap-cell {
+   --heat-color: var(--heat-0);
+   width: 10px;
+   height: 10px;
+   padding: 0;
+   border-radius: 2px;
+   background-color: var(--heat-color);
+
+   &[data-level="1"] { --heat-color: var(--heat-1); }
+   &[data-level="2"] { --heat-color: var(--heat-2); }
+   &[data-level="3"] { --heat-color: var(--heat-3); }
+   &[data-level="4"] { --heat-color: var(--heat-4); }
+
+   &:hover {
+      background-color: var(--heat-color);
+   }
+
+   button&:hover,
+   &.is-current {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 1px;
+   }
+}
+
+.heatmap-footer {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: 6px 12px;
+   margin-top: 16px;
+   font-size: 1.2rem;
+   color: var(--text-muted);
+}
+
+.heatmap-legend {
+   display: flex;
+   align-items: center;
+   gap: 3px;
 }
 
 /* ==========================================================================

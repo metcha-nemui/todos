@@ -4,10 +4,10 @@ import { TodoView  } from './view.js';
 
 // Modelの変更種別 → 描き直す対象
 const RENDER_TARGETS = {
-   todos:     ['today', 'backlog'],
+   todos:     ['today', 'backlog', 'heatmap'],
    diaries:   ['diary', 'diaryList'],
    templates: ['templates'],
-   date:      ['today', 'diary', 'backlog', 'diaryList'],
+   date:      ['today', 'diary', 'backlog', 'diaryList', 'heatmap'],
    status:    ['status'],
 };
 
@@ -67,6 +67,9 @@ class TodoPresenter {
       // 過去の日記の一覧 (選んだ日付へ移動)
       this.view.bindDiaryList((date) => this.model.setCurrentDate(date));
 
+      // Done 件数のヒートマップ (選んだ日付へ移動)
+      this.view.bindHeatmap((date) => this.model.setCurrentDate(date));
+
       // サジェスト候補の登録画面
       this.view.bindTemplateActions({
          onAdd:    (name) => this.model.addTemplate(name),
@@ -106,6 +109,10 @@ class TodoPresenter {
          backlog: () => this.view.renderBacklog({
             tomorrowDate: model.tomorrowDate,
             groupedTasks: model.getBacklogTodosGrouped(),
+         }),
+         heatmap: () => this.view.renderHeatmap({
+            currentDate: model.currentDate,
+            counts:      model.getDoneCountsByDate(),
          }),
          templates: () => this.view.setTemplates(model.getTaskTemplates()),
          status: () => this.view.renderStatus({ loadFailed: model.loadFailed }),

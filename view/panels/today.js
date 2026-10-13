@@ -28,6 +28,7 @@ export class TodayPanel {
       this.CountTodo = document.getElementById('list-count-todo');
       this.CountDone = document.getElementById('list-count-done');
       this.btnPiP    = document.getElementById('btn-pip');
+      this.btnHeatmap = document.getElementById('btn-heatmap');
 
       // サジェストを付ける入力欄
       this.suggestTargets = [
@@ -116,6 +117,11 @@ export class TodayPanel {
          const md   = getDones().map(t => `- [x] ${t.title}`).join('\n');
          copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
       });
+   }
+
+   // Done 件数のヒートマップを開くボタン
+   bindOpenHeatmap(handler) {
+      this.btnHeatmap.addEventListener('click', () => handler());
    }
 
    bindPiPButton(getTodos) {

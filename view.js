@@ -4,6 +4,7 @@ import { DiaryPanel } from './view/panels/diary.js';
 import { BacklogPanel } from './view/panels/backlog.js';
 import { TemplateModal } from './view/modals/template.js';
 import { DiaryListModal } from './view/modals/diaryList.js';
+import { HeatmapModal } from './view/modals/heatmap.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
 import { bindDragAndDrop } from './view/parts/dragSort.js';
@@ -17,6 +18,7 @@ export class TodoView {
       this.backlogPanel = new BacklogPanel();
       this.templateModal = new TemplateModal();
       this.diaryListModal = new DiaryListModal();
+      this.heatmapModal = new HeatmapModal();
       this.statusBanner  = new StatusBanner();
 
       this.taskTemplatesData = [];
@@ -44,6 +46,11 @@ export class TodoView {
    // 過去の日記の一覧 (モーダル) の描き直し
    renderDiaryList(data) {
       this.diaryListModal.render(data);
+   }
+
+   // Done 件数のヒートマップ (モーダル) の描き直し
+   renderHeatmap(data) {
+      this.heatmapModal.render(data);
    }
 
    renderBacklog(data) {
@@ -138,6 +145,15 @@ export class TodoView {
    bindDiaryList(onSelect) {
       this.diaryPanel.bindOpenList(() => this.diaryListModal.open());
       this.diaryListModal.bindSelect((date) => {
+         this.backlogPanel.resetInputDate();
+         onSelect(date);
+      });
+   }
+
+   // Done 件数のヒートマップ。マスを選ぶと onSelect にその日付が渡る
+   bindHeatmap(onSelect) {
+      this.todayPanel.bindOpenHeatmap(() => this.heatmapModal.open());
+      this.heatmapModal.bindSelect((date) => {
          this.backlogPanel.resetInputDate();
          onSelect(date);
       });

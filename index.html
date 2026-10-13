@@ -57,6 +57,7 @@
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
                         <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
+                        <button type="button" id="btn-heatmap" class="summary-action"><i data-lucide="sprout"></i>草</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-done">
                         <div class="autocomplete-wrapper">
@@ -166,6 +167,29 @@
          </div>
          <ul class="modal-list" id="list-diary"></ul>
          <p class="empty-text" id="diary-list-empty" hidden>日記はまだありません</p>
+      </div>
+   </div>
+
+   <!-- 日ごとの Done 件数のヒートマップ (動作は view/modals/heatmap.js) -->
+   <div id="heatmap-modal" class="modal" hidden>
+      <div class="modal-dialog modal-dialog-wide" role="dialog" aria-modal="true" aria-labelledby="heatmap-modal-title">
+         <div class="modal-header">
+            <h2 id="heatmap-modal-title">Done の記録</h2>
+            <button type="button" id="btn-heatmap-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <div class="heatmap-months" id="heatmap-months"></div>
+         <div class="heatmap-footer">
+            <span id="heatmap-total"></span>
+            <span class="heatmap-legend">
+               少
+               <span class="heatmap-cell" data-level="0"></span>
+               <span class="heatmap-cell" data-level="1"></span>
+               <span class="heatmap-cell" data-level="2"></span>
+               <span class="heatmap-cell" data-level="3"></span>
+               <span class="heatmap-cell" data-level="4"></span>
+               多
+            </span>
+         </div>
       </div>
    </div>
 
