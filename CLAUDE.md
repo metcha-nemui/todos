@@ -12,7 +12,7 @@
    - `view/modals/` — モーダル。
       - `template.js` — サジェスト候補の登録画面。
       - `diaryList.js` — 過去の日記の一覧。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
-      - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、月ごとに区切る)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
+      - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、月ごとに区切り、記録のない月は省く)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
    - `view/parts/` — パネルやモーダルから使う UI 部品。対象の要素は引数で受け取る。

@@ -21,6 +21,7 @@ export class HeatmapModal {
       this.btnClose = document.getElementById('btn-heatmap-close');
       this.months   = document.getElementById('heatmap-months');
       this.total    = document.getElementById('heatmap-total');
+      this.emptyText = document.getElementById('heatmap-empty');
 
       this.btnClose.addEventListener('click', () => this.close());
       bindModalClose(this.modal, () => this.close());
@@ -51,18 +52,22 @@ export class HeatmapModal {
          for (let date = first; date < next && date <= today; date = shiftDateString(date, 1)) {
             dates.push(date);
          }
-         months.push({ first, dates });
+         // 1件も記録のない月は載せない
+         if (dates.some(date => counts[date] > 0)) months.push({ first, dates });
       }
+      this.emptyText.hidden = months.length > 0;
 
       const shownCounts = months.flatMap(m => m.dates.map(date => counts[date] || 0));
       const levelOf = createLevelOf(shownCounts);
       this.total.textContent = `直近${MONTH_COUNT}か月で ${shownCounts.reduce((sum, c) => sum + c, 0)} 件`;
 
       this.months.innerHTML = '';
-      months.forEach(({ first, dates }, index) => {
-         // 年は先頭の月と1月にだけ付ける
+      let year = null;
+      months.forEach(({ first, dates }) => {
+         // 年は、年が変わった最初の月にだけ付ける
          const [yyyy, mm] = first.split('-').map(Number);
-         const label = (index === 0 || mm === 1) ? `${yyyy}年${mm}月` : `${mm}月`;
+         const label = (yyyy !== year) ? `${yyyy}年${mm}月` : `${mm}月`;
+         year = yyyy;
 
          // 1日の曜日まで空きマスで埋める (列が週、行が曜日)
          const pads = '<span class="heatmap-pad"></span>'.repeat(getWeekdayIndex(first));
