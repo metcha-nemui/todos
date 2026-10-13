@@ -119,6 +119,10 @@ export class TodayPanel {
    }
 
    bindPiPButton(getTodos) {
-      bindPiPButton(this.btnPiP, getTodos);
+      // 折りたたみ中は、画面に見えている分だけを渡す
+      bindPiPButton(this.btnPiP, () => {
+         const todos = getTodos();
+         return this._todoIsEllipsis ? todos.slice(0, ELLIPSIS_VISIBLE_COUNT) : todos;
+      });
    }
 }
