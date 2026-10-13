@@ -40,16 +40,16 @@ export class SplitModal {
       });
    }
 
-   // 1行目に元のタスク名を入れ、2行目から入力を始められるようにする
+   // 元のタスク名は見出しの下に表示するだけにし、入力は空の2行から始める
    open({ id, title }) {
       this._id = id;
       this.source.textContent = `元のタスク: ${title}`;
       this.list.innerHTML = '';
-      this._addRow(title);
-      const second = this._addRow();
+      const first = this._addRow();
+      this._addRow();
 
       this.modal.hidden = false;
-      second.focus();
+      first.focus();
    }
 
    close() {
