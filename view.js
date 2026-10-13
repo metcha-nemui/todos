@@ -5,6 +5,7 @@ import { BacklogPanel } from './view/panels/backlog.js';
 import { TemplateModal } from './view/modals/template.js';
 import { DiaryListModal } from './view/modals/diaryList.js';
 import { HeatmapModal } from './view/modals/heatmap.js';
+import { SplitModal } from './view/modals/split.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
 import { bindDragAndDrop } from './view/parts/dragSort.js';
@@ -19,6 +20,7 @@ export class TodoView {
       this.templateModal = new TemplateModal();
       this.diaryListModal = new DiaryListModal();
       this.heatmapModal = new HeatmapModal();
+      this.splitModal = new SplitModal();
       this.statusBanner  = new StatusBanner();
 
       this.taskTemplatesData = [];
@@ -118,7 +120,15 @@ export class TodoView {
    // handlers: { onToggle, onDelete, onEdit, onChangeDate }
    bindTaskActions(handlers) {
       const lists = [this.todayPanel.listTodo, this.todayPanel.listDone, this.backlogPanel.containerBacklogTasks];
-      bindTaskActions(lists, handlers);
+      bindTaskActions(lists, {
+         ...handlers,
+         onSplit: (id, title) => this.splitModal.open({ id, title }),
+      });
+   }
+
+   // タスクの分割画面。OK で handler に (元タスクの id, 分割後のタスク名の配列) が渡る
+   bindSplitTodo(handler) {
+      this.splitModal.bindSubmit(handler);
    }
 
    bindDragAndDrop(handleSortUpdate) {

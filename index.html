@@ -158,6 +158,25 @@
       </div>
    </div>
 
+   <!-- タスクの分割画面 (動作は view/modals/split.js) -->
+   <div id="split-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="split-modal-title">
+         <div class="modal-header">
+            <h2 id="split-modal-title">タスクを分割</h2>
+            <button type="button" id="btn-split-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <p class="split-source" id="split-source"></p>
+         <form class="split-form" id="form-split">
+            <ul class="modal-list" id="list-split"></ul>
+            <button type="button" id="btn-split-add-row" class="secondary split-add-row"><i data-lucide="plus"></i>行を追加</button>
+            <div class="modal-footer">
+               <button type="button" id="btn-split-cancel" class="secondary">キャンセル</button>
+               <button type="submit">OK</button>
+            </div>
+         </form>
+      </div>
+   </div>
+
    <!-- 過去の日記の一覧 (動作は view/modals/diaryList.js) -->
    <div id="diary-list-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="diary-list-modal-title">

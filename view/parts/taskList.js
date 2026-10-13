@@ -25,6 +25,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
                         <i data-lucide="calendar-days"></i>
                      </button>
                   ` : ''}
+                  ${isDone ? '' : `<button class="split-btn secondary" title="分割"><i data-lucide="split"></i></button>`}
                   <button class="edit-btn secondary"><i data-lucide="pencil"></i></button>
                   <button class="delete-btn danger"><i data-lucide="trash-2"></i></button>
                </div>
@@ -38,6 +39,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
                            <i data-lucide="calendar-days"></i> 日付変更
                         </button>`
                      : ''}
+                     ${isDone ? '' : `<button class="split-btn secondary"><i data-lucide="split"></i> 分割</button>`}
                      <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
                      <button class="delete-btn danger"><i data-lucide="trash-2"></i> 削除</button>
                   </div>
@@ -56,7 +58,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
 }
 
 // lists: タスク行 (.task-item) を内包する要素群。イベント委譲で処理する
-export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDate }) {
+export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDate, onSplit }) {
    lists.forEach(listContainer => {
       if(!listContainer) return;
 
@@ -99,6 +101,9 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                   e.stopPropagation();
                   e.target.showPicker();
                }
+            },
+            'split-btn'   : () => {
+               onSplit(id, li.querySelector('.task-title-text').textContent);
             },
             'edit-btn'    : () => {
                li.classList.add('is-editing');

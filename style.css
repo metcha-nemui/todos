@@ -820,6 +820,14 @@ summary.collapse-title {
    min-height: 0;
 }
 
+/* モーダル下端のボタン行 (キャンセル / 確定) */
+.modal-footer {
+   display: flex;
+   justify-content: flex-end;
+   gap: 8px;
+   margin-top: 16px;
+}
+
 /* サジェスト候補の登録画面 */
 
 /* 表示モード / 編集モード (編集中は .template-item に .is-editing が付く) */
@@ -874,6 +882,49 @@ summary.collapse-title {
       border-radius: 4px;
       font-size: 1.4rem;
    }
+}
+
+/* タスクの分割画面 */
+.split-source {
+   margin-bottom: 12px;
+   font-size: 1.3rem;
+   color: var(--text-muted);
+   word-break: break-all;
+}
+
+/* 行の一覧だけをスクロールさせる */
+.split-form {
+   display: flex;
+   flex-direction: column;
+   min-height: 0;
+}
+
+.split-row {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+
+   input[type="text"] {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-input);
+      font-size: 1.4rem;
+      color: var(--text-main);
+
+      &:focus {
+         outline: none;
+         border-color: var(--border-focus);
+         background-color: var(--bg-card);
+      }
+   }
+}
+
+.split-add-row {
+   align-self: flex-start;
+   margin-top: 8px;
 }
 
 @keyframes fadeIn {

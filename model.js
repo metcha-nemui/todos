@@ -189,6 +189,62 @@ export class TodoModel {
       this._commit('todos');
    }
    
+   // タスクを titles の各タスクに分割し、元タスクのあった位置に並べる
+   // 追加 → 元タスクの削除 → 並び順の振り直し の順に書き込む (途中で失敗しても元タスクは失われない)
+   async splitTodo(id, titles) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const todo = this.todos.find(t => t.id === id);
+      if (!todo || titles.length === 0) return;
+
+      // 元タスクと同じリストに並ぶタスク群
+      const group = this.todos
+         .filter(t => t.due_date === todo.due_date && !!t.is_done === !!todo.is_done)
+         .sort((a, b) => a.sort_order - b.sort_order);
+      const position = group.findIndex(t => t.id === id);
+
+      const createdAt = new Date().toISOString();
+      const { data, error } = await todoTable.insertTodos(titles.map((title, i) => ({
+         title: title,
+         is_done: todo.is_done,
+         due_date: todo.due_date,
+         done_at: todo.done_at,
+         created_at: createdAt,
+         sort_order: position + i,
+      })));
+      if (error) return this._fail('タスクの分割', error);
+
+      this.todos.push(...data);
+
+      const deleted = await todoTable.deleteTodo(id);
+      if (deleted.error) return this._fail('タスクの分割', deleted.error);
+
+      this.todos = this.todos.filter(t => t.id !== id);
+
+      // 元タスクより後ろは、分割で増えた分だけ後ろへずらす
+      const targets = group
+         .filter(t => t.id !== id)
+         .map((t, i) => ({ id: t.id, from: t.sort_order, index: i < position ? i : i + titles.length }))
+         .filter(({ from, index }) => from !== index);
+
+      const results = await Promise.all(
+         targets.map(({ id, index }) => todoTable.updateTodo(id, { sort_order: index }))
+      );
+
+      // 一部だけ失敗した場合も、成功した分はDBと揃える
+      const newOrders = new Map();
+      results.forEach((res, i) => {
+         if (!res.error) newOrders.set(targets[i].id, targets[i].index);
+      });
+      this.todos = this.todos.map(t =>
+         newOrders.has(t.id) ? { ...t, sort_order: newOrders.get(t.id) } : t
+      );
+
+      const failed = results.find(res => res.error);
+      if (failed) return this._fail('並び替えの保存', failed.error);
+
+      this._commit('todos');
+   }
+
    async updateSortOrder(orderedIds) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targets = orderedIds

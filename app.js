@@ -45,6 +45,9 @@ class TodoPresenter {
          onChangeDate: (id, date) => this.model.changeTodoDate(id, date),
       });
       
+      // タスクの分割 (元タスクを分割後のタスク群に置き換える)
+      this.view.bindSplitTodo((id, titles) => this.model.splitTodo(id, titles));
+
       // ドラッグ＆ドロップによる並び替え順序の同期
       this.view.bindDragAndDrop((orderedIds) => this.model.updateSortOrder(orderedIds));
       

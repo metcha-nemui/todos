@@ -37,6 +37,18 @@ export async function insertTodo(todo) {
    return { data: inserted, error: null };
 }
 
-export const updateTodo = (id, fields) => supabase.from('todos').update(fields).eq('id', id);
+// 複数のタスクを1リクエストで追加し、追加されたタスクの配列を data で返す
+export async function insertTodos(todos) {
+   const { data, error } = await supabase
+      .from('todos')
+      .insert(todos)
+      .select();
+
+   if (error) return { data: null, error };
+
+   return { data: (data || []).map(rowToTodo), error: null };
+}
+
+export const updateTodo =(id, fields) => supabase.from('todos').update(fields).eq('id', id);
 
 export const deleteTodo = (id) => supabase.from('todos').delete().eq('id', id);
