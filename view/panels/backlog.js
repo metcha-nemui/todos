@@ -41,7 +41,10 @@ export class BacklogPanel {
 
          const details = parseHtml(
             `<details ${isNoDate ? `id="details-nodate"` : ""} class="collapse" open>
-               <summary class="collapse-title">${date}</summary>
+               <summary class="collapse-title">
+                  <span>${date}</span>
+                  <span class="list-count">${tasks.length}</span>
+               </summary>
                <ul class="task-list"></ul>
             </details>`
          );

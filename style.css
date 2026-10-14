@@ -188,6 +188,18 @@ body {
       margin-left: 0;
       margin-right: 0;
       flex-wrap: wrap;
+
+      /* スマホ幅では入力欄を1段で使い、日付と追加ボタンは次の段へ */
+      @media (max-width: 768px) {
+         .autocomplete-wrapper {
+            flex-basis: 100%;
+         }
+
+         input[type="date"] {
+            flex: 1;
+            padding: 8px 10px;
+         }
+      }
    }
 
    input[type="text"] {
