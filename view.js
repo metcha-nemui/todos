@@ -6,6 +6,7 @@ import { TemplateModal } from './view/modals/template.js';
 import { DiaryListModal } from './view/modals/diaryList.js';
 import { HeatmapModal } from './view/modals/heatmap.js';
 import { DoneSearchModal } from './view/modals/doneSearch.js';
+import { ExportModal } from './view/modals/export.js';
 import { SplitModal } from './view/modals/split.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
@@ -22,6 +23,8 @@ export class TodoView {
       this.diaryListModal = new DiaryListModal();
       this.heatmapModal = new HeatmapModal();
       this.doneSearchModal = new DoneSearchModal();
+      this.exportModal = new ExportModal();
+      this.btnExport = document.getElementById('btn-export');
       this.splitModal = new SplitModal();
       this.statusBanner  = new StatusBanner();
 
@@ -179,6 +182,13 @@ export class TodoView {
          this.backlogPanel.resetInputDate();
          onSelect(date);
       });
+   }
+
+   // 月ごとのタスクの Markdown 出力。getTasks は月 ('YYYY-MM') からその月の { date, dones, todos } の配列を返す
+   // getCurrentDate は開いたときに表示する月の基準 (表示中の日付)
+   bindExport(getTasks, getCurrentDate) {
+      this.exportModal.bindGetTasks(getTasks);
+      this.btnExport.addEventListener('click', () => this.exportModal.open(getCurrentDate()));
    }
 
    // handlers: { onAdd, onRename, onDelete }

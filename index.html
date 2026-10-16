@@ -128,6 +128,7 @@
       </div>
       
       <div class="app-footer">
+         <button type="button" id="btn-export" class="secondary">Markdown出力</button>
          <button type="button" class="secondary" data-open-config>接続設定</button>
       </div>
    </div>
@@ -206,6 +207,30 @@
          </div>
          <ul class="modal-list" id="list-done-search"></ul>
          <p class="empty-text" id="done-search-empty" hidden>見つかりませんでした</p>
+      </div>
+   </div>
+
+   <!-- 月ごとのタスクの Markdown 出力 (動作は view/modals/export.js) -->
+   <div id="export-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="export-modal-title">
+         <div class="modal-header">
+            <h2 id="export-modal-title">Markdown 出力</h2>
+            <button type="button" id="btn-export-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <div class="modal-toolbar">
+            <div class="date-nav">
+               <button type="button" id="btn-export-prev" class="secondary" title="前月" aria-label="前月"><i data-lucide="chevron-left"></i></button>
+               <span class="date-display" id="export-month"></span>
+               <button type="button" id="btn-export-next" class="secondary" title="翌月" aria-label="翌月"><i data-lucide="chevron-right"></i></button>
+            </div>
+            <span id="export-count"></span>
+         </div>
+         <textarea class="export-preview" id="export-preview" readonly></textarea>
+         <p class="empty-text" id="export-empty" hidden>この月のタスクはありません</p>
+         <div class="modal-footer">
+            <button type="button" id="btn-export-copy" class="secondary"><i data-lucide="copy"></i>コピー</button>
+            <button type="button" id="btn-export-download"><i data-lucide="download"></i>ダウンロード</button>
+         </div>
       </div>
    </div>
 

@@ -377,6 +377,18 @@ export class TodoModel {
          .sort((a, b) => (b.due_date || '').localeCompare(a.due_date || '') || b.sort_order - a.sort_order)
          .map(t => ({ ...t }));
    }
+   // month ('YYYY-MM') の日付が付いたタスクを、日付の古い順に { date, dones, todos } の配列で返す
+   getTasksByDateInMonth(month) {
+      const byDate = {};
+      this.todos
+         .filter(t => t.due_date && t.due_date.slice(0, 7) === month)
+         .sort((a, b) => a.sort_order - b.sort_order)
+         .forEach(t => {
+            byDate[t.due_date] ??= { date: t.due_date, dones: [], todos: [] };
+            byDate[t.due_date][t.is_done ? 'dones' : 'todos'].push({ ...t });
+         });
+      return Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+   }
    getBacklogTodosGrouped() {
       const noDateTasks = this.todos.filter(t => !t.due_date && !t.is_done);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate && !t.is_done);

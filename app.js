@@ -79,6 +79,12 @@ class TodoPresenter {
          (date) => this.model.setCurrentDate(date)
       );
 
+      // 月ごとのタスクの Markdown 出力
+      this.view.bindExport(
+         (month) => this.model.getTasksByDateInMonth(month),
+         () => this.model.currentDate
+      );
+
       // サジェスト候補の登録画面
       this.view.bindTemplateActions({
          onAdd:    (name) => this.model.addTemplate(name),
