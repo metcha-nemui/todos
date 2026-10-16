@@ -1123,27 +1123,39 @@ summary.collapse-title {
    word-break: break-all;
 }
 
-/* Done の検索 (モーダル内)。1件が丸ごとボタン (押すとその日付へ移動する) */
-.done-search-item button {
+/* Done の検索 (モーダル内)。1件 = 日付へ移動するボタン + コピーボタン */
+.done-search-item {
    display: flex;
+   align-items: center;
+   gap: 4px;
+   padding-right: 6px;
+   border: 1px solid var(--border);
+   border-radius: var(--radius-sm);
+
+   &:hover {
+      background-color: var(--bg-input);
+   }
+}
+
+.done-search-jump {
+   flex: 1;
+   min-width: 0;
    align-items: baseline;
    justify-content: flex-start;
    gap: 10px;
-   width: 100%;
    padding: 8px 12px;
    background-color: transparent;
    color: var(--text-main);
-   border: 1px solid var(--border);
    font-weight: 400;
    text-align: left;
    white-space: normal;
 
    &:hover {
-      background-color: var(--bg-input);
+      background-color: transparent;
    }
 
    &:disabled {
-      cursor: default;
+      opacity: 1;
    }
 }
 

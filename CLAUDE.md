@@ -13,7 +13,7 @@
       - `template.js` — サジェスト候補の登録画面。
       - `diaryList.js` — 過去の日記の一覧。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、月ごとに区切り、記録のない月は省く)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
-      - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、結果を Markdown でコピーできる。選んだタスクの日付へ移動する。
+      - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、行ごとにタスク名をコピーでき、行を選ぶとそのタスクの日付へ移動する。
       - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面下部の「Markdown出力」ボタンから開く。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。

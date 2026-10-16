@@ -1,6 +1,5 @@
 // view/modals/doneSearch.js - Done タスクの検索 (モーダル)
 import { formatDateWithWeekday } from '../../lib/date.js';
-import { formatDaysMarkdown, groupDonesByDate } from '../../lib/markdown.js';
 import { copyToClipboard } from '../util/clipboard.js';
 import { escapeHtml, parseHtml } from '../util/html.js';
 import { bindModalClose } from './close.js';
@@ -27,7 +26,6 @@ export class DoneSearchModal {
       this.btnClose  = document.getElementById('btn-done-search-close');
       this.input     = document.getElementById('input-done-search');
       this.count     = document.getElementById('done-search-count');
-      this.btnCopy   = document.getElementById('btn-done-search-copy');
       this.list      = document.getElementById('list-done-search');
       this.emptyText = document.getElementById('done-search-empty');
 
@@ -41,9 +39,12 @@ export class DoneSearchModal {
       this.input.addEventListener('input', () => this._update());
       this.modal.querySelector('form').addEventListener('submit', (e) => e.preventDefault());
 
-      this.btnCopy.addEventListener('click', () => {
-         const md = formatDaysMarkdown(groupDonesByDate(this._results));
-         copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
+      // 行のコピーボタンで、そのタスク名をコピーする
+      this.list.addEventListener('click', (e) => {
+         const button = e.target.closest('button[data-copy-index]');
+         if (!button) return;
+
+         copyToClipboard(this._results[button.dataset.copyIndex].title);
       });
    }
 
@@ -79,12 +80,11 @@ export class DoneSearchModal {
       this._results = keyword ? this._search(keyword) : [];
 
       this.count.textContent = keyword ? `${this._results.length}件` : '';
-      this.btnCopy.disabled  = this._results.length === 0;
       this.emptyText.hidden  = !keyword || this._results.length > 0;
       this.list.innerHTML = '';
 
       let month = undefined;
-      this._results.forEach(task => {
+      this._results.forEach((task, index) => {
          // 月が変わるごとに見出しを挟む
          const taskMonth = task.due_date ? task.due_date.slice(0, 7) : null;
          if (taskMonth !== month) {
@@ -96,12 +96,18 @@ export class DoneSearchModal {
          const date = task.due_date || '';
          this.list.appendChild(parseHtml(
             `<li class="done-search-item">
-               <button type="button" data-date="${escapeHtml(date)}" ${date ? '' : 'disabled'}>
+               <button type="button" class="done-search-jump" data-date="${escapeHtml(date)}" ${date ? '' : 'disabled'}>
                   <span class="done-search-date">${formatDateWithWeekday(date)}</span>
                   <span class="done-search-title">${highlight(task.title, keyword)}</span>
                </button>
+               <button type="button" class="secondary" data-copy-index="${index}" title="コピー" aria-label="コピー"><i data-lucide="copy"></i></button>
             </li>`
          ));
       });
+
+      // 動的生成した行の Lucide アイコンを有効化
+      if (typeof lucide !== 'undefined') {
+         lucide.createIcons();
+      }
    }
 }
