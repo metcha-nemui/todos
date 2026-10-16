@@ -1,5 +1,6 @@
 // view/panels/today.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
-import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../../lib/date.js';
+import { getTodayDateString, shiftDateString } from '../../lib/date.js';
+import { formatDayMarkdown } from '../../lib/markdown.js';
 import { copyToClipboard } from '../util/clipboard.js';
 import { bindPiPButton } from '../parts/pip.js';
 import { renderTaskList } from '../parts/taskList.js';
@@ -29,6 +30,7 @@ export class TodayPanel {
       this.CountDone = document.getElementById('list-count-done');
       this.btnPiP    = document.getElementById('btn-pip');
       this.btnHeatmap = document.getElementById('btn-heatmap');
+      this.btnDoneSearch = document.getElementById('btn-done-search');
 
       // サジェストを付ける入力欄
       this.suggestTargets = [
@@ -108,21 +110,24 @@ export class TodayPanel {
 
    bindCopyButtons(getTodos, getDones) {
       this.btnCopyTodo.addEventListener('click', () => {
-         const date = formatDateWithWeekday(this._currentDate) + "\n";
-         const md   = getTodos().map(t => `- [ ] ${t.title}`).join('\n');
-         copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
+         const md = formatDayMarkdown({ date: this._currentDate, todos: getTodos() });
+         copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
       });
 
       this.btnCopyDone.addEventListener('click', () => {
-         const date = formatDateWithWeekday(this._currentDate) + "\n";
-         const md   = getDones().map(t => `- [x] ${t.title}`).join('\n');
-         copyToClipboard(date+md).then(() => alert("クリップボードにコピーしました"));
+         const md = formatDayMarkdown({ date: this._currentDate, dones: getDones() });
+         copyToClipboard(md).then(() => alert("クリップボードにコピーしました"));
       });
    }
 
    // Done 件数のヒートマップを開くボタン
    bindOpenHeatmap(handler) {
       this.btnHeatmap.addEventListener('click', () => handler());
+   }
+
+   // Done の検索画面を開くボタン
+   bindOpenDoneSearch(handler) {
+      this.btnDoneSearch.addEventListener('click', () => handler());
    }
 
    bindPiPButton(getTodos) {

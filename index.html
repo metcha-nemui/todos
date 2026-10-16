@@ -57,6 +57,7 @@
                         <span>Done</span>
                         <span id="list-count-done" class="list-count"></span>
                         <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
+                        <button type="button" id="btn-done-search" class="secondary summary-btn" title="Done を検索" aria-label="Done を検索"><i data-lucide="search"></i></button>
                         <button type="button" id="btn-heatmap" class="summary-action"><i data-lucide="sprout"></i>草</button>
                      </summary>
                      <form class="todo-input-form" id="form-add-done">
@@ -186,6 +187,25 @@
          </div>
          <ul class="modal-list" id="list-diary"></ul>
          <p class="empty-text" id="diary-list-empty" hidden>日記はまだありません</p>
+      </div>
+   </div>
+
+   <!-- Done の検索 (動作は view/modals/doneSearch.js) -->
+   <div id="done-search-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="done-search-modal-title">
+         <div class="modal-header">
+            <h2 id="done-search-modal-title">Done を検索</h2>
+            <button type="button" id="btn-done-search-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <form class="todo-input-form" role="search">
+            <input type="text" id="input-done-search" placeholder="タスク名の一部を入力..." autocomplete="off" enterkeyhint="search">
+         </form>
+         <div class="modal-toolbar">
+            <span id="done-search-count"></span>
+            <button type="button" id="btn-done-search-copy" class="secondary" disabled><i data-lucide="copy"></i>コピー</button>
+         </div>
+         <ul class="modal-list" id="list-done-search"></ul>
+         <p class="empty-text" id="done-search-empty" hidden>見つかりませんでした</p>
       </div>
    </div>
 

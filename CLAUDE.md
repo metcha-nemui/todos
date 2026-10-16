@@ -13,6 +13,7 @@
       - `template.js` — サジェスト候補の登録画面。
       - `diaryList.js` — 過去の日記の一覧。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、月ごとに区切り、記録のない月は省く)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
+      - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、結果を Markdown でコピーできる。選んだタスクの日付へ移動する。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
@@ -20,7 +21,7 @@
       - `taskList.js` — タスク行の描画と行内アクション。
       - `dragSort.js` / `suggest.js` / `pip.js` / `detailsState.js` — 並び替え / サジェスト / PiP / 折りたたみの開閉状況の保存。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
-- `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。
+- `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/parts/pip.js` が読み込む)。
 - PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。
@@ -34,7 +35,7 @@
 - フォルダ名で分かる語はファイル名に含めない (`panels/today.js`、`modals/template.js`)。クラス名は `TodayPanel` / `TemplateModal` のように付ける。
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
-- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、折りたたみの見出し `.collapse-title`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
+- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、折りたたみの見出し `.collapse-title`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。

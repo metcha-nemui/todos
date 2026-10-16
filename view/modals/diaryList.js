@@ -38,7 +38,7 @@ export class DiaryListModal {
             month = date.slice(0, 7);
             const [yyyy, mm] = month.split('-');
             this.list.appendChild(parseHtml(
-               `<li class="diary-list-month">${yyyy}年${Number(mm)}月</li>`
+               `<li class="modal-list-heading">${yyyy}年${Number(mm)}月</li>`
             ));
          }
 

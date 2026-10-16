@@ -366,6 +366,17 @@ export class TodoModel {
       });
       return counts;
    }
+   // タスク名に query を含む (大文字小文字は区別しない) Done を新しい順に返す
+   // 日付の新しい順、同じ日の中では並び順の後ろ (後から完了した) ほど先
+   searchDones(query) {
+      const keyword = query.trim().toLowerCase();
+      if (!keyword) return [];
+
+      return this.todos
+         .filter(t => t.is_done && t.title.toLowerCase().includes(keyword))
+         .sort((a, b) => (b.due_date || '').localeCompare(a.due_date || '') || b.sort_order - a.sort_order)
+         .map(t => ({ ...t }));
+   }
    getBacklogTodosGrouped() {
       const noDateTasks = this.todos.filter(t => !t.due_date && !t.is_done);
       const futureTasks = this.todos.filter(t => t.due_date && t.due_date > this.currentDate && !t.is_done);

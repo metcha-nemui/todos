@@ -5,6 +5,7 @@ import { BacklogPanel } from './view/panels/backlog.js';
 import { TemplateModal } from './view/modals/template.js';
 import { DiaryListModal } from './view/modals/diaryList.js';
 import { HeatmapModal } from './view/modals/heatmap.js';
+import { DoneSearchModal } from './view/modals/doneSearch.js';
 import { SplitModal } from './view/modals/split.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
@@ -20,6 +21,7 @@ export class TodoView {
       this.templateModal = new TemplateModal();
       this.diaryListModal = new DiaryListModal();
       this.heatmapModal = new HeatmapModal();
+      this.doneSearchModal = new DoneSearchModal();
       this.splitModal = new SplitModal();
       this.statusBanner  = new StatusBanner();
 
@@ -164,6 +166,16 @@ export class TodoView {
    bindHeatmap(onSelect) {
       this.todayPanel.bindOpenHeatmap(() => this.heatmapModal.open());
       this.heatmapModal.bindSelect((date) => {
+         this.backlogPanel.resetInputDate();
+         onSelect(date);
+      });
+   }
+
+   // Done の検索。search は検索語からヒットした Done (新しい順) を返す。タスクを選ぶと onSelect にその日付が渡る
+   bindDoneSearch(search, onSelect) {
+      this.todayPanel.bindOpenDoneSearch(() => this.doneSearchModal.open());
+      this.doneSearchModal.bindSearch(search);
+      this.doneSearchModal.bindSelect((date) => {
          this.backlogPanel.resetInputDate();
          onSelect(date);
       });

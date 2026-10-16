@@ -845,6 +845,34 @@ summary.collapse-title {
    margin-top: 16px;
 }
 
+/* 一覧の上に置く行 (件数 / 一覧に対するボタン) */
+.modal-toolbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 8px;
+   margin-bottom: 8px;
+   font-size: 1.3rem;
+   color: var(--text-muted);
+
+   button:disabled {
+      opacity: 0.4;
+      cursor: default;
+   }
+}
+
+/* 一覧内の区切り見出し (月ごと) */
+.modal-list-heading {
+   padding: 8px 4px 2px;
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: var(--text-muted);
+
+   &:first-child {
+      padding-top: 0;
+   }
+}
+
 /* サジェスト候補の登録画面 */
 
 /* 表示モード / 編集モード (編集中は .template-item に .is-editing が付く) */
@@ -1055,16 +1083,6 @@ summary.collapse-title {
 }
 
 /* 過去の日記の一覧 (モーダル内) */
-.diary-list-month {
-   padding: 8px 4px 2px;
-   font-size: 1.2rem;
-   font-weight: 600;
-   color: var(--text-muted);
-
-   &:first-child {
-      padding-top: 0;
-   }
-}
 
 /* 1件が丸ごとボタン (押すとその日付へ移動する) */
 .diary-list-item button {
@@ -1101,4 +1119,46 @@ summary.collapse-title {
    font-size: 1.4rem;
    white-space: pre-wrap;
    word-break: break-all;
+}
+
+/* Done の検索 (モーダル内)。1件が丸ごとボタン (押すとその日付へ移動する) */
+.done-search-item button {
+   display: flex;
+   align-items: baseline;
+   justify-content: flex-start;
+   gap: 10px;
+   width: 100%;
+   padding: 8px 12px;
+   background-color: transparent;
+   color: var(--text-main);
+   border: 1px solid var(--border);
+   font-weight: 400;
+   text-align: left;
+   white-space: normal;
+
+   &:hover {
+      background-color: var(--bg-input);
+   }
+
+   &:disabled {
+      cursor: default;
+   }
+}
+
+.done-search-date {
+   flex-shrink: 0;
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: var(--text-muted);
+}
+
+.done-search-title {
+   font-size: 1.4rem;
+   word-break: break-all;
+
+   mark {
+      background-color: var(--accent-light);
+      color: inherit;
+      border-radius: 2px;
+   }
 }

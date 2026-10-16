@@ -73,6 +73,12 @@ class TodoPresenter {
       // Done 件数のヒートマップ (選んだ日付へ移動)
       this.view.bindHeatmap((date) => this.model.setCurrentDate(date));
 
+      // Done の検索 (選んだタスクの日付へ移動)
+      this.view.bindDoneSearch(
+         (query) => this.model.searchDones(query),
+         (date) => this.model.setCurrentDate(date)
+      );
+
       // サジェスト候補の登録画面
       this.view.bindTemplateActions({
          onAdd:    (name) => this.model.addTemplate(name),
