@@ -60,6 +60,7 @@ export class TodayPanel {
       // 今日のToDo描画
       renderTaskList(this.listTodo, todos, false, true);
       this.CountTodo.textContent = todos.length;
+      this.toggleToDoEllipsis.hidden = todos.length <= ELLIPSIS_VISIBLE_COUNT;
       this._applyEllipsis();
    }
 

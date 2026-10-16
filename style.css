@@ -482,11 +482,16 @@ summary.collapse-title {
    &::after { content: ""; }
 }
 
+/* 一覧の下余白 (8px) に重ねて、上下の間隔を揃える */
+.toggle-todo-ellipsis {
+   margin-top: -8px;
+}
+
 .toggle-todo-ellipsis > div {
    display: flex;
    align-items: center;
    gap: 8px;
-   padding: 0.5em 1em;
+   padding: 8px 1em;
    cursor: pointer;
    
    svg {
