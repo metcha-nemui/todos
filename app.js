@@ -85,6 +85,12 @@ class TodoPresenter {
          () => this.model.currentDate
       );
 
+      // 全データの JSON バックアップと復元
+      this.view.bindBackup(
+         () => this.model.exportBackup(),
+         (backup) => this.model.importBackup(backup)
+      );
+
       // サジェスト候補の登録画面
       this.view.bindTemplateActions({
          onAdd:    (name) => this.model.addTemplate(name),

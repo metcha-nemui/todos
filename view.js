@@ -7,6 +7,7 @@ import { DiaryListModal } from './view/modals/diaryList.js';
 import { HeatmapModal } from './view/modals/heatmap.js';
 import { DoneSearchModal } from './view/modals/doneSearch.js';
 import { ExportModal } from './view/modals/export.js';
+import { BackupModal } from './view/modals/backup.js';
 import { SplitModal } from './view/modals/split.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
@@ -25,6 +26,8 @@ export class TodoView {
       this.doneSearchModal = new DoneSearchModal();
       this.exportModal = new ExportModal();
       this.btnExport = document.getElementById('btn-export');
+      this.backupModal = new BackupModal();
+      this.btnBackup = document.getElementById('btn-backup');
       this.splitModal = new SplitModal();
       this.statusBanner  = new StatusBanner();
 
@@ -189,6 +192,14 @@ export class TodoView {
    bindExport(getTasks, getCurrentDate) {
       this.exportModal.bindGetTasks(getTasks);
       this.btnExport.addEventListener('click', () => this.exportModal.open(getCurrentDate()));
+   }
+
+   // 全データの JSON バックアップと復元
+   // onDownload は書き出す内容 (失敗時は null) を返す。onRestore は読み込んだファイルの内容を受け取る
+   bindBackup(onDownload, onRestore) {
+      this.backupModal.bindDownload(onDownload);
+      this.backupModal.bindRestore(onRestore);
+      this.btnBackup.addEventListener('click', () => this.backupModal.open());
    }
 
    // handlers: { onAdd, onRename, onDelete }

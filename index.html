@@ -129,6 +129,7 @@
       
       <div class="app-footer">
          <button type="button" id="btn-export" class="secondary">Markdown出力</button>
+         <button type="button" id="btn-backup" class="secondary">バックアップ</button>
          <button type="button" class="secondary" data-open-config>接続設定</button>
       </div>
    </div>
@@ -229,6 +230,23 @@
          <div class="modal-footer">
             <button type="button" id="btn-export-copy" class="secondary"><i data-lucide="copy"></i>コピー</button>
             <button type="button" id="btn-export-download"><i data-lucide="download"></i>ダウンロード</button>
+         </div>
+      </div>
+   </div>
+
+   <!-- 全データの JSON バックアップと復元 (動作は view/modals/backup.js) -->
+   <div id="backup-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="backup-modal-title">
+         <div class="modal-header">
+            <h2 id="backup-modal-title">バックアップ</h2>
+            <button type="button" id="btn-backup-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <p class="modal-text">全テーブルの内容を JSON ファイルに書き出します。</p>
+         <p class="modal-text empty-text">復元は、書き込み先のテーブルが全て空のときだけ行えます。古い版のファイルは今の版に変換してから書き込みます。</p>
+         <input type="file" id="input-backup-file" accept=".json,application/json" hidden>
+         <div class="modal-footer">
+            <button type="button" id="btn-backup-restore" class="secondary"><i data-lucide="upload"></i>ファイルから復元</button>
+            <button type="button" id="btn-backup-download"><i data-lucide="download"></i>ダウンロード</button>
          </div>
       </div>
    </div>

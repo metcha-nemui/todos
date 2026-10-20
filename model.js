@@ -4,6 +4,7 @@ import { getTodayDateString, getTomorrowDateString } from './lib/date.js';
 import * as todoTable from './model/todos.js';
 import * as diaryTable from './model/diaries.js';
 import * as templateTable from './model/templates.js';
+import * as backup from './model/backup.js';
 
 export class TodoModel {
    constructor() {
@@ -344,6 +345,30 @@ export class TodoModel {
 
    _reportDuplicateTemplate() {
       if(this.onErrorCallback) this.onErrorCallback('同じ名前の候補が既にあります');
+   }
+
+   // 全データのバックアップ
+   // 書き出す内容を返す。失敗時は null
+   async exportBackup() {
+      if (!supabase) { console.warn('Supabase not configured'); return null; }
+      const { data, error } = await backup.exportBackup();
+      if (error) { this._reportError('バックアップの取得', error); return null; }
+      return data;
+   }
+
+   // バックアップから復元し、読み直す。成功したら true を返す
+   // 途中で失敗しても書き込めた分を表示するため読み直す
+   async importBackup(data) {
+      if (!supabase) { console.warn('Supabase not configured'); return false; }
+      const { error } = await backup.importBackup(data);
+      await this.reload();
+
+      if (error) {
+         console.error('復元に失敗:', error);
+         if(this.onErrorCallback) this.onErrorCallback(`復元に失敗しました: ${error.message}`);
+         return false;
+      }
+      return true;
    }
 
    // ゲッター群
