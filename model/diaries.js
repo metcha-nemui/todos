@@ -1,27 +1,21 @@
-// model/diaries.js - diaries テーブルの読み書き
-import { supabase, fetchAllRows } from '../lib/supabase.js';
+// model/diaries.js - 日記 (kind 'diary'、id は日付) の読み書き
+import * as records from './records.js';
+
+const KIND = 'diary';
 
 export async function fetchDiaries() {
-   const { data, error } = await fetchAllRows('diaries', ['entry_date']);
+   const { data, error } = await records.fetchRecords(KIND);
    if (error) return { data: null, error };
 
    return {
-      data: data.map(row => ({
-         date: row.entry_date,
-         content: row.content,
+      data: data.map(({ id, data }) => ({
+         date: id,
+         content: data.content ?? '',
       })),
       error: null
    };
 }
 
-export const upsertDiary = (date, content) => supabase
-   .from('diaries')
-   .upsert({
-      entry_date: date,
-      content: content,
-   });
+export const upsertDiary = (date, content) => records.upsertRecord(KIND, date, { content });
 
-export const deleteDiary = (date) => supabase
-   .from('diaries')
-   .delete()
-   .eq("entry_date", date);
+export const deleteDiary = (date) => records.deleteRecord(KIND, date);

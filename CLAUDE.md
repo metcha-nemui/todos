@@ -4,8 +4,9 @@
 
 ## 構成 (MVP)
 - `model.js` — `TodoModel`。データ保持と操作の窓口。書き込みは成功後に手元へ反映し、失敗は `bindOnError` で通知する。読み込みは `reload()` に集約し、起動時と画面復帰時に呼ぶ。
-   - `model/todos.js` / `diaries.js` / `templates.js` — テーブルごとの Supabase 読み書き。`templates` (サジェスト候補) の主キーは `name`。
-   - `model/backup.js` — 全テーブルの JSON バックアップと復元。DB の行をそのまま書き出し、スキーマの版 (`SCHEMA_VERSION`) を添える。スキーマを変えたら版を上げ、旧版 → 新版の変換を `MIGRATIONS` に足す (復元時に古い版のファイルを変換して書き込む)。復元は書き込み先のテーブルが全て空のときだけ行う。
+   - `model/records.js` — このアプリのテーブル `todo_app` の読み書き。1行が1レコードで、列は `kind` / `id` (合わせて主キー) / `data` (jsonb) / `updated_at`。項目の増減は `data` の中で行い、テーブルの列は変えない (Supabase 側を触らずに済ませるため。同じ Supabase の別プロダクトは別テーブルにする)。`data` の更新は丸ごと置き換え。
+   - `model/todos.js` / `diaries.js` / `templates.js` — 種別 (`kind` が `todo` / `diary` / `template`) ごとの読み書き。`records.js` を使い、読み込み時に足りない項目は既定値で補う。`diary` の `id` は日付、`todo` / `template` は uuid (アプリ側で振る)。サジェスト候補はアプリ内では名前で扱う。
+   - `model/backup.js` — 全データの JSON バックアップと復元。DB の行をそのまま書き出し、データの形の版 (`SCHEMA_VERSION`、v0 は旧3テーブル、v1 は `todo_app`) を添える。互換のない変更をしたら版を上げ、旧版 → 新版の変換を `MIGRATIONS` に足す (復元時に古い版のファイルを変換して書き込む)。項目の追加だけなら版は上げない。復元はテーブルが空のときだけ行う。
 - `view.js` — `TodoView`。画面を束ねる窓口。パネル単位の `render*` とイベントの `bind*` メソッド。`view/` の下は層ごとのフォルダに分ける。
    - `view/panels/` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
       - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。
@@ -24,7 +25,7 @@
       - `taskList.js` — タスク行の描画と行内アクション。
       - `dragSort.js` / `suggest.js` / `pip.js` / `detailsState.js` — 並び替え / サジェスト / PiP / 折りたたみの開閉状況の保存。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
-- `sql/drop_v0.sql` — v0 のテーブルを全て削除する SQL (v1 へ上げるときに SQL Editor に貼って実行する)。
+- `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
 - `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/parts/pip.js` が読み込む)。

@@ -133,7 +133,10 @@ export class TodoModel {
    
    async editTodo(id, newTitle) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
-      const { error } = await todoTable.updateTodo(id, { title: newTitle });
+      const todo = this.todos.find(t => t.id === id);
+      if (!todo) return;
+
+      const { error } = await todoTable.updateTodo({ ...todo, title: newTitle });
       if (error) return this._fail('タスクの編集', error);
       
       this.todos = this.todos.map(todo =>
@@ -165,7 +168,7 @@ export class TodoModel {
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === this.currentDate && !!t.is_done === updatedDone),
       };
       
-      const { error } = await todoTable.updateTodo(id, changes);
+      const { error } = await todoTable.updateTodo({ ...todo, ...changes });
       if (error) return this._fail('タスクの更新', error);
       
       this.todos = this.todos.map(t =>
@@ -176,12 +179,15 @@ export class TodoModel {
    
    async changeTodoDate(id, targetDate) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
+      const todo = this.todos.find(t => t.id === id);
+      if (!todo) return;
+
       const changes = {
          due_date: targetDate,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
       };
       
-      const { error } = await todoTable.updateTodo(id, changes);
+      const { error } = await todoTable.updateTodo({ ...todo, ...changes });
       if (error) return this._fail('日付の変更', error);
       
       this.todos = this.todos.map(todo =>
@@ -224,11 +230,11 @@ export class TodoModel {
       // 元タスクより後ろは、分割で増えた分だけ後ろへずらす
       const targets = group
          .filter(t => t.id !== id)
-         .map((t, i) => ({ id: t.id, from: t.sort_order, index: i < position ? i : i + titles.length }))
+         .map((t, i) => ({ todo: t, id: t.id, from: t.sort_order, index: i < position ? i : i + titles.length }))
          .filter(({ from, index }) => from !== index);
 
       const results = await Promise.all(
-         targets.map(({ id, index }) => todoTable.updateTodo(id, { sort_order: index }))
+         targets.map(({ todo, index }) => todoTable.updateTodo({ ...todo, sort_order: index }))
       );
 
       // 一部だけ失敗した場合も、成功した分はDBと揃える
@@ -249,11 +255,11 @@ export class TodoModel {
    async updateSortOrder(orderedIds) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targets = orderedIds
-         .map((id, index) => ({ id, index }))
-         .filter(({ id }) => this.todos.some(t => t.id === id));
+         .map((id, index) => ({ id, index, todo: this.todos.find(t => t.id === id) }))
+         .filter(({ todo }) => todo);
       
       const results = await Promise.all(
-         targets.map(({ id, index }) => todoTable.updateTodo(id, { sort_order: index }))
+         targets.map(({ todo, index }) => todoTable.updateTodo({ ...todo, sort_order: index }))
       );
       
       // 一部だけ失敗した場合も、成功した分はDBと揃える
