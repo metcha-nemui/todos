@@ -20,4 +20,7 @@ create policy "anon can read and write" on public.todo_app
    using (true)
    with check (true);
 
+-- 2026-10-30 以降に作るテーブルには Data API の権限が自動で付かないので、明示的に付ける
+grant select, insert, update, delete on public.todo_app to anon;
+
 commit;
