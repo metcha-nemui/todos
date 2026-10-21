@@ -11,6 +11,7 @@ const isStandalone = () => window.matchMedia('(display-mode: standalone)').match
 
 export class QuickView {
    constructor() {
+      this.tabs = document.querySelectorAll('[data-quick-kind]');
       this.form = document.getElementById('form-quick-add');
       this.inputTitle = document.getElementById('input-quick-title');
       this.inputDate = document.getElementById('input-quick-date');
@@ -30,6 +31,12 @@ export class QuickView {
       });
       this.inputDate.addEventListener('input', () => this._renderDateButtons());
       this._renderDateButtons();
+
+      // 上部のタブで ToDo / Done のどちらに追加するかを切り替える
+      this.isDone = false;
+      this.tabs.forEach(tab => {
+         tab.addEventListener('click', () => this._selectKind(tab.dataset.quickKind === 'done'));
+      });
 
       // インストールしたアプリとして開いているときは、Escape でウィンドウを閉じる
       document.addEventListener('keydown', (e) => {
@@ -55,6 +62,22 @@ export class QuickView {
          screen.availLeft + screen.availWidth  - width  - WINDOW_MARGIN,
          screen.availTop  + screen.availHeight - height - WINDOW_MARGIN
       );
+   }
+
+   // Done は日付がないと本編のどこにも出ないので、明日 / 日付なし を隠し、日付を必須にする
+   _selectKind(isDone) {
+      this.isDone = isDone;
+      this.tabs.forEach(tab => {
+         tab.setAttribute('aria-selected', String((tab.dataset.quickKind === 'done') === isDone));
+      });
+      this.dateButtons.forEach(btn => {
+         btn.hidden = isDone && btn.dataset.quickDate !== 'today';
+      });
+      this.inputDate.required = isDone;
+      if (isDone && !this.inputDate.value) this.inputDate.value = getTodayDateString();
+      this.inputTitle.placeholder = isDone ? '実行済タスクを入力...' : 'タスクを入力...';
+      this._renderDateButtons();
+      this.focus();
    }
 
    _presetDate(preset) {
@@ -102,23 +125,24 @@ export class QuickView {
       this.messageText.classList.toggle('is-error', isError);
    }
 
-   // handler(title, date) は追加に成功したら true を返す
+   // handler(title, date, isDone) は追加に成功したら true を返す
    // 成功したらタスク名だけ空にする (日付は続けて登録するときのため残す)
    bindAdd(handler) {
       this.form.addEventListener('submit', async (e) => {
          e.preventDefault();
-         const title = this.inputTitle.value.trim();
-         const date  = this.inputDate.value || null;
+         const title  = this.inputTitle.value.trim();
+         const date   = this.inputDate.value || null;
+         const isDone = this.isDone;
          if (!title || this.btnAdd.disabled) return;
 
          this.btnAdd.disabled = true;
-         const ok = await handler(title, date);
+         const ok = await handler(title, date, isDone);
          this.btnAdd.disabled = false;
          if (!ok) return;
 
          this.inputTitle.value = '';
          this._showMessage('');
-         showToast('追加しました');
+         showToast(isDone ? 'Doneに追加しました' : 'ToDoに追加しました');
          this.focus();
       });
    }

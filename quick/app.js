@@ -14,7 +14,7 @@ class QuickPresenter {
 
       this.model.bindOnError((message) => this.view.showError(message));
 
-      this.view.bindAdd((title, date) => this.model.addTodo(title, date, false));
+      this.view.bindAdd((title, date, isDone) => this.model.addTodo(title, date, isDone));
       this.view.bindRetry(() => this.load(this.model.reload()));
 
       // 他の端末や本編での追加を並び順に反映するため、戻ってきたら読み直す

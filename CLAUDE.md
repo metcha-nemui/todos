@@ -30,7 +30,7 @@
 - `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/parts/pip.js` が読み込む)。
-- `quick/` — タスクを追加するだけのクイック登録画面。本編とは別の PWA としてインストールし、OS のショートカットキーで呼び出して使う。入力はタスク名と日付だけ (サジェストなし)。本編の `TodoModel` をそのまま使い、データの読み書きを別に書かない。
+- `quick/` — タスクを追加するだけのクイック登録画面。本編とは別の PWA としてインストールし、OS のショートカットキーで呼び出して使う。上部のタブで ToDo / Done を切り替え、入力はタスク名と日付だけ (サジェストなし)。Done では日付を必須にする。本編の `TodoModel` をそのまま使い、データの読み書きを別に書かない。
    - `index.html` / `app.js` (`QuickPresenter`) / `view.js` (`QuickView`) / `style.css` (本編の `style.css` に重ねる) / `manifest.webmanifest` (スコープ `quick/`、`launch_handler` で既存ウィンドウを前面に出す)。
    - 接続設定は同じオリジンの localStorage を共有するので、本編で設定すれば使える (設定画面は持たない)。
 - PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。
