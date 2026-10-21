@@ -20,10 +20,7 @@
 </head>
 <body>
    <form class="todo-input-form quick-form" id="form-quick-add">
-      <div class="autocomplete-wrapper">
-         <input type="text" id="input-quick-title" placeholder="タスクを入力..." autocomplete="off" required disabled style="anchor-name:--input-quick-anchor">
-         <div id="suggest-quick-title" class="suggest-list" popover="manual" style="position-anchor:--input-quick-anchor"></div>
-      </div>
+      <input type="text" id="input-quick-title" placeholder="タスクを入力..." autocomplete="off" required disabled>
       <div class="quick-date-row">
          <input type="date" id="input-quick-date">
          <button type="button" class="secondary quick-date-btn" data-quick-date="today">今日</button>
@@ -38,7 +35,6 @@
       <button type="button" id="btn-quick-retry" class="secondary" hidden>再読み込み</button>
       <a href="../" target="_blank" id="link-quick-main" hidden>本編を開く</a>
    </p>
-   <ul class="quick-added" id="list-quick-added"></ul>
 
    <script type="module" src="app.js"></script>
 </body>

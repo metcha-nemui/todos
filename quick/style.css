@@ -53,26 +53,3 @@ button.secondary.quick-date-btn {
       color: var(--accent);
    }
 }
-
-.quick-added {
-   list-style: none;
-   display: flex;
-   flex-direction: column;
-   gap: 4px;
-   font-size: 1.3rem;
-
-   li {
-      display: flex;
-      gap: 10px;
-      padding: 6px 10px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      word-break: break-all;
-   }
-}
-
-.quick-added-date {
-   flex-shrink: 0;
-   color: var(--text-muted);
-}

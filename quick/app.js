@@ -12,9 +12,6 @@ class QuickPresenter {
       this.model = model;
       this.view  = view;
 
-      this.model.bindOnChange((kind) => {
-         if (kind === 'templates') this.view.setTemplates(this.model.getTaskTemplates());
-      });
       this.model.bindOnError((message) => this.view.showError(message));
 
       this.view.bindAdd((title, date) => this.model.addTodo(title, date, false));
