@@ -4,6 +4,8 @@ import { getTodayDateString, getTomorrowDateString } from '../lib/date.js';
 
 // インストールしたアプリとして開いたときのウィンドウの中身の幅 (px)。高さは中身に合わせる
 const WINDOW_WIDTH = 440;
+// 右下に置くときの画面の端からの間隔 (px)
+const WINDOW_MARGIN = 12;
 
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches;
 
@@ -38,7 +40,7 @@ export class QuickView {
       this._fitWindow();
    }
 
-   // インストールしたアプリとして開いたら、ウィンドウを中身の大きさにして画面の中央へ置く
+   // インストールしたアプリとして開いたら、ウィンドウを中身の大きさにして画面の右下へ置く
    // (Chrome は既定で大きなウィンドウで開くため)
    _fitWindow() {
       if (!isStandalone()) return;
@@ -48,9 +50,10 @@ export class QuickView {
       const height = Math.ceil(document.body.getBoundingClientRect().height) + (window.outerHeight - window.innerHeight);
 
       window.resizeTo(width, height);
+      // availWidth / availHeight はタスクバーを除いた広さなので、タスクバーには重ならない
       window.moveTo(
-         Math.round(screen.availLeft + (screen.availWidth  - width)  / 2),
-         Math.round(screen.availTop  + (screen.availHeight - height) / 2)
+         screen.availLeft + screen.availWidth  - width  - WINDOW_MARGIN,
+         screen.availTop  + screen.availHeight - height - WINDOW_MARGIN
       );
    }
 
