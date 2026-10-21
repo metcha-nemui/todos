@@ -26,7 +26,7 @@
    --overlay:    light-dark(oklch(0.21 0.01 286 / 0.25), oklch(0 0 0 / 0.6));
 
    /* 文字 */
-   --foreground:       light-dark(oklch(0.21 0.008 286),  oklch(0.97 0.003 286));
+   --foreground:       light-dark(oklch(0.21 0.008 286),  oklch(0.845 0.003 286));
    --muted-foreground: light-dark(oklch(0.552 0.016 286), oklch(0.705 0.015 286));
 
    /* 線 */
