@@ -2,6 +2,11 @@
 import { showToast } from '../view/parts/toast.js';
 import { getTodayDateString, getTomorrowDateString } from '../lib/date.js';
 
+// インストールしたアプリとして開いたときのウィンドウの中身の幅 (px)。高さは中身に合わせる
+const WINDOW_WIDTH = 440;
+
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches;
+
 export class QuickView {
    constructor() {
       this.form = document.getElementById('form-quick-add');
@@ -27,8 +32,26 @@ export class QuickView {
       // インストールしたアプリとして開いているときは、Escape でウィンドウを閉じる
       document.addEventListener('keydown', (e) => {
          if (e.key !== 'Escape') return;
-         if (window.matchMedia('(display-mode: standalone)').matches) window.close();
+         if (isStandalone()) window.close();
       });
+
+      this._fitWindow();
+   }
+
+   // インストールしたアプリとして開いたら、ウィンドウを中身の大きさにして画面の中央へ置く
+   // (Chrome は既定で大きなウィンドウで開くため)
+   _fitWindow() {
+      if (!isStandalone()) return;
+
+      // 枠 (タイトルバーなど) の分を足して、ウィンドウ全体の大きさにする
+      const width  = WINDOW_WIDTH + (window.outerWidth - window.innerWidth);
+      const height = Math.ceil(document.body.getBoundingClientRect().height) + (window.outerHeight - window.innerHeight);
+
+      window.resizeTo(width, height);
+      window.moveTo(
+         Math.round(screen.availLeft + (screen.availWidth  - width)  / 2),
+         Math.round(screen.availTop  + (screen.availHeight - height) / 2)
+      );
    }
 
    _presetDate(preset) {

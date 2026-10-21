@@ -5,6 +5,12 @@ body {
    padding: 16px;
 }
 
+/* 小さいウィンドウでは上に出すと入力欄に重なるので、下端に出す */
+.toast {
+   top: auto;
+   bottom: 12px;
+}
+
 .quick-form {
    flex-direction: column;
    margin: 0;
