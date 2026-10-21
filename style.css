@@ -755,8 +755,8 @@ summary.collapse-title {
    }
 }
 
-/* 画面上部の通知 (オフライン / 読み込み失敗) */
-.status-banner {
+/* 画面上部の通知 (オフライン / 読み込み失敗の通知と、一時的に出す view/parts/toast.js) */
+.toast {
    position: fixed;
    top: 12px;
    left: 50%;
@@ -776,7 +776,7 @@ summary.collapse-title {
    font-size: 1.3rem;
 }
 
-.status-banner-actions {
+.toast-actions {
    display: flex;
    gap: 6px;
 

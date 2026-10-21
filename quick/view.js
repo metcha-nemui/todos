@@ -1,4 +1,5 @@
 // quick/view.js - クイック登録画面 (タスク名と日付を入れて追加するだけ)
+import { showToast } from '../view/parts/toast.js';
 import { getTodayDateString, getTomorrowDateString } from '../lib/date.js';
 
 export class QuickView {
@@ -90,7 +91,8 @@ export class QuickView {
          if (!ok) return;
 
          this.inputTitle.value = '';
-         this._showMessage('追加しました');
+         this._showMessage('');
+         showToast('追加しました');
          this.focus();
       });
    }
