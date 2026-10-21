@@ -33,13 +33,13 @@
    --border:        light-dark(oklch(0.92 0.005 286), oklch(1 0 0 / 0.1));
    --border-strong: light-dark(oklch(0.85 0.008 286), oklch(1 0 0 / 0.2));
 
-   /* メインカラー (紫)。--primary-text は面の上に置く紫の文字、--primary-subtle は選択中などの淡い背景 */
-   --primary:            light-dark(oklch(0.541 0.247 293), oklch(0.585 0.233 293));
-   --primary-hover:      light-dark(oklch(0.491 0.24 293),  oklch(0.636 0.21 293));
+   /* メインカラー (紫。ライトは青寄りのインディゴ)。--primary-text は面の上に置く紫の文字、--primary-subtle は選択中などの淡い背景 */
+   --primary:            light-dark(oklch(0.511 0.262 277), oklch(0.585 0.233 293));
+   --primary-hover:      light-dark(oklch(0.457 0.24 277),  oklch(0.636 0.21 293));
    --primary-foreground: oklch(0.985 0.005 293);
-   --primary-text:       light-dark(oklch(0.491 0.24 293),  oklch(0.785 0.13 293));
-   --primary-subtle:     light-dark(oklch(0.955 0.028 293), oklch(0.585 0.233 293 / 0.18));
-   --ring:               light-dark(oklch(0.606 0.22 293),  oklch(0.702 0.16 293));
+   --primary-text:       light-dark(oklch(0.457 0.24 277),  oklch(0.785 0.13 293));
+   --primary-subtle:     light-dark(oklch(0.955 0.025 277), oklch(0.585 0.233 293 / 0.18));
+   --ring:               light-dark(oklch(0.585 0.233 277), oklch(0.702 0.16 293));
    --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
 
    /* 削除などの危険な操作 */
