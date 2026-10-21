@@ -1,0 +1,78 @@
+/* quick/style.css - クイック登録画面 (本編の style.css に重ねて読み込む) */
+
+/* 小さいウィンドウで使うので、余白を詰める */
+body {
+   padding: 16px;
+}
+
+.quick-form {
+   flex-direction: column;
+   margin: 0;
+}
+
+.quick-date-row {
+   display: flex;
+   align-items: stretch;
+   gap: 4px;
+
+   input[type="date"] {
+      flex: 1;
+      min-width: 0;
+      padding: 6px 10px;
+   }
+
+   button[type="submit"] {
+      margin-left: 4px;
+   }
+}
+
+/* 今日 / 明日 / 日付なし のうち、選んでいる日付に当たるもの */
+button.secondary.quick-date-btn {
+   padding: 6px 8px;
+
+   &.is-active {
+      background-color: var(--accent-light);
+      color: var(--accent);
+   }
+}
+
+.quick-message {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   min-height: 32px;
+   margin-top: 8px;
+   font-size: 1.3rem;
+   color: var(--text-muted);
+
+   .is-error {
+      color: var(--danger);
+   }
+
+   a {
+      color: var(--accent);
+   }
+}
+
+.quick-added {
+   list-style: none;
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
+   font-size: 1.3rem;
+
+   li {
+      display: flex;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      word-break: break-all;
+   }
+}
+
+.quick-added-date {
+   flex-shrink: 0;
+   color: var(--text-muted);
+}

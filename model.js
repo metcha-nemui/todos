@@ -26,7 +26,8 @@ export class TodoModel {
       if(savedDate) this.currentDate = savedDate;
       else          this.currentDate = getTodayDateString();
 
-      this.reload();
+      // 最初の読み込みの完了を待てるように持っておく
+      this.initialLoad = this.reload();
    }
 
    // callback には変更の種別 ('todos' | 'diaries' | 'templates' | 'date' | 'status') が渡る
@@ -112,6 +113,7 @@ export class TodoModel {
 
    // タスク操作
    // いずれもDBへの書き込みが成功してから手元のデータに反映する
+   // 追加は成功したら true を返す
    async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
@@ -127,8 +129,9 @@ export class TodoModel {
       if (error) return this._fail('タスクの追加', error);
       
       if (data) this.todos.push(data);
-      
+
       this._commit('todos');
+      return true;
    }
    
    async editTodo(id, newTitle) {

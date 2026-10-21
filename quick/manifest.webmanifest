@@ -1,0 +1,16 @@
+{
+   "name": "ToDo クイック登録",
+   "short_name": "ToDo登録",
+   "lang": "ja",
+   "start_url": "./",
+   "scope": "./",
+   "display": "standalone",
+   "launch_handler": { "client_mode": "focus-existing" },
+   "background_color": "#f5f7fa",
+   "theme_color": "#f5f7fa",
+   "icons": [
+      { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+      { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+      { "src": "../icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+   ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta name="robots" content="noindex, nofollow, noarchive">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <!-- PWA (本編とは別アプリとしてインストールする) -->
+   <link rel="manifest" href="manifest.webmanifest">
+   <meta name="theme-color" content="#f5f7fa">
+   <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+   <link rel="stylesheet" href="../style.css">
+   <link rel="stylesheet" href="style.css">
+   <title>ToDo クイック登録</title>
+</head>
+<body>
+   <form class="todo-input-form quick-form" id="form-quick-add">
+      <div class="autocomplete-wrapper">
+         <input type="text" id="input-quick-title" placeholder="タスクを入力..." autocomplete="off" required disabled style="anchor-name:--input-quick-anchor">
+         <div id="suggest-quick-title" class="suggest-list" popover="manual" style="position-anchor:--input-quick-anchor"></div>
+      </div>
+      <div class="quick-date-row">
+         <input type="date" id="input-quick-date">
+         <button type="button" class="secondary quick-date-btn" data-quick-date="today">今日</button>
+         <button type="button" class="secondary quick-date-btn" data-quick-date="tomorrow">明日</button>
+         <button type="button" class="secondary quick-date-btn" data-quick-date="none">日付なし</button>
+         <button type="submit" id="btn-quick-add" disabled>追加</button>
+      </div>
+   </form>
+
+   <p class="quick-message" id="quick-message" role="status">
+      <span id="quick-message-text"></span>
+      <button type="button" id="btn-quick-retry" class="secondary" hidden>再読み込み</button>
+      <a href="../" target="_blank" id="link-quick-main" hidden>本編を開く</a>
+   </p>
+   <ul class="quick-added" id="list-quick-added"></ul>
+
+   <script type="module" src="app.js"></script>
+</body>
+</html>
