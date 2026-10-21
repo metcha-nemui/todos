@@ -1,6 +1,10 @@
-/* Picture-in-Picture ウィンドウ用スタイル (view/parts/pip.js が読み込む) */
+/* Picture-in-Picture ウィンドウ用スタイル (view/parts/pip.js が読み込む)
+   作業中に画面の隅へ置いて使うので、配色テーマによらず常にダーク。色合いは本編のダークに揃える */
 :root {
-   --background: oklch(13% 0.028 261.692);
+   color-scheme: dark;
+   --background: oklch(0.145 0.006 286);
+   --stripe: oklch(0.185 0.007 286);
+   --border: oklch(0.26 0.008 286);
 }
 
 [hidden] {
@@ -28,7 +32,7 @@ body {
 
 .task {
    padding: 0.5em;
-   border-bottom: 1px solid oklch(27.8% 0.033 256.848);
+   border-bottom: 1px solid var(--border);
    box-sizing: border-box;
    display: flex;
    justify-content: space-between;
@@ -37,7 +41,7 @@ body {
 }
 
 .task:nth-child(2n) {
-   background: oklch(21% 0.034 264.665);
+   background: var(--stripe);
 }
 
 .task .delete {
@@ -61,8 +65,8 @@ body {
 .task.is-active {
    background: linear-gradient(
       to bottom,
-      oklch(54.6% 0.245 262.881),
-      oklch(37.9% 0.146 265.522)
+      oklch(0.585 0.233 293),
+      oklch(0.4 0.17 293)
    );
 }
 
@@ -75,7 +79,7 @@ body {
    font-size: 60px;
    font-weight: bold;
    font-family: "Calibri", sans-serif;
-   background: linear-gradient(to bottom, white, oklch(70.7% 0.022 261.325));
+   background: linear-gradient(to bottom, white, oklch(0.705 0.015 286));
    background-clip: text;
    color: transparent;
 }
@@ -87,7 +91,7 @@ body {
 }
 
 .timer.is-end {
-   background: linear-gradient(to bottom, oklch(80.9% 0.105 251.813), oklch(62.3% 0.214 259.815));
+   background: linear-gradient(to bottom, oklch(0.81 0.11 293), oklch(0.62 0.21 293));
    background-clip: text;
    color: transparent;
 }

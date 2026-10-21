@@ -14,6 +14,7 @@ import { setupCustomSuggest } from './view/parts/suggest.js';
 import { bindDragAndDrop } from './view/parts/dragSort.js';
 import { bindTaskActions } from './view/parts/taskList.js';
 import { bindDetailsStateSave, restoreDetailsState } from './view/parts/detailsState.js';
+import { bindThemeSwitch } from './view/parts/theme.js';
 
 export class TodoView {
    constructor() {
@@ -34,6 +35,7 @@ export class TodoView {
       this.taskTemplatesData = [];
 
       bindDetailsStateSave();
+      bindThemeSwitch(document.getElementById('theme-switch'));
 
       // カスタムサジェスト制御
       setupCustomSuggest(

@@ -25,6 +25,7 @@
       - `taskList.js` — タスク行の描画と行内アクション。
       - `dragSort.js` / `suggest.js` / `pip.js` / `detailsState.js` — 並び替え / サジェスト / PiP / 折りたたみの開閉状況の保存。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
+      - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面下部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
 - `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
 - `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
@@ -45,6 +46,7 @@
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
 - 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、画面上部の通知 `.toast` と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
+- 色は `style.css` の `:root` のトークン (shadcn/ui ふうの名前: `--background` / `--card` / `--popover` / `--muted` / `--hover` / `--foreground` / `--muted-foreground` / `--border` / `--primary` / `--primary-text` / `--primary-subtle` / `--ring` / `--destructive` など) で決め、各所では `var(--*)` だけを使う (色の値を直接書かない)。トークンは `light-dark(ライト, ダーク)` で両テーマの値を並べる。`pip.css` は常にダーク、`offline.html` は外部ファイルを読めないので自前で同じ値を持つ。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。

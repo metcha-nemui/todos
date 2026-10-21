@@ -4,10 +4,27 @@
    <meta charset="UTF-8">
    <meta name="robots" content="noindex, nofollow, noarchive">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="theme-color" content="#f5f7fa">
+   <meta name="theme-color" content="#fafafa">
    <title>ToDo App</title>
+   <!-- 配色テーマ (本編の style.css と同じ考え方。既定は端末の設定に合わせる) -->
+   <script>
+      const savedTheme = localStorage.getItem('todo_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme;
+   </script>
    <!-- オフライン時に sw.js が返すページ。外部ファイルを読めない状況で出すので、スタイルもここに書く -->
    <style>
+      :root {
+         color-scheme: light dark;
+      }
+
+      :root[data-theme="light"] {
+         color-scheme: light;
+      }
+
+      :root[data-theme="dark"] {
+         color-scheme: dark;
+      }
+
       body {
          margin: 0;
          min-height: 100vh;
@@ -17,8 +34,8 @@
          justify-content: center;
          gap: 20px;
          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-         background: #f5f7fa;
-         color: #0f172a;
+         background: light-dark(oklch(0.985 0.003 286), oklch(0.145 0.006 286));
+         color: light-dark(oklch(0.21 0.008 286), oklch(0.97 0.003 286));
       }
 
       p {
@@ -28,8 +45,8 @@
       }
 
       button {
-         background: #4f46e5;
-         color: #ffffff;
+         background: light-dark(oklch(0.541 0.247 293), oklch(0.585 0.233 293));
+         color: oklch(0.985 0.005 293);
          border: none;
          padding: 10px 16px;
          border-radius: 6px;

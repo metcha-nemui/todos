@@ -26,16 +26,16 @@ button.quick-tab {
    border-radius: 0;
    margin-bottom: -1px;
    background: none;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 
    &:hover {
       background: none;
-      color: var(--text-main);
+      color: var(--foreground);
    }
 
    &[aria-selected="true"] {
-      border-bottom-color: var(--accent);
-      color: var(--accent);
+      border-bottom-color: var(--primary);
+      color: var(--primary-text);
    }
 }
 
@@ -65,8 +65,8 @@ button.secondary.quick-date-btn {
    padding: 6px 8px;
 
    &.is-active {
-      background-color: var(--accent-light);
-      color: var(--accent);
+      background-color: var(--primary-subtle);
+      color: var(--primary-text);
    }
 }
 
@@ -77,13 +77,13 @@ button.secondary.quick-date-btn {
    min-height: 32px;
    margin-top: 8px;
    font-size: 1.3rem;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 
    .is-error {
-      color: var(--danger);
+      color: var(--destructive);
    }
 
    a {
-      color: var(--accent);
+      color: var(--primary-text);
    }
 }

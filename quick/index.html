@@ -7,7 +7,7 @@
 
    <!-- PWA (本編とは別アプリとしてインストールする) -->
    <link rel="manifest" href="manifest.webmanifest">
-   <meta name="theme-color" content="#f5f7fa">
+   <meta name="theme-color" content="#fafafa">
    <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
 
    <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +16,11 @@
 
    <link rel="stylesheet" href="../style.css">
    <link rel="stylesheet" href="style.css">
+   <!-- 配色テーマを描画前に当てる (チラつき防止。切り替えは view/parts/theme.js) -->
+   <script>
+      const savedTheme = localStorage.getItem('todo_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme;
+   </script>
    <title>ToDo クイック登録</title>
 </head>
 <body>

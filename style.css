@@ -1,42 +1,65 @@
 /* ==========================================================================
    1. Modern Reset & Variables
    ========================================================================== */
+/* 配色テーマ: 既定は端末の設定に合わせ、<html data-theme="light|dark"> で固定する (切り替えは view/parts/theme.js)
+   色はすべてここのトークンで決め、各所では var(--*) だけを使う。light-dark(ライト, ダーク) で両方の値を並べて書く */
 :root {
-   /* Color Palette - Apple/Linear Style */
-   --bg-app: #f5f7fa;
-   --bg-card: #ffffff;
-   --bg-input: #f8fafc;
-   --bg-hover: #f1f5f9;
-   
-   --text-main: #0f172a;
-   --text-muted: #64748b;
-   --text-inverse: #ffffff;
-   
-   --accent: #4f46e5;
-   --accent-hover: #4338ca;
-   --accent-light: #eeebff;
-   
-   --danger: #ef4444;
-   --danger-hover: #dc2626;
-   --danger-light: #fee2e2;
-   
-   --border: #e2e8f0;
-   --border-focus: #6366f1;
+   color-scheme: light dark;
+}
 
-   /* ヒートマップの濃さ (0件 → 多い) */
-   --heat-0: #ebedf0;
-   --heat-1: #9be9a8;
-   --heat-2: #40c463;
-   --heat-3: #30a14e;
-   --heat-4: #216e39;
-   
+:root[data-theme="light"] {
+   color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+   color-scheme: dark;
+}
+
+:root {
+   /* 面 (ニュートラルは zinc 寄り、わずかに紫を含ませる) */
+   --background: light-dark(oklch(0.985 0.003 286), oklch(0.145 0.006 286));
+   --card:       light-dark(oklch(1 0 0),           oklch(0.185 0.007 286));
+   --popover:    light-dark(oklch(1 0 0),           oklch(0.215 0.008 286));
+   --input-bg:   light-dark(oklch(1 0 0),           oklch(1 0 0 / 0.04));
+   --muted:      light-dark(oklch(0.967 0.004 286), oklch(0.245 0.008 286));
+   --hover:      light-dark(oklch(0.955 0.006 286), oklch(1 0 0 / 0.06));
+   --overlay:    light-dark(oklch(0.21 0.01 286 / 0.25), oklch(0 0 0 / 0.6));
+
+   /* 文字 */
+   --foreground:       light-dark(oklch(0.21 0.008 286),  oklch(0.97 0.003 286));
+   --muted-foreground: light-dark(oklch(0.552 0.016 286), oklch(0.705 0.015 286));
+
+   /* 線 */
+   --border:        light-dark(oklch(0.92 0.005 286), oklch(1 0 0 / 0.1));
+   --border-strong: light-dark(oklch(0.85 0.008 286), oklch(1 0 0 / 0.2));
+
+   /* メインカラー (紫)。--primary-text は面の上に置く紫の文字、--primary-subtle は選択中などの淡い背景 */
+   --primary:            light-dark(oklch(0.541 0.247 293), oklch(0.585 0.233 293));
+   --primary-hover:      light-dark(oklch(0.491 0.24 293),  oklch(0.636 0.21 293));
+   --primary-foreground: oklch(0.985 0.005 293);
+   --primary-text:       light-dark(oklch(0.491 0.24 293),  oklch(0.785 0.13 293));
+   --primary-subtle:     light-dark(oklch(0.955 0.028 293), oklch(0.585 0.233 293 / 0.18));
+   --ring:               light-dark(oklch(0.606 0.22 293),  oklch(0.702 0.16 293));
+   --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
+
+   /* 削除などの危険な操作 */
+   --destructive:        light-dark(oklch(0.577 0.215 27), oklch(0.704 0.17 22));
+   --destructive-subtle: light-dark(oklch(0.971 0.013 17), oklch(0.637 0.2 25 / 0.15));
+
+   /* ヒートマップの濃さ (0件 → 多い)。「草」なので緑のまま */
+   --heat-0: light-dark(oklch(0.94 0.005 286), oklch(0.27 0.008 286));
+   --heat-1: light-dark(oklch(0.87 0.1 150),   oklch(0.36 0.08 152));
+   --heat-2: light-dark(oklch(0.75 0.16 150),  oklch(0.49 0.12 152));
+   --heat-3: light-dark(oklch(0.63 0.16 150),  oklch(0.63 0.16 150));
+   --heat-4: light-dark(oklch(0.48 0.12 152),  oklch(0.78 0.19 150));
+
    /* System Values */
    --radius-sm: 6px;
    --radius-md: 10px;
-   --radius-lg: 16px;
-   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+   --radius-lg: 14px;
+   --shadow-sm: 0 1px 2px 0 light-dark(oklch(0 0 0 / 0.05), oklch(0 0 0 / 0.3));
+   --shadow-md: 0 2px 8px -2px light-dark(oklch(0.3 0.05 286 / 0.08), oklch(0 0 0 / 0.4)), var(--shadow-sm);
+   --shadow-lg: 0 12px 32px -8px light-dark(oklch(0.3 0.05 286 / 0.18), oklch(0 0 0 / 0.6)), 0 4px 8px -4px light-dark(oklch(0 0 0 / 0.08), oklch(0 0 0 / 0.4));
    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -57,8 +80,8 @@ html {
 body {
    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
    font-feature-settings: "palt";
-   background-color: var(--bg-app);
-   color: var(--text-main);
+   background-color: var(--background);
+   color: var(--foreground);
    line-height: 1.5;
    padding: 40px 20px;
    font-size: 1.5rem;
@@ -89,11 +112,11 @@ body {
    3. Panels & Cards
    ========================================================================== */
 .panel {
-   background: var(--bg-card);
+   background: var(--card);
    padding: 24px;
    border-radius: var(--radius-lg);
-   box-shadow: var(--shadow-md);
-   border: 1px solid rgb(255 255 255 / 0.8);
+   box-shadow: var(--shadow-sm);
+   border: 1px solid var(--border);
 }
 
 .panel-header {
@@ -109,7 +132,7 @@ body {
    h2 {
       font-size: 1.8rem;
       font-weight: 700;
-      color: var(--text-main);
+      color: var(--foreground);
       letter-spacing: -0.025em;
    }
 }
@@ -129,27 +152,27 @@ body {
    align-items: center;
    gap: 10px;
    position: relative;
-   background: var(--bg-input);
+   background: var(--input-bg);
    padding: 6px 14px;
    border-radius: var(--radius-sm);
    border: 1px solid var(--border);
    transition: var(--transition);
 
    &:hover {
-      border-color: var(--text-muted);
+      border-color: var(--border-strong);
    }
 
    svg {
       width: 16px;
       height: 16px;
-      color: var(--text-muted);
+      color: var(--muted-foreground);
    }
 }
 
 .date-display {
    font-size: 1.6rem;
    font-weight: 600;
-   color: var(--text-main);
+   color: var(--foreground);
    font-family: "Inter", "Segoe UI", sans-serif;
 }
 
@@ -207,21 +230,20 @@ body {
       padding: 10px 14px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
+      background-color: var(--input-bg);
       font-size: 1.5rem;
-      color: var(--text-main);
+      color: var(--foreground);
       transition: var(--transition);
 
       &::placeholder {
-         color: var(--text-muted);
+         color: var(--muted-foreground);
          opacity: 0.7;
       }
 
       &:focus {
          outline: none;
-         border-color: var(--border-focus);
-         background-color: var(--bg-card);
-         box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+         border-color: var(--ring);
+         box-shadow: var(--focus-ring);
       }
    }
 
@@ -229,14 +251,14 @@ body {
       padding: 0 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
-      color: var(--text-main);
+      background-color: var(--input-bg);
+      color: var(--foreground);
       font-size: 1.3rem;
       font-family: inherit;
       
       &:focus {
          outline: none;
-         border-color: var(--border-focus);
+         border-color: var(--ring);
       }
    }
 }
@@ -255,7 +277,7 @@ body {
    position: absolute;
    top: anchor(bottom);
    left: anchor(left);
-   background: var(--bg-card);
+   background: var(--popover);
    border: 1px solid var(--border);
    border-radius: var(--radius-sm);
    box-shadow: var(--shadow-lg);
@@ -272,14 +294,14 @@ body {
 .suggest-item {
    padding: 10px 14px;
    font-size: 1.4rem;
-   color: var(--text-main);
+   color: var(--foreground);
    cursor: pointer;
    transition: background-color 0.15s ease;
    word-break: break-all;
 
    &:hover {
-      background-color: var(--bg-hover);
-      color: var(--accent);
+      background-color: var(--hover);
+      color: var(--primary-text);
    }
 }
 
@@ -287,16 +309,16 @@ body {
 .suggest-manage {
    position: sticky;
    bottom: 0;
-   background: var(--bg-card);
+   background: var(--popover);
    border-top: 1px solid var(--border);
-   color: var(--text-muted);
+   color: var(--muted-foreground);
    font-size: 1.3rem;
 }
 
 /* Buttons */
 button {
-   background-color: var(--accent);
-   color: var(--text-inverse);
+   background-color: var(--primary);
+   color: var(--primary-foreground);
    border: none;
    padding: 10px 16px;
    border-radius: var(--radius-sm);
@@ -317,7 +339,7 @@ button {
    }
 
    &:hover {
-      background-color: var(--accent-hover);
+      background-color: var(--primary-hover);
    }
 
    &:disabled {
@@ -328,26 +350,26 @@ button {
    /* Secondary Button style */
    &.secondary {
       background-color: transparent;
-      color: var(--text-muted);
+      color: var(--muted-foreground);
       border: 1px solid transparent;
       padding: 6px;
       border-radius: var(--radius-sm);
 
       &:hover {
-         background-color: var(--bg-hover);
-         color: var(--text-main);
+         background-color: var(--hover);
+         color: var(--foreground);
       }
    }
 
    /* Danger Button style */
    &.danger {
       background-color: transparent;
-      color: var(--text-muted);
+      color: var(--muted-foreground);
       padding: 6px;
 
       &:hover {
-         background-color: var(--danger-light);
-         color: var(--danger);
+         background-color: var(--destructive-subtle);
+         color: var(--destructive);
       }
    }
 
@@ -359,8 +381,8 @@ button {
    
    /* 折りたたみ見出しの右端に置く、文字付きのボタン */
    &.summary-action {
-      background: var(--bg-input);
-      color: var(--text-muted);
+      background: var(--card);
+      color: var(--muted-foreground);
       border: 1px solid var(--border);
       padding: 2px 8px;
       font-size: 1.1rem;
@@ -374,16 +396,16 @@ button {
       }
 
       &:hover {
-         background: var(--bg-hover);
-         color: var(--text-main);
+         background: var(--hover);
+         color: var(--foreground);
       }
    }
 }
 
 .action-menu {
    label {
-      background-color: var(--accent);
-      color: var(--text-inverse);
+      background-color: var(--primary);
+      color: var(--primary-foreground);
       border: none;
       padding: 10px 16px;
       border-radius: var(--radius-sm);
@@ -399,11 +421,11 @@ button {
       
       &.secondary {
          background-color: transparent;
-         color: var(--text-muted);
+         color: var(--muted-foreground);
 
          &:hover {
-            background-color: var(--bg-hover);
-            color: var(--text-main);
+            background-color: var(--hover);
+            color: var(--foreground);
          }
       }
       svg {
@@ -418,7 +440,7 @@ button {
    5. Task Groups (Details / Summary)
    ========================================================================== */
 .collapse {
-   background: var(--bg-card);
+   background: var(--card);
    border: 1px solid var(--border);
    border-radius: var(--radius-md);
    margin-bottom: 14px;
@@ -428,7 +450,7 @@ button {
    &[open] {
       summary {
          border-bottom: 1px solid var(--border);
-         background: rgb(248 250 252 / 0.5);
+         background: color-mix(in oklab, var(--muted) 50%, transparent);
       }
    }
 }
@@ -439,7 +461,7 @@ summary.collapse-title {
    padding: 12px 16px;
    font-weight: 600;
    font-size: 1.5rem;
-   color: var(--text-main);
+   color: var(--foreground);
    cursor: pointer;
    user-select: none;
    list-style: none;
@@ -453,8 +475,8 @@ summary.collapse-title {
       display: inline-block;
       width: 5px;
       height: 5px;
-      border-right: 2px solid var(--text-muted);
-      border-bottom: 2px solid var(--text-muted);
+      border-right: 2px solid var(--muted-foreground);
+      border-bottom: 2px solid var(--muted-foreground);
       transform: rotate(-45deg);
       margin-right: 10px;
       transition: transform 0.2s ease;
@@ -471,7 +493,7 @@ summary.collapse-title {
 
 /* 一覧が空のときの案内文 */
 .empty-text {
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 }
 
 /* モーダル内の説明文 */
@@ -481,8 +503,8 @@ summary.collapse-title {
 
 .list-count {
    font-size: 1.2rem;
-   color: var(--text-muted);
-   background: var(--bg-hover);
+   color: var(--muted-foreground);
+   background: var(--muted);
    padding: 1px 6px;
    border-radius: 10px;
    margin-left: 6px;
@@ -507,7 +529,7 @@ summary.collapse-title {
    svg {
       width: 16px;
       height: 16px;
-      color: var(--text-muted);
+      color: var(--muted-foreground);
    }
 }
 
@@ -528,21 +550,21 @@ summary.collapse-title {
    align-items: center;
    justify-content: space-between;
    padding: 10px 12px;
-   background: var(--bg-card);
+   background: var(--card);
    border: 1px solid var(--border);
    border-radius: var(--radius-sm);
    cursor: grab;
    transition: border-color 0.2s, box-shadow 0.2s;
 
    &:hover {
-      border-color: cubic-bezier(0.4, 0, 0.2, 1);
-      background: var(--bg-input);
+      border-color: var(--border-strong);
+      background: var(--hover);
    }
 
    &.dragging {
       opacity: 0.4;
-      border: 2px dashed var(--accent) !important;
-      background: var(--accent-light);
+      border: 2px dashed var(--primary) !important;
+      background: var(--primary-subtle);
       box-shadow: none;
    }
 }
@@ -565,6 +587,13 @@ summary.collapse-title {
       padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
+      background: var(--input-bg);
+      color: var(--foreground);
+
+      &:focus {
+         outline: none;
+         border-color: var(--ring);
+      }
    }
 }
 
@@ -587,18 +616,18 @@ summary.collapse-title {
       appearance: none;
       width: 18px;
       height: 18px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-strong);
       border-radius: 4px;
       outline: none;
       cursor: pointer;
       transition: var(--transition);
       position: relative;
-      background: var(--bg-card);
+      background: var(--card);
       flex-shrink: 0;
 
       &:checked {
-         background-color: var(--accent);
-         border-color: var(--accent);
+         background-color: var(--primary);
+         border-color: var(--primary);
 
          &::after {
             content: "";
@@ -607,31 +636,31 @@ summary.collapse-title {
             top: 2px;
             width: 4px;
             height: 8px;
-            border: solid var(--text-inverse);
+            border: solid var(--primary-foreground);
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
          }
       }
       
       &:focus-visible {
-         box-shadow: 0 0 0 2px var(--border-focus);
+         box-shadow: 0 0 0 2px var(--ring);
       }
    }
 
    .task-title-text {
       font-size: 1.5rem;
-      color: var(--text-main);
+      color: var(--foreground);
       transition: var(--transition);
       word-break: break-all;
    }
 
    &.done {
       input[type="checkbox"] {
-         background-color: var(--accent);
-         border-color: var(--accent);
+         background-color: var(--primary);
+         border-color: var(--primary);
       }
       .task-title-text {
-         color: var(--text-muted);
+         color: var(--muted-foreground);
       }
    }
 }
@@ -667,7 +696,7 @@ summary.collapse-title {
    .action-menu {
       display: flex;
       position: fixed;
-      background: var(--bg-card);
+      background: var(--popover);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       box-shadow: var(--shadow-lg);
@@ -698,7 +727,7 @@ summary.collapse-title {
 .modal {
    position: fixed;
    inset: 0;
-   background: rgb(15 23 42 / 0.3);
+   background: var(--overlay);
    backdrop-filter: blur(4px);
    display: flex;
    align-items: center;
@@ -708,7 +737,7 @@ summary.collapse-title {
 }
 
 .modal-content {
-   background: var(--bg-card);
+   background: var(--popover);
    padding: 28px;
    border-radius: var(--radius-lg);
    max-width: 420px;
@@ -720,14 +749,14 @@ summary.collapse-title {
       font-size: 2rem;
       font-weight: 700;
       margin-bottom: 20px;
-      color: var(--text-main);
+      color: var(--foreground);
    }
 
    label {
       display: block;
       font-weight: 500;
       margin-bottom: 14px;
-      color: var(--text-main);
+      color: var(--foreground);
       font-size: 1.3rem;
 
       input[type="text"] {
@@ -736,13 +765,14 @@ summary.collapse-title {
          padding: 10px 12px;
          border: 1px solid var(--border);
          border-radius: var(--radius-sm);
-         background: var(--bg-input);
+         background: var(--input-bg);
+         color: var(--foreground);
          font-size: 1.5rem;
 
          &:focus {
             outline: none;
-            border-color: var(--border-focus);
-            background: var(--bg-card);
+            border-color: var(--ring);
+            box-shadow: var(--focus-ring);
          }
       }
    }
@@ -769,8 +799,9 @@ summary.collapse-title {
    gap: 6px 12px;
    max-width: calc(100% - 24px);
    padding: 8px 14px;
-   background: var(--text-main);
-   color: var(--text-inverse);
+   background: var(--popover);
+   color: var(--foreground);
+   border: 1px solid var(--border);
    border-radius: var(--radius-md);
    box-shadow: var(--shadow-lg);
    font-size: 1.3rem;
@@ -798,11 +829,37 @@ summary.collapse-title {
    }
 }
 
+/* 配色テーマの切り替え (システム / ライト / ダーク)。選んでいるものを aria-pressed で示す */
+.theme-switch {
+   display: inline-flex;
+   gap: 2px;
+   margin-right: auto;
+   padding: 2px;
+   background: var(--muted);
+   border-radius: var(--radius-sm);
+
+   button.secondary {
+      padding: 4px 8px;
+      border-radius: 4px;
+
+      svg {
+         width: 14px;
+         height: 14px;
+      }
+
+      &[aria-pressed="true"] {
+         background: var(--card);
+         color: var(--foreground);
+         box-shadow: var(--shadow-sm);
+      }
+   }
+}
+
 /* 一覧を載せるモーダルの枠 (サジェスト候補の登録画面 / 過去の日記) */
 .modal-dialog {
    display: flex;
    flex-direction: column;
-   background: var(--bg-card);
+   background: var(--popover);
    padding: 24px;
    border-radius: var(--radius-lg);
    max-width: 480px;
@@ -834,7 +891,7 @@ summary.collapse-title {
    h2 {
       font-size: 1.8rem;
       font-weight: 700;
-      color: var(--text-main);
+      color: var(--foreground);
    }
 }
 
@@ -865,7 +922,7 @@ summary.collapse-title {
    gap: 8px;
    margin-bottom: 8px;
    font-size: 1.3rem;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 }
 
 /* 一覧内の区切り見出し (月ごと) */
@@ -873,7 +930,7 @@ summary.collapse-title {
    padding: 8px 4px 2px;
    font-size: 1.2rem;
    font-weight: 600;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 
    &:first-child {
       padding-top: 0;
@@ -889,7 +946,7 @@ summary.collapse-title {
    border-radius: var(--radius-sm);
 
    &:hover {
-      background: var(--bg-input);
+      background: var(--hover);
    }
 
    &.is-editing {
@@ -932,7 +989,14 @@ summary.collapse-title {
       padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 4px;
+      background: var(--input-bg);
+      color: var(--foreground);
       font-size: 1.4rem;
+
+      &:focus {
+         outline: none;
+         border-color: var(--ring);
+      }
    }
 }
 
@@ -940,7 +1004,7 @@ summary.collapse-title {
 .split-source {
    margin-bottom: 12px;
    font-size: 1.3rem;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
    word-break: break-all;
 }
 
@@ -962,14 +1026,14 @@ summary.collapse-title {
       padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
+      background-color: var(--input-bg);
       font-size: 1.4rem;
-      color: var(--text-main);
+      color: var(--foreground);
 
       &:focus {
          outline: none;
-         border-color: var(--border-focus);
-         background-color: var(--bg-card);
+         border-color: var(--ring);
+         box-shadow: var(--focus-ring);
       }
    }
 }
@@ -1000,7 +1064,7 @@ summary.collapse-title {
    margin-bottom: 4px;
    font-size: 1.1rem;
    font-weight: 600;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
    white-space: nowrap;
 }
 
@@ -1033,7 +1097,7 @@ summary.collapse-title {
 
    button&:hover,
    &.is-current {
-      outline: 2px solid var(--border-focus);
+      outline: 2px solid var(--ring);
       outline-offset: 1px;
    }
 }
@@ -1046,7 +1110,7 @@ summary.collapse-title {
    gap: 6px 12px;
    margin-top: 16px;
    font-size: 1.2rem;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 }
 
 .heatmap-legend {
@@ -1064,7 +1128,7 @@ summary.collapse-title {
    .diary-count {
       font-size: 1.2rem;
       text-align: right;
-      color: var(--text-muted);
+      color: var(--muted-foreground);
    }
 
    textarea {
@@ -1073,7 +1137,7 @@ summary.collapse-title {
       padding: 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
+      background-color: var(--input-bg);
       transition: var(--transition);
       width: 100%;
       height: 5lh;
@@ -1082,9 +1146,8 @@ summary.collapse-title {
 
       &:focus {
          outline: none;
-         border-color: var(--border-focus);
-         background-color: var(--bg-card);
-         box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+         border-color: var(--ring);
+         box-shadow: var(--focus-ring);
       }
    }
 }
@@ -1100,26 +1163,26 @@ summary.collapse-title {
    width: 100%;
    padding: 8px 12px;
    background-color: transparent;
-   color: var(--text-main);
+   color: var(--foreground);
    border: 1px solid var(--border);
    font-weight: 400;
    text-align: left;
    white-space: normal;
 
    &:hover {
-      background-color: var(--bg-input);
+      background-color: var(--hover);
    }
 }
 
 .diary-list-item.is-current button {
-   border-color: var(--border-focus);
-   background-color: var(--accent-light);
+   border-color: var(--ring);
+   background-color: var(--primary-subtle);
 }
 
 .diary-list-date {
    font-size: 1.2rem;
    font-weight: 600;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 }
 
 .diary-list-text {
@@ -1138,7 +1201,7 @@ summary.collapse-title {
    border-radius: var(--radius-sm);
 
    &:hover {
-      background-color: var(--bg-input);
+      background-color: var(--hover);
    }
 }
 
@@ -1150,7 +1213,7 @@ summary.collapse-title {
    gap: 10px;
    padding: 8px 12px;
    background-color: transparent;
-   color: var(--text-main);
+   color: var(--foreground);
    font-weight: 400;
    text-align: left;
    white-space: normal;
@@ -1168,7 +1231,7 @@ summary.collapse-title {
    flex-shrink: 0;
    font-size: 1.2rem;
    font-weight: 600;
-   color: var(--text-muted);
+   color: var(--muted-foreground);
 }
 
 .done-search-title {
@@ -1176,7 +1239,7 @@ summary.collapse-title {
    word-break: break-all;
 
    mark {
-      background-color: var(--accent-light);
+      background-color: var(--primary-subtle);
       color: inherit;
       border-radius: 2px;
    }
@@ -1189,14 +1252,14 @@ summary.collapse-title {
    padding: 10px 12px;
    border: 1px solid var(--border);
    border-radius: var(--radius-sm);
-   background-color: var(--bg-input);
-   color: var(--text-main);
+   background-color: var(--input-bg);
+   color: var(--foreground);
    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
    font-size: 1.3rem;
    resize: none;
 
    &:focus {
       outline: none;
-      border-color: var(--border-focus);
+      border-color: var(--ring);
    }
 }

@@ -1,5 +1,6 @@
 // quick/view.js - クイック登録画面 (タスク名と日付を入れて追加するだけ)
 import { showToast } from '../view/parts/toast.js';
+import { watchTheme } from '../view/parts/theme.js';
 import { getTodayDateString, getTomorrowDateString } from '../lib/date.js';
 
 // インストールしたアプリとして開いたときのウィンドウの中身の幅 (px)。高さは中身に合わせる
@@ -43,6 +44,9 @@ export class QuickView {
          if (e.key !== 'Escape') return;
          if (isStandalone()) window.close();
       });
+
+      // 配色テーマは本編で切り替える。ここでは端末の設定と本編での切り替えに追従するだけ
+      watchTheme();
 
       this._fitWindow();
    }
