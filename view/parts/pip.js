@@ -7,23 +7,10 @@ export function isPiPSupported() {
    return 'documentPictureInPicture' in window;
 }
 
-// 直前の PiP ウィンドウの中身の大きさ。開き直しても同じ大きさにする
-let lastSize = null;
-
-// PiP ウィンドウを開き、index.html の <template id="..."> の中身を流し込む。
-// ブラウザ任せで前回の大きさを引き継ぐと、開き直すたびに枠の分だけ横に広がるので、
-// 大きさは自前で覚えて指定する
+// PiP ウィンドウを開き、index.html の <template id="..."> の中身を流し込む
 export async function openPiPWindow(templateId) {
-   const pipWindow = await window.documentPictureInPicture.requestWindow(
-      lastSize ? { ...lastSize, preferInitialWindowPlacement: true } : {}
-   );
+   const pipWindow = await window.documentPictureInPicture.requestWindow();
    const pipDocument = pipWindow.document;
-
-   const saveSize = () => {
-      lastSize = { width: pipWindow.innerWidth, height: pipWindow.innerHeight };
-   };
-   saveSize();
-   pipWindow.addEventListener("resize", saveSize);
 
    await loadStyleSheet(pipDocument, PIP_CSS_URL);
 
