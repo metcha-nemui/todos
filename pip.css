@@ -5,10 +5,17 @@
    --background: oklch(0.145 0.006 286);
    --stripe: oklch(0.185 0.007 286);
    --hover: oklch(0.24 0.008 286);
+   --card: oklch(0.185 0.007 286);
+   --input-bg: oklch(1 0 0 / 0.04);
    --border: oklch(0.26 0.008 286);
+   --border-strong: oklch(1 0 0 / 0.2);
    --muted-foreground: oklch(0.705 0.015 286);
    --primary: oklch(0.585 0.233 293);
    --primary-hover: oklch(0.54 0.22 293);
+   --primary-foreground: oklch(0.985 0.005 293);
+   --ring: oklch(0.702 0.16 293);
+   --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
+   --radius-sm: 6px;
 }
 
 [hidden] {
@@ -126,15 +133,62 @@ body {
    border-bottom: 1px solid var(--border);
 }
 
+/* 入力欄とチェックボックスは本編のダークに揃える */
 .focus-minutes input {
    width: 4em;
+   padding: 4px 8px;
    font: inherit;
+   color: inherit;
+   background: var(--input-bg);
+   border: 1px solid var(--border);
+   border-radius: var(--radius-sm);
+}
+
+.focus-minutes input:focus {
+   outline: none;
+   border-color: var(--ring);
+   box-shadow: var(--focus-ring);
 }
 
 #focus-select .task {
    justify-content: flex-start;
    gap: 0.5em;
    cursor: pointer;
+}
+
+#focus-select input[type="checkbox"] {
+   appearance: none;
+   position: relative;
+   flex-shrink: 0;
+   width: 18px;
+   height: 18px;
+   margin: 0;
+   background: var(--card);
+   border: 1px solid var(--border-strong);
+   border-radius: 4px;
+   outline: none;
+   cursor: pointer;
+}
+
+#focus-select input[type="checkbox"]:checked {
+   background: var(--primary);
+   border-color: var(--primary);
+}
+
+#focus-select input[type="checkbox"]:checked::after {
+   content: "";
+   position: absolute;
+   left: 5px;
+   top: 2px;
+   width: 4px;
+   height: 8px;
+   border: solid var(--primary-foreground);
+   border-width: 0 2px 2px 0;
+   transform: rotate(45deg);
+}
+
+#focus-select input[type="checkbox"]:focus-visible {
+   box-shadow: 0 0 0 2px var(--ring);
 }
 
 .focus-progress {
