@@ -3,8 +3,9 @@
 // マークアップは index.html の <template id="pip-focus-content">、スタイルは pip.css
 import { isPiPSupported, openPiPWindow } from './pip.js';
 
-// 1タスクあたりの持ち時間 (分) の既定値
+// 1タスクあたりの持ち時間 (分) の既定値。前回の値を端末に保存して次回の初期値にする
 const DEFAULT_MINUTES = 10;
+const STORAGE_KEY = 'todo_focus_minutes';
 
 // getTodos は今日のToDo、onComplete(id) は「完了」を押したときに呼ぶ
 export function bindPiPFocusButton(button, getTodos, onComplete) {
@@ -36,15 +37,14 @@ function setupFocus(pipWindow, todos, onComplete) {
    const btnDone      = $("#focus-done");
    const endView      = $("#focus-end");
 
-   // 開始画面: 対象にするタスクを選ぶ (既定はすべて)
-   inputMinutes.value = DEFAULT_MINUTES;
+   // 開始画面: 対象にするタスクを選ぶ (既定は未選択)
+   inputMinutes.value = localStorage.getItem(STORAGE_KEY) || DEFAULT_MINUTES;
    todos.forEach(todo => {
       const label = pipDocument.createElement("label");
       label.classList.add("task");
       const checkbox = pipDocument.createElement("input");
       checkbox.type = "checkbox";
       checkbox.value = todo.id;
-      checkbox.checked = true;
       const span = pipDocument.createElement("span");
       span.textContent = todo.title;
       label.append(checkbox, span);
@@ -104,6 +104,7 @@ function setupFocus(pipWindow, todos, onComplete) {
       );
       queue = todos.filter(todo => selectedIds.has(todo.id));
       duration = Number(inputMinutes.value) * 60000;
+      localStorage.setItem(STORAGE_KEY, inputMinutes.value);
 
       setupForm.hidden = true;
       runView.hidden = false;
