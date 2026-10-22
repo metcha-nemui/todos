@@ -399,6 +399,11 @@ button {
          background: var(--hover);
          color: var(--foreground);
       }
+
+      /* 並べたときは先頭だけを右端へ寄せる */
+      & + .summary-action {
+         margin-left: 4px;
+      }
    }
 }
 

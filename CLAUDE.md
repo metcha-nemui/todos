@@ -23,7 +23,10 @@
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
    - `view/parts/` — パネルやモーダルから使う UI 部品。対象の要素は引数で受け取る。
       - `taskList.js` — タスク行の描画と行内アクション。
-      - `dragSort.js` / `suggest.js` / `pip.js` / `detailsState.js` — 並び替え / サジェスト / PiP / 折りたたみの開閉状況の保存。
+      - `dragSort.js` / `suggest.js` / `detailsState.js` — 並び替え / サジェスト / 折りたたみの開閉状況の保存。
+      - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
+      - `pipSplit.js` — Split: 今日のToDoを一覧で出し、クリックで次へ進めて経過時間を記録する。一覧だけスクロールし、下のタイマーは固定。
+      - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
       - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面下部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。

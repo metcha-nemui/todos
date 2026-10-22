@@ -57,8 +57,12 @@ class TodoPresenter {
          () => this.model.getTodayDones()
       );
       
-      // PiP起動ボタン
-      this.view.bindPiPButton(() => this.model.getTodayTodos());
+      // PiP起動ボタン (Split / Focus)
+      this.view.bindPiPSplitButton(() => this.model.getTodayTodos());
+      this.view.bindPiPFocusButton(
+         () => this.model.getTodayTodos(),
+         (id) => this.model.completeTodo(id)
+      );
       
       // Diary編集
       // Modelは入力中の本文を消さないよう変更を通知しないので、一覧だけここで描き直す

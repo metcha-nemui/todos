@@ -1,10 +1,14 @@
-/* Picture-in-Picture ウィンドウ用スタイル (view/parts/pip.js が読み込む)
+/* Picture-in-Picture ウィンドウ (Split / Focus) 用スタイル (view/parts/pip.js が読み込む)
    作業中に画面の隅へ置いて使うので、配色テーマによらず常にダーク。色合いは本編のダークに揃える */
 :root {
    color-scheme: dark;
    --background: oklch(0.145 0.006 286);
    --stripe: oklch(0.185 0.007 286);
+   --hover: oklch(0.24 0.008 286);
    --border: oklch(0.26 0.008 286);
+   --muted-foreground: oklch(0.705 0.015 286);
+   --primary: oklch(0.585 0.233 293);
+   --primary-hover: oklch(0.54 0.22 293);
 }
 
 [hidden] {
@@ -25,9 +29,12 @@ body {
    background: var(--background);
 }
 
+/* タスクの一覧だけをスクロールさせ、下のタイマーは常に見せる */
 .wrapper {
    width: 100%;
-   flex-grow: 1;
+   flex: 1 1 auto;
+   min-height: 0;
+   overflow-y: auto;
 }
 
 .task {
@@ -71,6 +78,7 @@ body {
 }
 
 .footer {
+   flex-shrink: 0;
    text-align: right;
    padding-inline: 0.5em;
 }
@@ -98,4 +106,109 @@ body {
 
 .sec {
    font-size: 45px;
+}
+
+/* ---- Focus ---- */
+
+.focus-screen {
+   display: flex;
+   flex-direction: column;
+   flex: 1 1 auto;
+   min-height: 0;
+}
+
+.focus-minutes {
+   flex-shrink: 0;
+   display: flex;
+   align-items: center;
+   gap: 0.5em;
+   padding: 0.5em;
+   border-bottom: 1px solid var(--border);
+}
+
+.focus-minutes input {
+   width: 4em;
+   font: inherit;
+}
+
+#focus-select .task {
+   justify-content: flex-start;
+   gap: 0.5em;
+   cursor: pointer;
+}
+
+.focus-progress {
+   flex-shrink: 0;
+   padding: 0.5em;
+   color: var(--muted-foreground);
+}
+
+/* 今やることを1つだけ大きく見せる */
+.focus-task {
+   flex: 1 1 auto;
+   min-height: 0;
+   overflow-y: auto;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.5em 1em;
+   font-size: 22px;
+   font-weight: bold;
+   text-align: center;
+   overflow-wrap: anywhere;
+}
+
+.focus-bar-track {
+   flex-shrink: 0;
+   height: 4px;
+   background: var(--stripe);
+}
+
+.focus-bar {
+   height: 100%;
+   background: var(--primary);
+}
+
+.focus-actions {
+   flex-shrink: 0;
+   display: flex;
+   gap: 0.5em;
+   padding: 0.5em;
+}
+
+.focus-actions button {
+   flex: 1;
+   padding: 0.5em;
+   font: inherit;
+   font-weight: bold;
+   color: inherit;
+   background: var(--stripe);
+   border: 1px solid var(--border);
+   border-radius: 6px;
+   cursor: pointer;
+}
+
+.focus-actions button:hover {
+   background: var(--hover);
+}
+
+.focus-actions button.is-primary {
+   background: var(--primary);
+   border-color: var(--primary);
+}
+
+.focus-actions button.is-primary:hover {
+   background: var(--primary-hover);
+}
+
+.focus-actions button:disabled {
+   opacity: 0.5;
+   cursor: default;
+}
+
+.focus-message {
+   margin: auto;
+   padding: 1em;
+   color: var(--muted-foreground);
+   text-align: center;
 }

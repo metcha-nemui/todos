@@ -159,16 +159,27 @@ export class TodoModel {
    
    // 完了状態を反転し、表示中の日付の該当リスト末尾へ移す
    async toggleTodo(id) {
-      if (!supabase) { console.warn('Supabase not configured'); return; }
       const todo = this.todos.find(t => t.id === id);
       if (!todo) return;
-      
-      const updatedDone = !todo.is_done;
+      return this._setDone(todo, !todo.is_done, this.currentDate);
+   }
+
+   // 未完了なら完了にし、そのタスクの日付の Done 末尾へ移す (Focus から)。
+   // 開いている間にメイン画面で完了済みにされていても、未完了へ戻さない
+   async completeTodo(id) {
+      const todo = this.todos.find(t => t.id === id);
+      if (!todo || todo.is_done) return;
+      return this._setDone(todo, true, todo.due_date);
+   }
+
+   async _setDone(todo, updatedDone, date) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const id = todo.id;
       const changes = {
          is_done: updatedDone,
          done_at: updatedDone ? new Date().toISOString() : null,
-         due_date: this.currentDate,
-         sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === this.currentDate && !!t.is_done === updatedDone),
+         due_date: date,
+         sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === date && !!t.is_done === updatedDone),
       };
       
       const { error } = await todoTable.updateTodo({ ...todo, ...changes });

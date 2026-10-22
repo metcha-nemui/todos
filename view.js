@@ -153,8 +153,12 @@ export class TodoView {
       this.todayPanel.bindCopyButtons(getTodos, getDones);
    }
 
-   bindPiPButton(getTodos) {
-      this.todayPanel.bindPiPButton(getTodos);
+   bindPiPSplitButton(getTodos) {
+      this.todayPanel.bindPiPSplitButton(getTodos);
+   }
+
+   bindPiPFocusButton(getTodos, onComplete) {
+      this.todayPanel.bindPiPFocusButton(getTodos, onComplete);
    }
 
    bindUpdateDiary(handler) {

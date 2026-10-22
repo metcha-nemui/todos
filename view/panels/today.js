@@ -2,7 +2,8 @@
 import { getTodayDateString, shiftDateString } from '../../lib/date.js';
 import { formatDayMarkdown } from '../../lib/markdown.js';
 import { copyToClipboard } from '../util/clipboard.js';
-import { bindPiPButton } from '../parts/pip.js';
+import { bindPiPSplitButton } from '../parts/pipSplit.js';
+import { bindPiPFocusButton } from '../parts/pipFocus.js';
 import { renderTaskList } from '../parts/taskList.js';
 
 // 折りたたみ時に表示するToDoの件数
@@ -28,7 +29,8 @@ export class TodayPanel {
       this.btnCopyDone = document.getElementById('btn-copy-done');
       this.CountTodo = document.getElementById('list-count-todo');
       this.CountDone = document.getElementById('list-count-done');
-      this.btnPiP    = document.getElementById('btn-pip');
+      this.btnPiPSplit = document.getElementById('btn-pip-split');
+      this.btnPiPFocus = document.getElementById('btn-pip-focus');
       this.btnHeatmap = document.getElementById('btn-heatmap');
       this.btnDoneSearch = document.getElementById('btn-done-search');
 
@@ -130,11 +132,16 @@ export class TodayPanel {
       this.btnDoneSearch.addEventListener('click', () => handler());
    }
 
-   bindPiPButton(getTodos) {
+   bindPiPSplitButton(getTodos) {
       // 折りたたみ中は、画面に見えている分だけを渡す
-      bindPiPButton(this.btnPiP, () => {
+      bindPiPSplitButton(this.btnPiPSplit, () => {
          const todos = getTodos();
          return this._todoIsEllipsis ? todos.slice(0, ELLIPSIS_VISIBLE_COUNT) : todos;
       });
+   }
+
+   // 対象は Focus の開始画面で選ぶので、折りたたみによらず全件を渡す
+   bindPiPFocusButton(getTodos, onComplete) {
+      bindPiPFocusButton(this.btnPiPFocus, getTodos, onComplete);
    }
 }
