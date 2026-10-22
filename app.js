@@ -4,7 +4,7 @@ import { TodoView  } from './view.js';
 
 // Modelの変更種別 → 描き直す対象
 const RENDER_TARGETS = {
-   todos:     ['today', 'backlog', 'heatmap'],
+   todos:     ['today', 'backlog', 'heatmap', 'focus'],
    diaries:   ['diary', 'diaryList'],
    templates: ['templates'],
    date:      ['today', 'diary', 'backlog', 'diaryList', 'heatmap'],
@@ -139,6 +139,7 @@ class TodoPresenter {
             currentDate: model.currentDate,
             counts:      model.getDoneCountsByDate(),
          }),
+         focus: () => this.view.renderFocus(model.todos),
          templates: () => this.view.setTemplates(model.getTaskTemplates()),
          status: () => this.view.renderStatus({ loadFailed: model.loadFailed }),
       };

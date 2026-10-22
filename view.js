@@ -161,6 +161,10 @@ export class TodoView {
       this.todayPanel.bindPiPFocusButton(getTodos, onComplete);
    }
 
+   renderFocus(allTodos) {
+      this.todayPanel.renderFocus(allTodos);
+   }
+
    bindUpdateDiary(handler) {
       this.diaryPanel.bindUpdateDiary(handler);
    }

@@ -142,6 +142,11 @@ export class TodayPanel {
 
    // 対象は Focus の開始画面で選ぶので、折りたたみによらず全件を渡す
    bindPiPFocusButton(getTodos, onComplete) {
-      bindPiPFocusButton(this.btnPiPFocus, getTodos, onComplete);
+      this._syncFocus = bindPiPFocusButton(this.btnPiPFocus, getTodos, onComplete);
+   }
+
+   // 開いている Focus へ、メイン画面での変更を反映する
+   renderFocus(allTodos) {
+      this._syncFocus?.(allTodos);
    }
 }
