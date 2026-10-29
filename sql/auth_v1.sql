@@ -3,8 +3,9 @@
 -- 先に Supabase のダッシュボードで次を済ませておくこと
 --   1. Authentication の設定で「Allow new users to sign up」をオフにする (自分以外がユーザーを作れないように)
 --   2. Authentication → Users → Add user で自分のユーザーを作る (Auto Confirm)
---   3. 新しいアプリでログインできることを確かめる (これより前に流すと読み書きできなくなる)
 -- 下の <YOUR_UID> を、Users に表示される自分の User UID に置き換えてから実行する
+-- ログインした状態の通信は anon ではなく authenticated として扱われるので、これを流すまではログインすると何も読めない
+-- (データは消えていない。ログインしないまま開くと読めないのはアプリ側で止めているため)
 
 begin;
 
