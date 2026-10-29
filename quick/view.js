@@ -97,18 +97,19 @@ export class QuickView {
       });
    }
 
-   // state: 'loading' | 'ready' | 'unconfigured' | 'failed'。追加できるのは 'ready' のときだけ
+   // state: 'loading' | 'ready' | 'unconfigured' | 'needLogin' | 'failed'。追加できるのは 'ready' のときだけ
    renderStatus(state) {
       const ready = state === 'ready';
       this.inputTitle.disabled = !ready;
       this.btnAdd.disabled = !ready;
       this.btnRetry.hidden = state !== 'failed';
-      this.linkMain.hidden = state !== 'unconfigured';
+      this.linkMain.hidden = state !== 'unconfigured' && state !== 'needLogin';
 
       const messages = {
          loading:      '読み込み中…',
          ready:        '',
          unconfigured: '接続設定がありません。本編の「接続設定」から設定してください。',
+         needLogin:    'ログインしていません。本編でログインしてください。',
          failed:       '読み込みに失敗しました。',
       };
       this._showMessage(messages[state], state !== 'ready' && state !== 'loading');

@@ -1048,6 +1048,37 @@ summary.collapse-title {
    margin-top: 8px;
 }
 
+/* ログイン画面 */
+.login-form {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+
+   input {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background-color: var(--input-bg);
+      font-size: 1.4rem;
+      color: var(--foreground);
+
+      &:focus {
+         outline: none;
+         border-color: var(--ring);
+         box-shadow: var(--focus-ring);
+      }
+   }
+
+   .modal-footer {
+      margin-top: 8px;
+   }
+}
+
+.login-error {
+   font-size: 1.3rem;
+   color: var(--destructive);
+}
+
 @keyframes fadeIn {
    from { opacity: 0; }
    to { opacity: 1; }

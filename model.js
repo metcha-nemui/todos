@@ -1,5 +1,5 @@
 // model.js - Data Layer (状態の保持と各テーブル操作の窓口)
-import { supabase } from './lib/supabase.js';
+import { supabase, getSignedIn, signInWithPassword, signOutUser, onAuthChange } from './lib/supabase.js';
 import { getTodayDateString, getTomorrowDateString } from './lib/date.js';
 import * as todoTable from './model/todos.js';
 import * as diaryTable from './model/diaries.js';
@@ -19,12 +19,17 @@ export class TodoModel {
       // 読み込みの状態。loadFailed は直近の読み込みで1つでも失敗したら true
       this.loadFailed = false;
       this.lastLoadStartedAt = 0;
+      // 未ログインなら true。その間は読み込まない
+      this.needLogin = false;
       // 種別ごとの変更回数。読み直し中に手元が変わったことを検知するために使う
       this._revisions = { todos: 0, diaries: 0, templates: 0 };
 
       const savedDate = localStorage.getItem('todo_current_date');
       if(savedDate) this.currentDate = savedDate;
       else          this.currentDate = getTodayDateString();
+
+      // 他のウィンドウでのログイン・ログアウトも反映する
+      if (supabase) onAuthChange((signedIn) => this._onAuthChange(signedIn));
 
       // 最初の読み込みの完了を待てるように持っておく
       this.initialLoad = this.reload();
@@ -46,17 +51,64 @@ export class TodoModel {
       this.lastLoadStartedAt = Date.now();
       this.tomorrowDate = getTomorrowDateString();
 
+      // 未ログインで読むと空で返り、データが消えたように見えるので読まない
+      // セッションを確かめられなかったとき (オフラインでトークンを更新できない等) は読み込み失敗として扱う
+      const { signedIn, error } = await getSignedIn();
+      if (error) {
+         console.error('Failed to get session:', error);
+         return this._setStatus({ loadFailed: true });
+      }
+      if (!signedIn) return this._setStatus({ needLogin: true, loadFailed: false });
+      this._setStatus({ needLogin: false });
+
       const results = await Promise.all([
          this._load('todos',     todoTable.fetchTodos),
          this._load('diaries',   diaryTable.fetchDiaries),
          this._load('templates', templateTable.fetchTemplates),
       ]);
 
-      const failed = results.includes(false);
-      if (failed !== this.loadFailed) {
-         this.loadFailed = failed;
-         this._commit('status');
+      this._setStatus({ loadFailed: results.includes(false) });
+   }
+
+   // status: { loadFailed?, needLogin? }。変わったときだけ通知する
+   _setStatus(status) {
+      const changed = Object.keys(status).some(key => this[key] !== status[key]);
+      if (!changed) return;
+      Object.assign(this, status);
+      this._commit('status');
+   }
+
+   // ログイン / ログアウト
+   // ログインは成功したら null、失敗したらユーザー向けメッセージを返す。読み込みは onAuthChange から行う
+   async signIn(email, password) {
+      if (!supabase) return '接続設定がありません';
+      const { error } = await signInWithPassword(email, password);
+      if (!error) return null;
+
+      console.error('ログインに失敗:', error);
+      if (error.code === 'invalid_credentials') return 'メールアドレスかパスワードが違います';
+      return `ログインに失敗しました: ${error.message}`;
+   }
+
+   async signOut() {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const { error } = await signOutUser();
+      if (error) this._reportError('ログアウト', error);
+   }
+
+   // ログインしたら読み直し、ログアウトしたら手元のデータを消す
+   _onAuthChange(signedIn) {
+      if (signedIn === !this.needLogin) return;
+
+      if (signedIn) {
+         this.reload();
+         return;
       }
+      this._setStatus({ needLogin: true, loadFailed: false });
+      ['todos', 'diaries', 'templates'].forEach(kind => {
+         this[kind] = [];
+         this._commit(kind);
+      });
    }
 
    // kind は this のプロパティ名を兼ねる。成功したら true を返す
@@ -367,10 +419,16 @@ export class TodoModel {
       if(this.onErrorCallback) this.onErrorCallback('同じ名前の候補が既にあります');
    }
 
+   _reportNeedLogin() {
+      if(this.onErrorCallback) this.onErrorCallback('ログインしてください');
+   }
+
    // 全データのバックアップ
    // 書き出す内容を返す。失敗時は null
    async exportBackup() {
       if (!supabase) { console.warn('Supabase not configured'); return null; }
+      // 未ログインだと空のファイルになり、復元も「テーブルが空」と誤って判定するため断る
+      if (this.needLogin) { this._reportNeedLogin(); return null; }
       const { data, error } = await backup.exportBackup();
       if (error) { this._reportError('バックアップの取得', error); return null; }
       return data;
@@ -380,6 +438,7 @@ export class TodoModel {
    // 途中で失敗しても書き込めた分を表示するため読み直す
    async importBackup(data) {
       if (!supabase) { console.warn('Supabase not configured'); return false; }
+      if (this.needLogin) { this._reportNeedLogin(); return false; }
       const { error } = await backup.importBackup(data);
       await this.reload();
 

@@ -32,6 +32,7 @@
       <span id="status-banner-text"></span>
       <span id="status-banner-actions" class="toast-actions">
          <button type="button" id="btn-status-retry">再読み込み</button>
+         <button type="button" id="btn-status-login" hidden>ログイン</button>
          <button type="button" data-open-config>接続設定</button>
       </span>
    </div>
@@ -142,6 +143,7 @@
          <button type="button" id="btn-export" class="secondary">Markdown出力</button>
          <button type="button" id="btn-backup" class="secondary">バックアップ</button>
          <button type="button" class="secondary" data-open-config>接続設定</button>
+         <button type="button" id="btn-logout" class="secondary">ログアウト</button>
       </div>
    </div>
    
@@ -156,6 +158,24 @@
       </div>
    </div>
    
+   <!-- ログイン画面 (動作は view/modals/login.js) -->
+   <div id="login-modal" class="modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+         <div class="modal-header">
+            <h2 id="login-modal-title">ログイン</h2>
+            <button type="button" id="btn-login-close" class="secondary" title="閉じる" aria-label="閉じる"><i data-lucide="x"></i></button>
+         </div>
+         <form class="login-form" id="form-login">
+            <input type="email" id="input-login-email" placeholder="メールアドレス" autocomplete="username" required>
+            <input type="password" id="input-login-password" placeholder="パスワード" autocomplete="current-password" required>
+            <p class="login-error" id="login-error" role="alert" hidden></p>
+            <div class="modal-footer">
+               <button type="submit" id="btn-login-submit">ログイン</button>
+            </div>
+         </form>
+      </div>
+   </div>
+
    <!-- サジェスト候補の登録画面 (動作は view/modals/template.js) -->
    <div id="template-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">

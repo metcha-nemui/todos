@@ -36,7 +36,9 @@ class QuickPresenter {
 
       this.view.renderStatus('loading');
       await loading;
-      this.ready = !this.model.loadFailed;
+      // ログインは本編で行う (同じオリジンなのでセッションを共有する)
+      this.ready = !this.model.needLogin && !this.model.loadFailed;
+      if (this.model.needLogin) return this.view.renderStatus('needLogin');
       this.view.renderStatus(this.ready ? 'ready' : 'failed');
    }
 }

@@ -9,6 +9,7 @@ import { DoneSearchModal } from './view/modals/doneSearch.js';
 import { ExportModal } from './view/modals/export.js';
 import { BackupModal } from './view/modals/backup.js';
 import { SplitModal } from './view/modals/split.js';
+import { LoginModal } from './view/modals/login.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
 import { bindDragAndDrop } from './view/parts/dragSort.js';
@@ -31,6 +32,9 @@ export class TodoView {
       this.btnBackup = document.getElementById('btn-backup');
       this.splitModal = new SplitModal();
       this.statusBanner  = new StatusBanner();
+      this.loginModal = new LoginModal();
+      this.btnLogout = document.getElementById('btn-logout');
+      this._needLogin = false;
 
       this.taskTemplatesData = [];
 
@@ -76,8 +80,14 @@ export class TodoView {
       this.templateModal.render(this.taskTemplatesData);
    }
    
+   // data: { loadFailed, needLogin }。ログインが要るようになったらログイン画面を開く
    renderStatus(data) {
       this.statusBanner.render(data);
+      this.btnLogout.hidden = data.needLogin;
+
+      if (data.needLogin && !this._needLogin) this.loginModal.open();
+      if (!data.needLogin) this.loginModal.close();
+      this._needLogin = data.needLogin;
    }
    
    // 入力の途中かどうか。途中なら描き直しで入力が消えるので、読み直しを見送る判断に使う
@@ -113,6 +123,18 @@ export class TodoView {
 
    bindRetryLoad(handler) {
       this.statusBanner.bindRetry(handler);
+   }
+
+   // ログイン画面。handler(email, password) は成功したら null、失敗したらメッセージを返す
+   bindLogin(handler) {
+      this.statusBanner.bindLogin(() => this.loginModal.open());
+      this.loginModal.bindSubmit(handler);
+   }
+
+   bindLogout(handler) {
+      this.btnLogout.addEventListener('click', () => {
+         if (confirm('ログアウトしますか？')) handler();
+      });
    }
 
    bindDatePicker(handler) {

@@ -28,6 +28,10 @@ class TodoPresenter {
       // 画面に戻ってきたときの読み直しと、失敗時の手動読み直し
       this.view.bindResume(() => this.reloadIfIdle());
       this.view.bindRetryLoad(() => this.model.reload());
+
+      // ログイン / ログアウト
+      this.view.bindLogin((email, password) => this.model.signIn(email, password));
+      this.view.bindLogout(() => this.model.signOut());
       
       // 2. Viewのユーザー操作イベントをPresenterのハンドラ（Modelへの命令）にバインド
       
@@ -141,7 +145,7 @@ class TodoPresenter {
          }),
          focus: () => this.view.renderFocus(model.todos),
          templates: () => this.view.setTemplates(model.getTaskTemplates()),
-         status: () => this.view.renderStatus({ loadFailed: model.loadFailed }),
+         status: () => this.view.renderStatus({ loadFailed: model.loadFailed, needLogin: model.needLogin }),
       };
       
       RENDER_TARGETS[kind].forEach(target => renderers[target]());

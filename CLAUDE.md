@@ -18,6 +18,7 @@
       - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、行ごとにタスク名をコピーでき、行を選ぶとそのタスクの日付へ移動する。
       - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面下部の「Markdown出力」ボタンから開く。
       - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面下部の「バックアップ」ボタンから開く。
+      - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面下部のボタン。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
@@ -30,8 +31,8 @@
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
       - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面下部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
-- `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
-- `lib/supabase.js` — Supabase クライアント初期化と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
+- `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`auth_v1.sql` (anon で読み書きしていた既存テーブルを本人だけに切り替える)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
+- `lib/supabase.js` — Supabase クライアント初期化、ログイン (`getSignedIn` / `signInWithPassword` / `signOutUser` / `onAuthChange`) と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
 - `app.js` — `TodoPresenter`。Model と View を接続するエントリポイント。Model の変更種別 (`todos` / `diaries` / `templates` / `date` / `status`) ごとに描き直すパネルを `RENDER_TARGETS` で決める。
 - `index.html` / `style.css` — 画面とスタイル。`pip.css` — PiP ウィンドウ用スタイル (`view/parts/pip.js` が読み込む)。
 - `quick/` — タスクを追加するだけのクイック登録画面。本編とは別の PWA としてインストールし、OS のショートカットキーで呼び出して使う。上部のタブで ToDo / Done を切り替え、入力はタスク名と日付だけ (サジェストなし)。Done では日付を必須にする。本編の `TodoModel` をそのまま使い、データの読み書きを別に書かない。
@@ -42,6 +43,8 @@
 ## 実行・確認
 - ビルド・テストなし。ES Modules のため `file://` では動かない。ローカルサーバで配信して確認する (例: `python -m http.server`)。
 - Supabase の URL / anon key はブラウザの localStorage `supabaseConfig` (`{SUPABASE_URL, SUPABASE_ANON_KEY}`) から読む。コードやコミットに書かない。
+- 認証は Supabase Auth のメールアドレスとパスワード。anon key は公開される前提の値なので、守りは RLS で行う (`todo_app` は自分の User UID の `authenticated` だけが読み書きでき、サインアップは無効)。ユーザーと UID は Supabase のダッシュボードで管理し、コードやコミットに書かない。
+- RLS で弾かれた読み込みはエラーにならず空で返る。データが消えたように見えたりバックアップの「テーブルが空」判定を誤ったりしないよう、`TodoModel` は未ログイン (`needLogin`) の間は読み込まない。セッションは同じオリジンの本編とクイック登録で共有する。
 
 ## コード規約
 - `view/` の import は `panels` / `modals` → `parts` → `util` の向きだけにする (同じ層どうしは `modals/close.js` のような層内の共通処理に限る)。DOM に触らないヘルパは `lib/` に置く。

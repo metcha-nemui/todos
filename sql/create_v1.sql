@@ -13,14 +13,16 @@ create table public.todo_app (
    primary key (kind, id)
 );
 
--- anon key で読み書きする (v0 と同じく、anon key を知っていれば誰でも読み書きできる)
+-- ログインした本人だけが読み書きできる (anon key だけでは何もできない)
+-- 先にダッシュボードでサインアップを無効にして自分のユーザーを作り、<YOUR_UID> をその User UID に置き換える
+-- (既に anon で作ったテーブルを切り替えるときは sql/auth_v1.sql)
 alter table public.todo_app enable row level security;
-create policy "anon can read and write" on public.todo_app
-   for all to anon
-   using (true)
-   with check (true);
+create policy "owner only" on public.todo_app
+   for all to authenticated
+   using (auth.uid() = '<YOUR_UID>'::uuid)
+   with check (auth.uid() = '<YOUR_UID>'::uuid);
 
 -- 2026-10-30 以降に作るテーブルには Data API の権限が自動で付かないので、明示的に付ける
-grant select, insert, update, delete on public.todo_app to anon;
+grant select, insert, update, delete on public.todo_app to authenticated;
 
 commit;
