@@ -38,7 +38,7 @@
 - `quick/` — タスクを追加するだけのクイック登録画面。本編とは別の PWA としてインストールし、OS のショートカットキーで呼び出して使う。上部のタブで ToDo / Done を切り替え、入力はタスク名と日付だけ (サジェストなし)。Done では日付を必須にする。本編の `TodoModel` をそのまま使い、データの読み書きを別に書かない。
    - `index.html` / `app.js` (`QuickPresenter`) / `view.js` (`QuickView`) / `style.css` (本編の `style.css` に重ねる) / `manifest.webmanifest` (スコープ `quick/`、`launch_handler` で既存ウィンドウを前面に出す)。
    - 接続設定は同じオリジンの localStorage を共有するので、本編で設定すれば使える (設定画面は持たない)。
-- PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。
+- PWA: `manifest.webmanifest` / `icons/` — ホーム画面に追加したときの名前とアイコン。スコープは `index.html` だけにする (`./` にすると `quick/` を内包し、本編を入れた状態でクイック登録をインストールできなくなる)。`id` は既存のインストールを引き継ぐため `./` で固定。`sw.js` — サービスワーカー。`offline.html` — オフラインで開いたときに `sw.js` が返すページ。
 
 ## 実行・確認
 - ビルド・テストなし。ES Modules のため `file://` では動かない。ローカルサーバで配信して確認する (例: `python -m http.server`)。
