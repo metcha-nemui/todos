@@ -2,7 +2,6 @@
    "name": "ToDo クイック登録",
    "short_name": "ToDo登録",
    "lang": "ja",
-   "id": "./",
    "start_url": "./",
    "scope": "./",
    "display": "standalone",

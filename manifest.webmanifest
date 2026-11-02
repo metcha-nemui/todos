@@ -2,7 +2,6 @@
    "name": "ToDo App",
    "short_name": "ToDo",
    "lang": "ja",
-   "id": "./",
    "start_url": "./index.html",
    "scope": "./index.html",
    "display": "standalone",
