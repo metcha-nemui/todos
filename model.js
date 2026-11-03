@@ -294,7 +294,8 @@ export class TodoModel {
          done_at: updatedDone ? new Date().toISOString() : null,
          due_date: date,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === date && !!t.is_done === updatedDone),
-         must: updatedDone ? todo.must : this._fitMust(todo.must, date, id),
+         // Done は Must / Want を区別しないので、完了にしたら外す
+         must: updatedDone ? false : this._fitMust(todo.must, date, id),
       };
       
       const { error } = await todoTable.updateTodo({ ...todo, ...changes });
