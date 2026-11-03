@@ -879,15 +879,6 @@ button.date-control {
    svg {
       color: var(--muted-foreground);
    }
-
-   /* スマホ幅では配色・設定と1行に収めるため、アイコンを省く */
-   @media (max-width: 480px) {
-      padding: 0 calc(var(--space) * 2.5);
-
-      svg {
-         display: none;
-      }
-   }
 }
 
 .date-display {
