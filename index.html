@@ -38,6 +38,23 @@
    </div>
    
    <div class="container">
+      <div class="app-header">
+         <div class="theme-switch" id="theme-switch" role="group" aria-label="配色">
+            <button type="button" class="secondary" data-theme-option="system" title="端末の設定に合わせる" aria-label="端末の設定に合わせる"><i data-lucide="monitor"></i></button>
+            <button type="button" class="secondary" data-theme-option="light" title="ライト" aria-label="ライト"><i data-lucide="sun"></i></button>
+            <button type="button" class="secondary" data-theme-option="dark" title="ダーク" aria-label="ダーク"><i data-lucide="moon"></i></button>
+         </div>
+         <!-- テーマ以外はたまにしか使わないので、設定メニューにまとめる -->
+         <button type="button" class="secondary" popovertarget="settings-menu" title="設定" aria-label="設定" style="anchor-name:--settings-menu-anchor"><i data-lucide="settings"></i></button>
+         <div id="settings-menu" class="settings-menu" popover style="position-anchor:--settings-menu-anchor">
+            <button type="button" id="btn-templates" class="secondary">サジェスト候補</button>
+            <button type="button" id="btn-export" class="secondary">Markdown出力</button>
+            <button type="button" id="btn-backup" class="secondary">バックアップ</button>
+            <button type="button" class="secondary" data-open-config>接続設定</button>
+            <button type="button" id="btn-logout" class="secondary">ログアウト</button>
+         </div>
+      </div>
+      
       <!-- 今日ビュー -->
       <div id="view-today">
          <div class="panel">
@@ -147,23 +164,6 @@
                </form>
                <div id="container-backlog-tasks"></div>
             </div>
-         </div>
-      </div>
-      
-      <div class="app-footer">
-         <div class="theme-switch" id="theme-switch" role="group" aria-label="配色">
-            <button type="button" class="secondary" data-theme-option="system" title="端末の設定に合わせる" aria-label="端末の設定に合わせる"><i data-lucide="monitor"></i></button>
-            <button type="button" class="secondary" data-theme-option="light" title="ライト" aria-label="ライト"><i data-lucide="sun"></i></button>
-            <button type="button" class="secondary" data-theme-option="dark" title="ダーク" aria-label="ダーク"><i data-lucide="moon"></i></button>
-         </div>
-         <!-- テーマ以外はたまにしか使わないので、メニューにまとめる -->
-         <button type="button" class="secondary" popovertarget="footer-menu" title="その他" aria-label="その他" style="anchor-name:--footer-menu-anchor"><i data-lucide="ellipsis"></i></button>
-         <div id="footer-menu" class="footer-menu" popover style="position-anchor:--footer-menu-anchor">
-            <button type="button" id="btn-templates" class="secondary">サジェスト候補</button>
-            <button type="button" id="btn-export" class="secondary">Markdown出力</button>
-            <button type="button" id="btn-backup" class="secondary">バックアップ</button>
-            <button type="button" class="secondary" data-open-config>接続設定</button>
-            <button type="button" id="btn-logout" class="secondary">ログアウト</button>
          </div>
       </div>
    </div>

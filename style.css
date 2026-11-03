@@ -976,25 +976,25 @@ summary.list-heading {
    }
 }
 
-/* 画面最下部のリンク */
-.app-footer {
+/* 画面最上部の操作 (配色テーマと設定メニュー) */
+.app-header {
    display: flex;
    justify-content: flex-end;
    gap: 8px;
-   margin-top: 12px;
+   margin-bottom: 12px;
 
    button {
       font-size: 1.2rem;
    }
 }
 
-/* 画面下部の「その他」メニュー (テーマ以外のたまに使う操作) */
-.footer-menu {
+/* 画面上部の設定メニュー (テーマ以外のたまに使う操作) */
+.settings-menu {
    position: absolute;
    inset: auto;
-   bottom: anchor(top);
+   top: anchor(bottom);
    right: anchor(right);
-   margin: 0 0 4px;
+   margin: 4px 0 0;
    padding: 4px;
    background: var(--popover);
    border: 1px solid var(--border);

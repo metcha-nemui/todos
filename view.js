@@ -44,10 +44,10 @@ export class TodoView {
       bindTabs(document.getElementById('main-tabs'));
       bindThemeSwitch(document.getElementById('theme-switch'));
 
-      // 画面下部のメニューは、項目を選んだら閉じる (開いたモーダルの上に残らないように)
-      const footerMenu = document.getElementById('footer-menu');
-      footerMenu.addEventListener('click', (e) => {
-         if (e.target.closest('button')) footerMenu.hidePopover();
+      // 画面上部の設定メニューは、項目を選んだら閉じる (開いたモーダルの上に残らないように)
+      const settingsMenu = document.getElementById('settings-menu');
+      settingsMenu.addEventListener('click', (e) => {
+         if (e.target.closest('button')) settingsMenu.hidePopover();
       });
       document.getElementById('btn-templates').addEventListener('click', () => this.templateModal.open());
 

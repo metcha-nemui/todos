@@ -14,13 +14,13 @@
       - 期限を過ぎた Must は今日を表示しているとき「期限切れ」として Must の上に出す (`getOverdueMusts`)。期限を過ぎた Want は読み込み時 (`reload`) に日付なしへ戻す (`_releaseOverdueWants`)。
       - `statusBanner.js` — 画面上部の通知 (オフライン / 未ログイン / 読み込み失敗)。
    - `view/modals/` — モーダル。
-      - `template.js` — サジェスト候補の登録画面。画面下部のメニューの「サジェスト候補」と、サジェスト末尾の「候補を編集…」から開く。
+      - `template.js` — サジェスト候補の登録画面。画面上部の設定メニューの「サジェスト候補」と、サジェスト末尾の「候補を編集…」から開く。
       - `diaryList.js` — 過去の日記の一覧。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、直近12か月を月ごとに区切り、記録のない月は省く)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、行ごとにタスク名をコピーでき、行を選ぶとそのタスクの日付へ移動する。
-      - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面下部のメニューの「Markdown出力」から開く。
-      - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面下部のメニューの「バックアップ」から開く。
-      - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面下部のメニュー。
+      - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面上部の設定メニューの「Markdown出力」から開く。
+      - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面上部の設定メニューの「バックアップ」から開く。
+      - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面上部の設定メニュー。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
@@ -33,7 +33,7 @@
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
       - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
-      - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面下部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
+      - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面上部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
 - `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`auth_v1.sql` (anon で読み書きしていた既存テーブルを本人だけに切り替える)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
 - `lib/supabase.js` — Supabase クライアント初期化、ログイン (`getSignedIn` / `signInWithPassword` / `signOutUser` / `onAuthChange`) と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。
