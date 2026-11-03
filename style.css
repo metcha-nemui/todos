@@ -96,12 +96,6 @@ body {
    margin: 0 auto;
 }
 
-.main-layout {
-   display: flex;
-   flex-direction: column;
-   gap: 24px;
-}
-
 @media (max-width: 768px) {
    body {
       padding: 16px 12px;
@@ -123,9 +117,8 @@ body {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 20px;
-   padding-bottom: 14px;
-   border-bottom: 1px solid var(--border);
+   /* 下の区切り線はすぐ下のタブ (.tabs) が引く */
+   margin-bottom: 12px;
    flex-wrap: wrap;
    gap: 10px;
 
@@ -492,8 +485,32 @@ summary.collapse-title {
    }
 }
 
-#container-today-tasks {
-   margin-top: 20px;
+/* タブの切り替え。選んでいるものを aria-selected で示し、中身は hidden で出し分ける */
+.tabs {
+   display: flex;
+   gap: 4px;
+   margin-bottom: 16px;
+   border-bottom: 1px solid var(--border);
+}
+
+button.tab {
+   padding: 6px 14px;
+   border: none;
+   border-bottom: 2px solid transparent;
+   border-radius: 0;
+   margin-bottom: -1px;
+   background: none;
+   color: var(--muted-foreground);
+
+   &:hover {
+      background: none;
+      color: var(--foreground);
+   }
+
+   &[aria-selected="true"] {
+      border-bottom-color: var(--primary);
+      color: var(--primary-text);
+   }
 }
 
 /* 一覧が空のときの案内文 */

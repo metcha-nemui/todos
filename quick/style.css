@@ -11,32 +11,9 @@ body {
    bottom: 12px;
 }
 
-/* ToDo / Done の切り替え。選んでいるものを aria-selected で示す */
-.quick-tabs {
-   display: flex;
-   gap: 4px;
+/* ToDo / Done の切り替え (見た目は本編の .tabs) */
+.tabs {
    margin-bottom: 8px;
-   border-bottom: 1px solid var(--border);
-}
-
-button.quick-tab {
-   padding: 6px 14px;
-   border: none;
-   border-bottom: 2px solid transparent;
-   border-radius: 0;
-   margin-bottom: -1px;
-   background: none;
-   color: var(--muted-foreground);
-
-   &:hover {
-      background: none;
-      color: var(--foreground);
-   }
-
-   &[aria-selected="true"] {
-      border-bottom-color: var(--primary);
-      color: var(--primary-text);
-   }
 }
 
 .quick-form {

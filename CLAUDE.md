@@ -9,7 +9,7 @@
    - `model/backup.js` — 全データの JSON バックアップと復元。DB の行をそのまま書き出し、データの形の版 (`SCHEMA_VERSION`、v0 は旧3テーブル、v1 は `todo_app`) を添える。互換のない変更をしたら版を上げ、旧版 → 新版の変換を `MIGRATIONS` に足す (復元時に古い版のファイルを変換して書き込む)。項目の追加だけなら版は上げない。復元はテーブルが空のときだけ行う。
 - `view.js` — `TodoView`。画面を束ねる窓口。パネル単位の `render*` とイベントの `bind*` メソッド。`view/` の下は層ごとのフォルダに分ける。
    - `view/panels/` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
-      - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。
+      - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。画面ではタブ (Done (Done と Diary) / ToDo / 今後) で出し分け、日付の見出しは全タブ共通。起動時は毎回 Done タブ (`index.html` の初期状態、前回のタブは覚えない)。ToDo を完了にするとトースト「タスクを完了しました」を出す。
       - `statusBanner.js` — 画面上部の通知 (オフライン / 読み込み失敗)。
    - `view/modals/` — モーダル。
       - `template.js` — サジェスト候補の登録画面。
@@ -28,6 +28,7 @@
       - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
       - `pipSplit.js` — Split: 今日のToDoを一覧で出し、クリックで次へ進めて経過時間を記録する。一覧だけスクロールし、下のタイマーは固定。
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
+      - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
       - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面下部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
@@ -51,7 +52,7 @@
 - フォルダ名で分かる語はファイル名に含めない (`panels/today.js`、`modals/template.js`)。クラス名は `TodayPanel` / `TemplateModal` のように付ける。
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
-- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、画面上部の通知 `.toast` と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
+- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、画面上部の通知 `.toast` と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、タブ `.tabs` / `.tab` (本編とクイック登録で共用)、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
 - 色は `style.css` の `:root` のトークン (shadcn/ui ふうの名前: `--background` / `--card` / `--popover` / `--muted` / `--hover` / `--foreground` / `--muted-foreground` / `--border` / `--primary` / `--primary-text` / `--primary-subtle` / `--ring` / `--destructive` など) で決め、各所では `var(--*)` だけを使う (色の値を直接書かない)。トークンは `light-dark(ライト, ダーク)` で両テーマの値を並べる。`pip.css` は常にダーク、`offline.html` は外部ファイルを読めないので自前で同じ値を持つ。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。

@@ -43,7 +43,10 @@ class TodoPresenter {
       
       // タスクに対する各種アクション（チェック、物理削除、編集、日付変更）
       this.view.bindTaskActions({
-         onToggle:     (id) => this.model.toggleTodo(id),
+         onToggle:     async (id) => {
+            const ok = await this.model.toggleTodo(id);
+            if (ok && this.model.todos.find(t => t.id === id)?.is_done) this.view.showCompleted();
+         },
          onDelete:     (id) => this.model.deleteTodo(id),
          onEdit:       (id, newTitle) => this.model.editTodo(id, newTitle),
          onChangeDate: (id, date) => this.model.changeTodoDate(id, date),

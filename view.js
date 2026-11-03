@@ -16,6 +16,8 @@ import { bindDragAndDrop } from './view/parts/dragSort.js';
 import { bindTaskActions } from './view/parts/taskList.js';
 import { bindDetailsStateSave, restoreDetailsState } from './view/parts/detailsState.js';
 import { bindThemeSwitch } from './view/parts/theme.js';
+import { bindTabs } from './view/parts/tabs.js';
+import { showToast } from './view/parts/toast.js';
 
 export class TodoView {
    constructor() {
@@ -39,6 +41,7 @@ export class TodoView {
       this.taskTemplatesData = [];
 
       bindDetailsStateSave();
+      bindTabs(document.getElementById('main-tabs'));
       bindThemeSwitch(document.getElementById('theme-switch'));
 
       // カスタムサジェスト制御
@@ -239,6 +242,11 @@ export class TodoView {
       this.templateModal.bindAdd(onAdd);
       this.templateModal.bindRename(onRename);
       this.templateModal.bindDelete(onDelete);
+   }
+
+   // タスクを完了にしたとき。Done タブに積み上がったことを知らせる
+   showCompleted() {
+      showToast('タスクを完了しました');
    }
 
    showError(message) {

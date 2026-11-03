@@ -40,87 +40,88 @@
    <div class="container">
       <!-- 今日ビュー -->
       <div id="view-today">
-         <div class="main-layout">
-            <!-- 今日のタスクパネル -->
-            <div class="panel">
-               <div class="panel-header">
-                  <h2>本日のタスク</h2>
-                  <div class="date-nav">
-                     <button type="button" id="btn-date-prev" class="secondary" title="前日" aria-label="前日"><i data-lucide="chevron-left"></i></button>
-                     <div class="date-control">
-                        <input type="date" id="date-picker" class="date-picker">
-                        <i data-lucide="calendar-days"></i>
-                        <span class="date-display" id="current-date-text"></span>
-                     </div>
-                     <button type="button" id="btn-date-next" class="secondary" title="翌日" aria-label="翌日"><i data-lucide="chevron-right"></i></button>
+         <div class="panel">
+            <div class="panel-header">
+               <h2>本日のタスク</h2>
+               <div class="date-nav">
+                  <button type="button" id="btn-date-prev" class="secondary" title="前日" aria-label="前日"><i data-lucide="chevron-left"></i></button>
+                  <div class="date-control">
+                     <input type="date" id="date-picker" class="date-picker">
+                     <i data-lucide="calendar-days"></i>
+                     <span class="date-display" id="current-date-text"></span>
                   </div>
-               </div>
-               
-               <div id="container-today-tasks">
-                  <!-- Done (今日) -->
-                  <details id="details-done" class="collapse" open>
-                     <summary class="collapse-title">
-                        <span>Done</span>
-                        <span id="list-count-done" class="list-count"></span>
-                        <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
-                        <button type="button" id="btn-done-search" class="secondary summary-btn" title="Done を検索" aria-label="Done を検索"><i data-lucide="search"></i></button>
-                        <button type="button" id="btn-heatmap" class="summary-action"><i data-lucide="sprout"></i>草</button>
-                     </summary>
-                     <form class="todo-input-form" id="form-add-done">
-                        <div class="autocomplete-wrapper">
-                           <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." autocomplete="off" required style="anchor-name:--input-done-anchor">
-                           <div id="suggest-done-title" class="suggest-list" popover="manual" style="position-anchor:--input-done-anchor"></div>
-                        </div>
-                        <button type="submit">追加</button>
-                     </form>
-                     <ul class="task-list" id="list-done"></ul>
-                  </details>
-                  
-                  <!-- ToDo (今日) -->
-                  <details id="details-todo" class="collapse" open>
-                     <summary class="collapse-title">
-                        <span>ToDo</span>
-                        <span id="list-count-todo" class="list-count"></span>
-                        <button id="btn-copy-todo" class="secondary summary-btn"><i data-lucide="copy"></i></button>
-                        <button id="btn-pip-split" class="summary-action">Split</button>
-                        <button id="btn-pip-focus" class="summary-action">Focus</button>
-                     </summary>
-                     <form class="todo-input-form" id="form-add-todo">
-                        <div class="autocomplete-wrapper">
-                           <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required style="anchor-name:--input-todo-anchor">
-                           <div id="suggest-todo-title" class="suggest-list" popover="manual" style="position-anchor:--input-todo-anchor"></div>
-                        </div>
-                        <button type="submit">追加</button>
-                     </form>
-                     <ul class="task-list" id="list-todo"></ul>
-                     <div id="toggle-todo-ellipsis" class="toggle-todo-ellipsis">
-                        <div id="todo-ellipsis-on"><i data-lucide="plus"></i><span>すべて表示</span></div>
-                        <div id="todo-ellipsis-off" hidden><i data-lucide="minus"></i><span>折りたたむ</span></div>
-                     </div>
-                  </details>
-               </div>
-               
-               <div>
-                  <details id="details-diary" class="collapse">
-                     <summary class="collapse-title">
-                        <span>Diary</span>
-                        <button type="button" id="btn-diary-list" class="summary-action"><i data-lucide="list"></i>過去の日記</button>
-                     </summary>
-                     <div class="diary-content">
-                        <textarea id="input-diary"></textarea>
-                        <div class="diary-count">
-                           <span id="diary-counter"></span> / 140
-                        </div>
-                     </div>
-                  </details>
+                  <button type="button" id="btn-date-next" class="secondary" title="翌日" aria-label="翌日"><i data-lucide="chevron-right"></i></button>
                </div>
             </div>
             
-            <!-- 今後のタスクパネル -->
-            <div class="panel">
-               <div class="panel-header">
-                  <h2>今後のタスク</h2>
-               </div>
+            <!-- Done / ToDo / 今後 の切り替え (動作は view/parts/tabs.js)。起動時は毎回 Done -->
+            <div class="tabs" id="main-tabs" role="tablist">
+               <button type="button" class="tab" role="tab" id="tab-done" aria-controls="tabpanel-done" aria-selected="true">Done</button>
+               <button type="button" class="tab" role="tab" id="tab-todo" aria-controls="tabpanel-todo" aria-selected="false">ToDo</button>
+               <button type="button" class="tab" role="tab" id="tab-backlog" aria-controls="tabpanel-backlog" aria-selected="false">今後</button>
+            </div>
+            
+            <!-- Done タブ (その日の記録 = やったこと + 日記) -->
+            <div id="tabpanel-done" role="tabpanel" aria-labelledby="tab-done">
+               <details id="details-done" class="collapse" open>
+                  <summary class="collapse-title">
+                     <span>Done</span>
+                     <span id="list-count-done" class="list-count"></span>
+                     <button id="btn-copy-done" class="secondary summary-btn"><i data-lucide="copy"></i></button>
+                     <button type="button" id="btn-done-search" class="secondary summary-btn" title="Done を検索" aria-label="Done を検索"><i data-lucide="search"></i></button>
+                     <button type="button" id="btn-heatmap" class="summary-action"><i data-lucide="sprout"></i>草</button>
+                  </summary>
+                  <form class="todo-input-form" id="form-add-done">
+                     <div class="autocomplete-wrapper">
+                        <input type="text" id="input-done-title" placeholder="実行済タスクを入力..." autocomplete="off" required style="anchor-name:--input-done-anchor">
+                        <div id="suggest-done-title" class="suggest-list" popover="manual" style="position-anchor:--input-done-anchor"></div>
+                     </div>
+                     <button type="submit">追加</button>
+                  </form>
+                  <ul class="task-list" id="list-done"></ul>
+               </details>
+               
+               <details id="details-diary" class="collapse">
+                  <summary class="collapse-title">
+                     <span>Diary</span>
+                     <button type="button" id="btn-diary-list" class="summary-action"><i data-lucide="list"></i>過去の日記</button>
+                  </summary>
+                  <div class="diary-content">
+                     <textarea id="input-diary"></textarea>
+                     <div class="diary-count">
+                        <span id="diary-counter"></span> / 140
+                     </div>
+                  </div>
+               </details>
+            </div>
+            
+            <!-- ToDo タブ (その日の ToDo) -->
+            <div id="tabpanel-todo" role="tabpanel" aria-labelledby="tab-todo" hidden>
+               <details id="details-todo" class="collapse" open>
+                  <summary class="collapse-title">
+                     <span>ToDo</span>
+                     <span id="list-count-todo" class="list-count"></span>
+                     <button id="btn-copy-todo" class="secondary summary-btn"><i data-lucide="copy"></i></button>
+                     <button id="btn-pip-split" class="summary-action">Split</button>
+                     <button id="btn-pip-focus" class="summary-action">Focus</button>
+                  </summary>
+                  <form class="todo-input-form" id="form-add-todo">
+                     <div class="autocomplete-wrapper">
+                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required style="anchor-name:--input-todo-anchor">
+                        <div id="suggest-todo-title" class="suggest-list" popover="manual" style="position-anchor:--input-todo-anchor"></div>
+                     </div>
+                     <button type="submit">追加</button>
+                  </form>
+                  <ul class="task-list" id="list-todo"></ul>
+                  <div id="toggle-todo-ellipsis" class="toggle-todo-ellipsis">
+                     <div id="todo-ellipsis-on"><i data-lucide="plus"></i><span>すべて表示</span></div>
+                     <div id="todo-ellipsis-off" hidden><i data-lucide="minus"></i><span>折りたたむ</span></div>
+                  </div>
+               </details>
+            </div>
+            
+            <!-- 今後タブ (今後のタスク) -->
+            <div id="tabpanel-backlog" role="tabpanel" aria-labelledby="tab-backlog" hidden>
                <form class="todo-input-form form-add-backlog" id="form-add-backlog">
                   <div class="autocomplete-wrapper">
                      <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力..." autocomplete="off" required style="anchor-name:--input-backlog-anchor">

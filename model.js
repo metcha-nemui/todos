@@ -210,6 +210,7 @@ export class TodoModel {
    }
    
    // 完了状態を反転し、表示中の日付の該当リスト末尾へ移す
+   // 成功したら true を返す
    async toggleTodo(id) {
       const todo = this.todos.find(t => t.id === id);
       if (!todo) return;
@@ -241,6 +242,7 @@ export class TodoModel {
          t.id === id ? { ...t, ...changes } : t
       );
       this._commit('todos');
+      return true;
    }
    
    async changeTodoDate(id, targetDate) {
