@@ -1006,6 +1006,10 @@ button.date-picker-day {
    flex-wrap: wrap;
    margin-bottom: calc(var(--space) * 4);
 
+   .date-field {
+      font-weight: var(--font-semibold);
+   }
+
    /* スマホ幅では入力欄を1段で使い、日付と追加ボタンは次の段へ */
    @media (max-width: 768px) {
       .autocomplete-wrapper {
