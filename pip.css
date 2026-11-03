@@ -2,12 +2,12 @@
    作業中に画面の隅へ置いて使うので、配色テーマによらず常にダーク。色合いは本編のダークに揃える */
 :root {
    color-scheme: dark;
-   --background: oklch(0.145 0.006 286);
-   --stripe: oklch(0.185 0.007 286);
-   --hover: oklch(0.24 0.008 286);
-   --card: oklch(0.185 0.007 286);
-   --input-bg: oklch(1 0 0 / 0.04);
-   --border: oklch(0.26 0.008 286);
+   --background: oklch(0.209 0.004 286);
+   --stripe: oklch(0.239 0.004 286);
+   --hover: oklch(0.289 0.005 286);
+   --card: oklch(0.239 0.004 286);
+   --input-bg: oklch(1 0 0 / 0.05);
+   --border: oklch(0.313 0.005 286);
    --border-strong: oklch(1 0 0 / 0.2);
    --muted-foreground: oklch(0.705 0.015 286);
    --primary: oklch(0.585 0.233 293);
