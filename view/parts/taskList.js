@@ -72,8 +72,13 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
             const menu = menuBtn.nextElementSibling;
             const rect = menuBtn.getBoundingClientRect();
             menu.hidden = false;
-            menu.style.top  = rect.top  + "px";
-            menu.style.left = rect.left - menu.getBoundingClientRect().width/2 + "px";
+            // ボタンの下に右端を揃えて開く。下に収まらなければ上に開き、左右は画面内に収める
+            const { width, height } = menu.getBoundingClientRect();
+            const gap = 4;
+            const top = rect.bottom + gap + height <= window.innerHeight ? rect.bottom + gap : rect.top - gap - height;
+            const left = Math.min(Math.max(rect.right - width, gap), window.innerWidth - width - gap);
+            menu.style.top  = Math.max(top, gap) + "px";
+            menu.style.left = left + "px";
             const closeMenu = () => {
                menu.hidden = true;
                document.removeEventListener('click', closeMenu);
