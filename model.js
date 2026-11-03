@@ -1,10 +1,14 @@
 // model.js - Data Layer (状態の保持と各テーブル操作の窓口)
 import { supabase, getSignedIn, signInWithPassword, signOutUser, onAuthChange } from './lib/supabase.js';
-import { getTodayDateString, getTomorrowDateString } from './lib/date.js';
+import { getTodayDateString, getTomorrowDateString, daysBetween } from './lib/date.js';
 import * as todoTable from './model/todos.js';
 import * as diaryTable from './model/diaries.js';
 import * as templateTable from './model/templates.js';
 import * as backup from './model/backup.js';
+
+// 「最近やらなくなったもの」: Done がこの回数以上あり、最後の Done からこの日数以上空いたもの
+const DORMANT_MIN_COUNT = 5;
+const DORMANT_DAYS = 30;
 
 export class TodoModel {
    constructor() {
@@ -576,6 +580,31 @@ export class TodoModel {
          .filter(t => t.is_done && t.title.toLowerCase().includes(keyword))
          .sort((a, b) => (b.due_date || '').localeCompare(a.due_date || '') || b.sort_order - a.sort_order)
          .map(t => ({ ...t }));
+   }
+   // 「最近やらなくなったもの」(何度も Done にしていたのに、しばらく Done がないもの)
+   // サジェスト候補の名前を含む Done はその候補ごと、それ以外は同じタスク名ごとにまとめる
+   // { minCount, days, activities: [{ name, count, first, last, daysSince }] } を返す。activities は最後の Done の新しい順
+   getDormantActivities() {
+      const today = getTodayDateString();
+      const datesByName = new Map();
+      this.todos.filter(t => t.is_done && t.due_date).forEach(t => {
+         const title = t.title.toLowerCase();
+         const names = this.templates.filter(name => title.includes(name.toLowerCase()));
+         (names.length > 0 ? names : [t.title]).forEach(name => {
+            if (!datesByName.has(name)) datesByName.set(name, []);
+            datesByName.get(name).push(t.due_date);
+         });
+      });
+
+      const activities = [...datesByName]
+         .map(([name, dates]) => {
+            dates.sort();
+            const last = dates[dates.length - 1];
+            return { name, count: dates.length, first: dates[0], last, daysSince: daysBetween(last, today) };
+         })
+         .filter(a => a.count >= DORMANT_MIN_COUNT && a.daysSince >= DORMANT_DAYS)
+         .sort((a, b) => b.last.localeCompare(a.last));
+      return { minCount: DORMANT_MIN_COUNT, days: DORMANT_DAYS, activities };
    }
    // month ('YYYY-MM') の日付が付いたタスクを、日付の古い順に { date, dones, todos } の配列で返す
    getTasksByDateInMonth(month) {

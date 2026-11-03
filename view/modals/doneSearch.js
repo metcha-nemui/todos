@@ -48,8 +48,9 @@ export class DoneSearchModal {
       });
    }
 
-   // 前回の検索語を残したまま、最新のデータで検索し直して開く
-   open() {
+   // 前回の検索語を残したまま (query を渡したらその語で)、最新のデータで検索し直して開く
+   open(query = null) {
+      if (query !== null) this.input.value = query;
       this.modal.hidden = false;
       this._update();
       this.input.focus();
