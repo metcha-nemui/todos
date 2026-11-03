@@ -299,7 +299,7 @@ button.date-field {
    color: var(--foreground);
    box-shadow: var(--shadow-xs);
    font: inherit;
-   font-size: var(--text-base);
+   font-size: var(--text-sm);
    font-weight: var(--font-normal);
    transition: var(--transition-colors);
 
