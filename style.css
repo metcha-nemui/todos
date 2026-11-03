@@ -804,9 +804,10 @@ button.tab {
    position: sticky;
    top: 0;
    z-index: var(--z-sticky);
-   /* 上に残ったとき、下を流れる中身が透けないように塗る。上の余白の分だけ上へ広げる */
+   /* 上に残ったとき、下を流れる中身が透けないように塗る。上の余白の分だけ上へ広げる。
+      中の上の余白は本文の余白 (広い画面で大きくなる) に揃えず、固定したときに空きすぎないようにする */
    margin: calc(-1 * var(--page-py)) calc(-1 * var(--page-px)) calc(var(--space) * 2);
-   padding: var(--page-py) var(--page-px) calc(var(--space) * 3);
+   padding: calc(var(--space) * 4) var(--page-px) calc(var(--space) * 3);
    background: var(--background);
 }
 
