@@ -154,7 +154,7 @@ export class TodoView {
 
    // handlers: { onToggle, onDelete, onEdit, onChangeDate }
    bindTaskActions(handlers) {
-      const lists = [this.todayPanel.listTodo, this.todayPanel.listDone, this.backlogPanel.containerBacklogTasks];
+      const lists = [this.todayPanel.listMust, this.todayPanel.listWant, this.todayPanel.listOverdue, this.todayPanel.listDone, this.backlogPanel.containerBacklogTasks];
       bindTaskActions(lists, {
          ...handlers,
          onSplit: (id, title) => this.splitModal.open({ id, title }),
@@ -166,12 +166,14 @@ export class TodoView {
       this.splitModal.bindSubmit(handler);
    }
 
-   bindDragAndDrop(handleSortUpdate) {
+   // handleMoveMust(id, toMust, orderedIds) は Must / Want の間で移したときに呼ぶ
+   bindDragAndDrop(handleSortUpdate, handleMoveMust) {
       bindDragAndDrop(
-         [this.todayPanel.listTodo, this.todayPanel.listDone],
+         [this.todayPanel.listDone],
          this.backlogPanel.containerBacklogTasks,
          handleSortUpdate
       );
+      this.todayPanel.bindDragAndDrop(handleSortUpdate, handleMoveMust);
    }
 
    bindCopyButtons(getTodos, getDones) {

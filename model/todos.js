@@ -3,6 +3,9 @@ import * as records from './records.js';
 
 const KIND = 'todo';
 
+// 1日に置ける Must (その日に絶対やるもの) の上限。数えるのは未完了のものだけ
+export const MUST_LIMIT = 2;
+
 // レコード → アプリ内で扱うタスク。足りない項目は既定値で補う
 const recordToTodo = ({ id, data }) => ({
    id: id,
@@ -12,6 +15,7 @@ const recordToTodo = ({ id, data }) => ({
    done_at: data.done_at ?? null,
    created_at: data.created_at ?? null,
    sort_order: data.sort_order ?? 0,
+   must: data.must ?? false,
 });
 
 // タスク → レコードの data (id は主キー側に持つ)

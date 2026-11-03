@@ -107,16 +107,32 @@
                   </summary>
                   <form class="todo-input-form" id="form-add-todo">
                      <div class="autocomplete-wrapper">
-                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力..." autocomplete="off" required style="anchor-name:--input-todo-anchor">
+                        <input type="text" id="input-todo-title" placeholder="新しいタスクを入力... (先頭に ! で Must)" autocomplete="off" required style="anchor-name:--input-todo-anchor">
                         <div id="suggest-todo-title" class="suggest-list" popover="manual" style="position-anchor:--input-todo-anchor"></div>
                      </div>
                      <button type="submit">追加</button>
                   </form>
-                  <ul class="task-list" id="list-todo"></ul>
-                  <div id="toggle-todo-ellipsis" class="toggle-todo-ellipsis">
-                     <div id="todo-ellipsis-on"><i data-lucide="plus"></i><span>すべて表示</span></div>
-                     <div id="todo-ellipsis-off" hidden><i data-lucide="minus"></i><span>折りたたむ</span></div>
+                  
+                  <!-- Must (その日に絶対やるもの。件数に上限がある) と、期限を過ぎた Must -->
+                  <div class="list-heading">
+                     <span>Must</span>
+                     <span id="list-count-must" class="list-count"></span>
                   </div>
+                  <ul class="task-list overdue-list" id="list-overdue" hidden></ul>
+                  <ul class="task-list" id="list-must"></ul>
+                  
+                  <!-- Want (やりたい・やったほうがいい。期限を過ぎたら日付なしへ戻る) -->
+                  <details id="details-want" class="list-group" open>
+                     <summary class="list-heading">
+                        <span>Want</span>
+                        <span id="list-count-want" class="list-count"></span>
+                     </summary>
+                     <ul class="task-list" id="list-want"></ul>
+                     <div id="toggle-todo-ellipsis" class="toggle-todo-ellipsis">
+                        <div id="todo-ellipsis-on"><i data-lucide="plus"></i><span>すべて表示</span></div>
+                        <div id="todo-ellipsis-off" hidden><i data-lucide="minus"></i><span>折りたたむ</span></div>
+                     </div>
+                  </details>
                </details>
             </div>
             
@@ -124,7 +140,7 @@
             <div id="tabpanel-backlog" role="tabpanel" aria-labelledby="tab-backlog" hidden>
                <form class="todo-input-form form-add-backlog" id="form-add-backlog">
                   <div class="autocomplete-wrapper">
-                     <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力..." autocomplete="off" required style="anchor-name:--input-backlog-anchor">
+                     <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力... (先頭に ! で Must)" autocomplete="off" required style="anchor-name:--input-backlog-anchor">
                      <div id="suggest-backlog-title" class="suggest-list" popover="manual" style="position-anchor:--input-backlog-anchor"></div>
                   </div>
                   <input type="date" id="input-backlog-date">

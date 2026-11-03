@@ -47,6 +47,49 @@ export function bindDragAndDrop(staticLists, groupedContainer, handleSortUpdate)
    }
 }
 
+// linkedLists: 互いに行き来できるリスト群 (ToDo の Must / Want)
+// 別のリストへは canDrop(list) が true のときだけ移せる
+// 同じリスト内の並び替えは handleSortUpdate(orderedIds)、別のリストへ移したら handleMove(id, list, orderedIds)
+export function bindLinkedDragAndDrop(linkedLists, canDrop, handleSortUpdate, handleMove) {
+   let draggedElement = null;
+   let sourceList = null;
+
+   linkedLists.forEach(targetList => {
+      targetList.addEventListener('dragstart', (e) => {
+         draggedElement = e.target.closest('.task-item');
+         if (draggedElement) {
+            draggedElement.classList.add('dragging');
+            sourceList = targetList;
+         }
+      });
+
+      targetList.addEventListener('dragover', (e) => {
+         if (!draggedElement) return;
+         if (targetList !== sourceList && !canDrop(targetList)) return;
+         e.preventDefault();
+
+         const afterElement = getDragAfterElement(targetList, e.clientY);
+         if (afterElement == null) {
+            targetList.appendChild(draggedElement);
+         } else {
+            targetList.insertBefore(draggedElement, afterElement);
+         }
+      });
+
+      // dragend は行が今いるリストに届く
+      targetList.addEventListener('dragend', () => {
+         if (!draggedElement) return;
+         draggedElement.classList.remove('dragging');
+
+         const orderedIds = [...targetList.querySelectorAll('.task-item')].map(li => li.dataset.id);
+         if (targetList === sourceList) handleSortUpdate(orderedIds);
+         else                           handleMove(draggedElement.dataset.id, targetList, orderedIds);
+         draggedElement = null;
+         sourceList = null;
+      });
+   });
+}
+
 function setupDragEventsForList(targetList, getDragged, setDragged, handleSortUpdate) {
    targetList.addEventListener('dragstart', (e) => {
       const el = e.target.closest('.task-item');

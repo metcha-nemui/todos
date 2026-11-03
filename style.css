@@ -446,7 +446,7 @@ button {
    transition: var(--transition);
 
    &[open] {
-      summary {
+      > summary {
          border-bottom: 1px solid var(--border);
          background: color-mix(in oklab, var(--muted) 50%, transparent);
       }
@@ -536,6 +536,42 @@ button.tab {
    &::after { content: ""; }
 }
 
+/* 一覧の中の小見出し (ToDo の Must / Want)。折りたためるものは <details class="list-group"> の <summary> に付ける */
+.list-heading {
+   display: flex;
+   align-items: center;
+   padding: 8px 16px 0;
+   font-size: 1.3rem;
+   font-weight: 600;
+   color: var(--muted-foreground);
+}
+
+summary.list-heading {
+   cursor: pointer;
+   user-select: none;
+   list-style: none;
+
+   &::-webkit-details-marker {
+      display: none;
+   }
+
+   &::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-right: 2px solid var(--muted-foreground);
+      border-bottom: 2px solid var(--muted-foreground);
+      transform: rotate(-45deg);
+      margin-right: 8px;
+      transition: transform 0.2s ease;
+   }
+
+   .list-group[open] > &::before {
+      transform: rotate(45deg);
+   }
+}
+
 /* 一覧の下余白 (8px) に重ねて、上下の間隔を揃える */
 .toggle-todo-ellipsis {
    margin-top: -8px;
@@ -565,6 +601,11 @@ button.tab {
    display: flex;
    flex-direction: column;
    gap: 4px;
+}
+
+/* 期限切れの Must は、すぐ下の Must の一覧と続けて見せる */
+.overdue-list {
+   padding-bottom: 0;
 }
 
 .task-item {
@@ -674,6 +715,22 @@ button.tab {
       color: var(--foreground);
       transition: var(--transition);
       word-break: break-all;
+   }
+
+   /* タスク名の後ろの小さな札 (今後の Must、期限切れの日付) */
+   .task-badge {
+      flex-shrink: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--primary-subtle);
+      color: var(--primary-text);
+
+      .overdue-list & {
+         background: var(--destructive-subtle);
+         color: var(--destructive);
+      }
    }
 
    &.done {

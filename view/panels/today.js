@@ -1,12 +1,13 @@
-// view/panels/today.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo)
-import { getTodayDateString, shiftDateString } from '../../lib/date.js';
+// view/panels/today.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo (Must / Want))
+import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../../lib/date.js';
 import { formatDayMarkdown } from '../../lib/markdown.js';
 import { copyToClipboard } from '../util/clipboard.js';
 import { bindPiPSplitButton } from '../parts/pipSplit.js';
 import { bindPiPFocusButton } from '../parts/pipFocus.js';
 import { renderTaskList } from '../parts/taskList.js';
+import { bindLinkedDragAndDrop } from '../parts/dragSort.js';
 
-// 折りたたみ時に表示するToDoの件数
+// 折りたたみ時に表示するWantの件数
 const ELLIPSIS_VISIBLE_COUNT = 5;
 
 export class TodayPanel {
@@ -23,12 +24,17 @@ export class TodayPanel {
       this.toggleToDoEllipsis = document.getElementById('toggle-todo-ellipsis');
       this._todoIsEllipsis = true;
 
-      this.listTodo = document.getElementById('list-todo');
+      this.listMust = document.getElementById('list-must');
+      this.listWant = document.getElementById('list-want');
+      this.listOverdue = document.getElementById('list-overdue');
+      this.detailsWant = document.getElementById('details-want');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
       this.btnCopyDone = document.getElementById('btn-copy-done');
       this.CountTodo = document.getElementById('list-count-todo');
       this.CountDone = document.getElementById('list-count-done');
+      this.CountMust = document.getElementById('list-count-must');
+      this.CountWant = document.getElementById('list-count-want');
       this.btnPiPSplit = document.getElementById('btn-pip-split');
       this.btnPiPFocus = document.getElementById('btn-pip-focus');
       this.btnHeatmap = document.getElementById('btn-heatmap');
@@ -42,6 +48,8 @@ export class TodayPanel {
 
       // 最後に描画した日付 (追加・コピー時に使う)
       this._currentDate = null;
+      // 1日に置ける Must の上限 (Want から Must へ移せるかの判定に使う)
+      this._mustLimit = Infinity;
 
       this.toggleToDoEllipsis.addEventListener("click", () => {
          this._todoIsEllipsis = !this._todoIsEllipsis;
@@ -51,7 +59,8 @@ export class TodayPanel {
       });
    }
 
-   render({ currentDate, todos, dones }) {
+   // todos は Must が先に並ぶ。overdues は期限を過ぎた Must
+   render({ currentDate, todos, dones, overdues, mustLimit }) {
       // 日付反映
       this._currentDate = currentDate;
       this.currentDateText.textContent = currentDate;
@@ -61,15 +70,25 @@ export class TodayPanel {
       renderTaskList(this.listDone, dones, true);
       this.CountDone.textContent = dones.length;
 
-      // 今日のToDo描画
-      renderTaskList(this.listTodo, todos, false, true);
+      // 今日のToDo描画 (Must / Want)
+      const musts = todos.filter(t => t.must);
+      const wants = todos.filter(t => !t.must);
+      this._mustLimit = mustLimit;
       this.CountTodo.textContent = todos.length;
-      this.toggleToDoEllipsis.hidden = todos.length <= ELLIPSIS_VISIBLE_COUNT;
+
+      renderTaskList(this.listOverdue, overdues, false, true, t => `期限切れ ${formatDateWithWeekday(t.due_date)}`);
+      this.listOverdue.hidden = overdues.length === 0;
+      renderTaskList(this.listMust, musts, false, true);
+      this.CountMust.textContent = `${musts.length}/${mustLimit}`;
+
+      renderTaskList(this.listWant, wants, false, true);
+      this.CountWant.textContent = wants.length;
+      this.toggleToDoEllipsis.hidden = wants.length <= ELLIPSIS_VISIBLE_COUNT;
       this._applyEllipsis();
    }
 
    _applyEllipsis() {
-      const todoItems = this.listTodo.querySelectorAll(".task-item");
+      const todoItems = this.listWant.querySelectorAll(".task-item");
       todoItems.forEach((d, i) => {
          d.hidden = this._todoIsEllipsis && i >= ELLIPSIS_VISIBLE_COUNT;
       });
@@ -132,11 +151,27 @@ export class TodayPanel {
       this.btnDoneSearch.addEventListener('click', () => handler());
    }
 
+   // Must / Want の間のドラッグ移動。Must が上限に達しているときは Must へ移せない
+   // handleMove(id, toMust, orderedIds) は別のリストへ移したときに呼ぶ
+   bindDragAndDrop(handleSortUpdate, handleMove) {
+      const canDrop = (list) => list !== this.listMust
+         || this.listMust.querySelectorAll('.task-item:not(.dragging)').length < this._mustLimit;
+      bindLinkedDragAndDrop(
+         [this.listMust, this.listWant],
+         canDrop,
+         handleSortUpdate,
+         (id, list, orderedIds) => handleMove(id, list === this.listMust, orderedIds)
+      );
+   }
+
    bindPiPSplitButton(getTodos) {
-      // 折りたたみ中は、画面に見えている分だけを渡す
+      // 画面に見えている分だけを渡す (Want を閉じていれば Must だけ、折りたたみ中は Want の先頭だけ)
       bindPiPSplitButton(this.btnPiPSplit, () => {
          const todos = getTodos();
-         return this._todoIsEllipsis ? todos.slice(0, ELLIPSIS_VISIBLE_COUNT) : todos;
+         const musts = todos.filter(t => t.must);
+         const wants = todos.filter(t => !t.must);
+         if (!this.detailsWant.open) return musts;
+         return [...musts, ...(this._todoIsEllipsis ? wants.slice(0, ELLIPSIS_VISIBLE_COUNT) : wants)];
       });
    }
 

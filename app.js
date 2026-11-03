@@ -55,8 +55,11 @@ class TodoPresenter {
       // タスクの分割 (元タスクを分割後のタスク群に置き換える)
       this.view.bindSplitTodo((id, titles) => this.model.splitTodo(id, titles));
 
-      // ドラッグ＆ドロップによる並び替え順序の同期
-      this.view.bindDragAndDrop((orderedIds) => this.model.updateSortOrder(orderedIds));
+      // ドラッグ＆ドロップによる並び替え順序の同期と、Must / Want の間の移動
+      this.view.bindDragAndDrop(
+         (orderedIds) => this.model.updateSortOrder(orderedIds),
+         (id, toMust, orderedIds) => this.model.moveTodoMust(id, toMust, orderedIds)
+      );
       
       // Markdownクリップボードコピー（独立ボタン）
       this.view.bindCopyButtons(
@@ -132,6 +135,8 @@ class TodoPresenter {
             currentDate: model.currentDate,
             todos:       model.getTodayTodos(),
             dones:       model.getTodayDones(),
+            overdues:    model.getOverdueMusts(),
+            mustLimit:   model.mustLimit,
          }),
          diary: () => this.view.renderDiary({
             currentDate: model.currentDate,

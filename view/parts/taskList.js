@@ -2,9 +2,11 @@
 import { copyToClipboard } from '../util/clipboard.js';
 import { escapeHtml } from '../util/html.js';
 
-export function renderTaskList(element, tasks, isDone, showDateChanger = false) {
+// getBadge(task) はタスク名の後ろに出す札の文字 (出さないときは空文字) を返す
+export function renderTaskList(element, tasks, isDone, showDateChanger = false, getBadge = () => '') {
    element.innerHTML = '';
    tasks.forEach(task => {
+      const badge = getBadge(task);
       const li = document.createElement('li');
       li.className = 'task-item';
       li.dataset.id = task.id;
@@ -15,6 +17,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false) 
             <div class="task-item-content ${isDone ? 'done' : ''}">
                <input type="checkbox" ${isDone ? 'checked' : ''} class="toggle-check">
                <span class="task-title-text">${escapeHtml(task.title)}</span>
+               ${badge ? `<span class="task-badge">${escapeHtml(badge)}</span>` : ''}
             </div>
             <div class="task-actions">
                <div class="actions-desktop">

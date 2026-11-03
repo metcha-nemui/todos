@@ -67,7 +67,34 @@ export class TodoModel {
          this._load('templates', templateTable.fetchTemplates),
       ]);
 
+      if (results[0]) await this._releaseOverdueWants();
+
       this._setStatus({ loadFailed: results.includes(false) });
+   }
+
+   // 期限を過ぎた Want (未完了で Must でなく、日付が今日より前) を、日付なしへ静かに戻す
+   // Must は期限切れとして残す (getOverdueMusts)
+   async _releaseOverdueWants() {
+      const today = getTodayDateString();
+      const targets = this.todos
+         .filter(t => !t.is_done && !t.must && t.due_date && t.due_date < today)
+         .sort((a, b) => a.due_date.localeCompare(b.due_date) || a.sort_order - b.sort_order);
+      if (targets.length === 0) return;
+
+      const base = todoTable.nextSortOrder(this.todos, t => t.due_date === null);
+      const changed = targets.map((todo, i) => ({ ...todo, due_date: null, sort_order: base + i }));
+      const results = await Promise.all(changed.map(todo => todoTable.updateTodo(todo)));
+
+      // 一部だけ失敗した場合も、成功した分はDBと揃える
+      const moved = new Map();
+      results.forEach((res, i) => {
+         if (!res.error) moved.set(changed[i].id, changed[i]);
+      });
+      this.todos = this.todos.map(t => moved.get(t.id) ?? t);
+      this._commit('todos');
+
+      const failed = results.find(res => res.error);
+      if (failed) this._reportError('期限を過ぎたタスクの移動', failed.error);
    }
 
    // status: { loadFailed?, needLogin? }。変わったときだけ通知する
@@ -163,20 +190,50 @@ export class TodoModel {
       this._commit('date');
    }
 
+   // Must (その日に絶対やるもの) の上限の確認
+   // date の未完了の Must の数 (exceptId のタスクは数えない)
+   _countMust(date, exceptId = null) {
+      return this.todos.filter(t => t.must && !t.is_done && t.due_date === date && t.id !== exceptId).length;
+   }
+
+   // date に Must をもう1件置けるか。日付なしには置けない
+   _canBeMust(date, exceptId = null) {
+      return !!date && this._countMust(date, exceptId) < todoTable.MUST_LIMIT;
+   }
+
+   // Must にしたいタスクを date の未完了に置くときの must。置けなければ Want にして知らせる
+   _fitMust(wantMust, date, exceptId = null) {
+      if (!wantMust) return false;
+      if (this._canBeMust(date, exceptId)) return true;
+
+      this._reportMustLimit(date);
+      return false;
+   }
+
+   _reportMustLimit(date) {
+      const reason = date ? `Must は1日${todoTable.MUST_LIMIT}件までです` : '日付のないタスクは Must にできません';
+      if(this.onErrorCallback) this.onErrorCallback(`${reason}。Want にしました`);
+   }
+
    // タスク操作
    // いずれもDBへの書き込みが成功してから手元のデータに反映する
    // 追加は成功したら true を返す
+   // ToDo はタスク名の先頭に「!」を付けると Must にする (クイック登録でも効く)
    async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
+
+      const mustTitle = isDone ? '' : title.replace(/^[!！]\s*/, '');
+      const wantMust = mustTitle !== '' && mustTitle !== title;
       
       const { data, error } = await todoTable.insertTodo({
-         title: title,
+         title: wantMust ? mustTitle : title,
          is_done: isDone,
          due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
+         must: this._fitMust(wantMust, targetDate),
       });
       if (error) return this._fail('タスクの追加', error);
       
@@ -233,6 +290,7 @@ export class TodoModel {
          done_at: updatedDone ? new Date().toISOString() : null,
          due_date: date,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === date && !!t.is_done === updatedDone),
+         must: updatedDone ? todo.must : this._fitMust(todo.must, date, id),
       };
       
       const { error } = await todoTable.updateTodo({ ...todo, ...changes });
@@ -253,6 +311,7 @@ export class TodoModel {
       const changes = {
          due_date: targetDate,
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
+         must: todo.is_done ? todo.must : this._fitMust(todo.must, targetDate, id),
       };
       
       const { error } = await todoTable.updateTodo({ ...todo, ...changes });
@@ -277,6 +336,10 @@ export class TodoModel {
          .sort((a, b) => a.sort_order - b.sort_order);
       const position = group.findIndex(t => t.id === id);
 
+      // Must を分けたときは、上限に収まる分だけ先頭から Must にする
+      const mustRoom = todo.must && !todo.is_done ? todoTable.MUST_LIMIT - this._countMust(todo.due_date, id) : 0;
+      if (todo.must && !todo.is_done && titles.length > mustRoom) this._reportMustLimit(todo.due_date);
+
       const createdAt = new Date().toISOString();
       const { data, error } = await todoTable.insertTodos(titles.map((title, i) => ({
          title: title,
@@ -285,6 +348,7 @@ export class TodoModel {
          done_at: todo.done_at,
          created_at: createdAt,
          sort_order: position + i,
+         must: todo.is_done ? todo.must : i < mustRoom,
       })));
       if (error) return this._fail('タスクの分割', error);
 
@@ -318,6 +382,25 @@ export class TodoModel {
       if (failed) return this._fail('並び替えの保存', failed.error);
 
       this._commit('todos');
+   }
+
+   // Must / Want の間で移し、移した先の並び (orderedIds) に並べ直す
+   // Must が上限に達しているときは移さず、画面を元に戻す
+   async moveTodoMust(id, must, orderedIds) {
+      if (!supabase) { console.warn('Supabase not configured'); return; }
+      const todo = this.todos.find(t => t.id === id);
+      if (!todo) return;
+      if (must && !this._canBeMust(todo.due_date, id)) {
+         this._reportMustLimit(todo.due_date);
+         return this._commit('todos');
+      }
+
+      const { error } = await todoTable.updateTodo({ ...todo, must });
+      if (error) return this._fail('Must / Want の変更', error);
+
+      this.todos = this.todos.map(t => t.id === id ? { ...t, must } : t);
+      this._touch('todos');
+      return this.updateSortOrder(orderedIds);
    }
 
    async updateSortOrder(orderedIds) {
@@ -453,10 +536,21 @@ export class TodoModel {
    }
 
    // ゲッター群
+   // 表示中の日付の ToDo。Must を先に並べる
    getTodayTodos() {
       return this.todos
          .filter(t => t.due_date === this.currentDate && !t.is_done)
-         .sort((a, b) => a.sort_order - b.sort_order);
+         .sort((a, b) => b.must - a.must || a.sort_order - b.sort_order);
+   }
+   // 期限を過ぎた未完了の Must を古い順に返す。今日を表示しているときだけ出す
+   getOverdueMusts() {
+      if (this.currentDate !== getTodayDateString()) return [];
+      return this.todos
+         .filter(t => t.must && !t.is_done && t.due_date && t.due_date < this.currentDate)
+         .sort((a, b) => a.due_date.localeCompare(b.due_date) || a.sort_order - b.sort_order);
+   }
+   get mustLimit() {
+      return todoTable.MUST_LIMIT;
    }
 
    getTodayDones() {

@@ -49,7 +49,7 @@ export class BacklogPanel {
             </details>`
          );
          const ul = details.querySelector('.task-list');
-         renderTaskList(ul, tasks, false, true);
+         renderTaskList(ul, tasks, false, true, t => t.must ? 'Must' : '');
 
          this.containerBacklogTasks.appendChild(details);
       }
