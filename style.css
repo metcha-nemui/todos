@@ -148,7 +148,8 @@ body {
    padding: var(--page-py) var(--page-px);
    font-family: var(--font-sans);
    font-feature-settings: "palt";
-   font-size: var(--text-sm);
+   /* 本文 (タスク名など) の大きさ。ボタン・見出し・札などは各所で大きさを決める */
+   font-size: var(--text-base);
    line-height: 1.5;
    background-color: var(--background);
    color: var(--foreground);
@@ -298,7 +299,7 @@ button.date-field {
    color: var(--foreground);
    box-shadow: var(--shadow-xs);
    font: inherit;
-   font-size: var(--text-sm);
+   font-size: var(--text-base);
    font-weight: var(--font-normal);
    transition: var(--transition-colors);
 
