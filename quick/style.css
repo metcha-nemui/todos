@@ -1,45 +1,45 @@
-/* quick/style.css - クイック登録画面 (本編の style.css に重ねて読み込む) */
+/* quick/style.css - クイック登録画面 (本編の style.css に重ねて読み込む。値は本編のトークンを使う) */
 
 /* 小さいウィンドウで使うので、余白を詰める */
 body {
-   padding: 16px;
+   min-height: 0;
+   padding: var(--space-4);
 }
 
 /* 小さいウィンドウでは上に出すと入力欄に重なるので、下端に出す */
 .toast {
    top: auto;
-   bottom: 12px;
+   bottom: var(--space-3);
 }
 
 /* ToDo / Done の切り替え (見た目は本編の .tabs) */
 .tabs {
-   margin-bottom: 8px;
+   margin-bottom: var(--space-3);
 }
 
 .quick-form {
    flex-direction: column;
-   margin: 0;
 }
 
 .quick-date-row {
    display: flex;
    align-items: stretch;
-   gap: 4px;
+   gap: var(--space-1);
 
    .date-field {
       flex: 1;
       min-width: 0;
-      padding: 6px 10px;
    }
 
    button[type="submit"] {
-      margin-left: 4px;
+      margin-left: var(--space-1);
    }
 }
 
 /* 今日 / 明日 / 日付なし のうち、選んでいる日付に当たるもの */
 button.secondary.quick-date-btn {
-   padding: 6px 8px;
+   min-height: var(--control-h);
+   padding: 0 var(--space-2);
 
    &.is-active {
       background-color: var(--primary-subtle);
@@ -50,10 +50,10 @@ button.secondary.quick-date-btn {
 .quick-message {
    display: flex;
    align-items: center;
-   gap: 8px;
-   min-height: 32px;
-   margin-top: 8px;
-   font-size: 1.3rem;
+   gap: var(--space-2);
+   min-height: var(--control-h-sm);
+   margin-top: var(--space-2);
+   font-size: var(--text-sm);
    color: var(--muted-foreground);
 
    .is-error {

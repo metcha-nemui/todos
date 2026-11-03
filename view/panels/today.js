@@ -1,5 +1,5 @@
 // view/panels/today.js - 「本日のタスク」パネル (日付ヘッダ、Done / ToDo (Must / Want))
-import { getTodayDateString, shiftDateString, formatDateWithWeekday, formatDateLabel } from '../../lib/date.js';
+import { getTodayDateString, shiftDateString, formatDateWithWeekday } from '../../lib/date.js';
 import { formatDayMarkdown } from '../../lib/markdown.js';
 import { copyToClipboard } from '../util/clipboard.js';
 import { bindPiPSplitButton } from '../parts/pipSplit.js';
@@ -64,7 +64,7 @@ export class TodayPanel {
    render({ currentDate, todos, dones, overdues, mustLimit }) {
       // 日付反映
       this._currentDate = currentDate;
-      this.currentDateText.textContent = formatDateLabel(currentDate);
+      this.currentDateText.textContent = currentDate;
 
       // 今日のDone描画
       renderTaskList(this.listDone, dones, true);
