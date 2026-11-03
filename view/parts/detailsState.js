@@ -6,7 +6,6 @@ const STORAGE_KEY = "todo_group_open_states";
 const DETAILS_KEYS = {
    "details-todo"  : "TODO",
    "details-done"  : "DONE",
-   "details-want"  : "WANT",
    "details-nodate": "NODATE",
 };
 

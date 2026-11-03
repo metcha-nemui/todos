@@ -10,15 +10,6 @@
    ========================================================================== */
 /* 配色テーマ: 既定は端末の設定に合わせ、<html data-theme="light|dark"> で固定する (切り替えは view/parts/theme.js)
    色は light-dark(ライト, ダーク) で両方の値を並べて書く */
-/* 端末の Noto Sans JP を 92% に縮めて使う。同じ大きさだと漢字が英数字 (Segoe UI) より大きく太く見えるため
-   (端末にないとき (Android など) は読み込めず、次の system-ui になる) */
-@font-face {
-   font-family: "Noto Sans JP Adjusted";
-   src: local("Noto Sans JP"), local("NotoSansJP-Regular");
-   font-weight: 100 900;
-   size-adjust: 92%;
-}
-
 :root {
    color-scheme: light dark;
 }
@@ -90,12 +81,12 @@
    --text-base: 1rem;
    --text-lg:   1.125rem;
    --text-xl:   1.25rem;
-   /* 英数字は Segoe UI、日本語は Noto Sans JP (上の @font-face。Android では端末の Roboto と Noto Sans CJK になる)
+   /* 英数字は Segoe UI、日本語は Noto Sans JP (Android では端末の Roboto と Noto Sans CJK になる)
       Segoe UI には 500 がなく 400 で出て日本語と太さがずれるので、太さは 400 / 600 / 700 だけを使う */
    --font-normal:   400;
    --font-semibold: 600;
    --font-bold:     700;
-   --font-sans: "Segoe UI", "Noto Sans JP Adjusted", system-ui, sans-serif;
+   --font-sans: "Segoe UI", "Noto Sans JP", system-ui, sans-serif;
    --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
 
    /* 角丸・影 */
@@ -399,9 +390,8 @@ input[type="checkbox"] {
    }
 }
 
-/* 折りたたみの見出し。先頭に開閉の向きを示す印を付ける (カードの見出しと一覧内の小見出しで共通) */
-summary.collapse-title,
-summary.list-heading {
+/* 折りたたみの見出し。先頭に開閉の向きを示す印を付ける */
+summary.collapse-title {
    cursor: pointer;
    user-select: none;
    list-style: none;
@@ -442,7 +432,7 @@ summary.collapse-title {
    }
 }
 
-/* 一覧の中の小見出し (ToDo の Must / Want)。折りたためるものは <details class="list-group"> の <summary> に付ける */
+/* 一覧の中の小見出し (ToDo の Must / Want) */
 .list-heading {
    display: flex;
    align-items: center;

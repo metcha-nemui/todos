@@ -23,7 +23,6 @@ export class TodayPanel {
       this.listMust = document.getElementById('list-must');
       this.listWant = document.getElementById('list-want');
       this.listOverdue = document.getElementById('list-overdue');
-      this.detailsWant = document.getElementById('details-want');
       this.listDone = document.getElementById('list-done');
       this.btnCopyTodo = document.getElementById('btn-copy-todo');
       this.btnCopyDone = document.getElementById('btn-copy-done');
@@ -147,14 +146,10 @@ export class TodayPanel {
    }
 
    bindPiPSplitButton(getTodos) {
-      // 画面に見えている分だけを渡す (Want を閉じていれば Must だけ)
-      bindPiPSplitButton(this.btnPiPSplit, () => {
-         const todos = getTodos();
-         return this.detailsWant.open ? todos : todos.filter(t => t.must);
-      });
+      bindPiPSplitButton(this.btnPiPSplit, getTodos);
    }
 
-   // 対象は Focus の開始画面で選ぶので、折りたたみによらず全件を渡す
+   // 対象は Focus の開始画面で選ぶ
    bindPiPFocusButton(getTodos, onComplete) {
       this._syncFocus = bindPiPFocusButton(this.btnPiPFocus, getTodos, onComplete);
    }

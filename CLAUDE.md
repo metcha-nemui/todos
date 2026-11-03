@@ -29,7 +29,7 @@
       - `datePicker.js` — 日付を選ぶカレンダー (端末の `<input type="date">` は使わない。端末ごとに動きが違うため)。`openDatePicker` は要素の下に開き、日を選ぶまで確定しない (`allowEmpty` で「日付なし」も選べる)。入力欄の代わりは `DateField` (ボタンに日付を出し、`value` で読み書きする)。
       - `dragSort.js` / `suggest.js` / `detailsState.js` — 並び替え (`bindLinkedDragAndDrop` はリスト間の移動もできる。Must / Want 用) / サジェスト (入力欄が空のときは出さない) / 折りたたみの開閉状況の保存。
       - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
-      - `pipSplit.js` — Split: 今日のToDoのうち画面に見えている分 (Want を閉じていれば Must だけ) を一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
+      - `pipSplit.js` — Split: 今日のToDoを一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
       - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。`bindTabSwipe` は本文 (`main`) を指で横にはらうと隣のタブへ切り替える (入力欄・浮き出す面の上で始めた操作は除く)。
       - `toast.js` — 画面下部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
@@ -56,10 +56,10 @@
 - インデントは半角スペース3つ。既存の書式・コメント密度に合わせる。
 - 改行コードは常に CRLF。ファイルを編集・新規作成したら CRLF になっていることを確認する。`sed -i` は CRLF を LF に変えることがあるので、置換はバイト単位 (Python 等) で行う。
 - `style.css` は shadcn/ui ふう。Tokens (変数) → Base → Parts (使い回す部品) → Layout → Screens (画面ごと) の順に並べ、部品の見た目は Parts にまとめる (ボタンは既定が主ボタン、`.secondary` が枠なし、`.danger` が押すと赤い枠なし、`.outline` が枠付き。入力欄・カード `.collapse`・切り替え `.tabs` / `.theme-switch`・札・浮き出す面 (サジェスト / メニュー / カレンダー / 通知)・メニューの項目・モーダル)。クイック登録の `quick/style.css` も本編のトークンを使う。
-- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` / 下部のボタン行 `.modal-footer` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、通知 `.toast` (一時的なものは下端に出す `.toast-bottom`) と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、タブ `.tabs` / `.tab` (本編とクイック登録で共用)、タスク一覧内の小見出し `.list-heading` (折りたためるものは `details.list-group`) とタスク名の後ろの札 `.task-badge`、見出し内の件数 `.list-count`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
+- 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` / 下部のボタン行 `.modal-footer` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、通知 `.toast` (一時的なものは下端に出す `.toast-bottom`) と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、タブ `.tabs` / `.tab` (本編とクイック登録で共用)、タスク一覧内の小見出し `.list-heading` とタスク名の後ろの札 `.task-badge`、見出し内の件数 `.list-count`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
 - 色は `style.css` の `:root` のトークン (shadcn/ui ふうの名前: `--background` / `--card` / `--popover` / `--muted` / `--hover` / `--selected` / `--foreground` / `--muted-foreground` / `--border` / `--primary` / `--primary-text` / `--primary-subtle` / `--ring` / `--destructive` など) で決め、各所では `var(--*)` だけを使う (色の値を直接書かない)。余白・大きさ・文字・角丸・影も同じくトークンを使う (Tailwind ふう: 余白は基準値 `--space` (0.25rem = 4px) を `calc(var(--space) * N)` で N 倍する、部品の高さ `--control-h` / `--control-h-sm` / `--control-h-xs`、アイコン `--icon-size`、文字 `--text-xs` 〜 `--text-xl` と `--font-*`、角丸 `--radius-sm` 〜 `--radius-xl`、影 `--shadow-xs` 〜 `--shadow-lg`、重なり `--z-*`)。トークンは `light-dark(ライト, ダーク)` で両テーマの値を並べる。`pip.css` は常にダーク、`offline.html` は外部ファイルを読めないので自前で同じ値を持つ。
 - HTML のコメントは最低限にする (描画前の配色の適用など、見ただけでは分からないものだけ)。各部分の役割はこのファイルに書く。
-- 文字は英数字が Segoe UI、日本語が Noto Sans JP (Web フォントは読み込まない。Windows には入っている。漢字が大きく太く見えないよう `@font-face` で端末のものを 92% に縮めて使う。Android では端末の Roboto / Noto Sans CJK)。太さは 400 / 600 / 700 だけを使う (Segoe UI に 500 がなく、日本語と太さがずれるため)。`html` の `font-size` は変えず、1rem = 16px のまま使う。
+- 文字は英数字が Segoe UI、日本語が Noto Sans JP (Web フォントは読み込まない。Windows には入っている。Android では端末の Roboto / Noto Sans CJK)。太さは 400 / 600 / 700 だけを使う (Segoe UI に 500 がなく、日本語と太さがずれるため)。`html` の `font-size` は変えず、1rem = 16px のまま使う。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。
