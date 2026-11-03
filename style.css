@@ -424,7 +424,7 @@ summary.collapse-title {
    gap: calc(var(--space) * 1);
    min-height: calc(var(--space) * 10);
    padding: calc(var(--space) * 2) calc(var(--space) * 3) calc(var(--space) * 2) calc(var(--space) * 4);
-   font-size: var(--text-base);
+   font-size: var(--text-sm);
    font-weight: var(--font-semibold);
    color: var(--foreground);
 
