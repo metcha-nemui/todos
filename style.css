@@ -618,7 +618,7 @@ button.tab {
    }
 }
 
-/* 画面上部の通知 (オフライン / 読み込み失敗の通知と、一時的に出す view/parts/toast.js) */
+/* 通知 (画面上部に出し続けるオフライン / 読み込み失敗の通知と、画面下部に一時的に出す view/parts/toast.js) */
 .toast {
    position: fixed;
    top: calc(var(--space) * 3);
@@ -634,6 +634,12 @@ button.tab {
    padding: calc(var(--space) * 2.5) calc(var(--space) * 4);
    font-size: var(--text-sm);
    animation: fadeIn var(--duration) var(--ease);
+}
+
+/* 一時的な通知は、画面上部の日付などに重ならないよう下端に出す */
+.toast-bottom {
+   top: auto;
+   bottom: calc(var(--space) * 4 + env(safe-area-inset-bottom));
 }
 
 .toast-actions {

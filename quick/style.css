@@ -6,12 +6,6 @@ body {
    padding: calc(var(--space) * 4);
 }
 
-/* 小さいウィンドウでは上に出すと入力欄に重なるので、下端に出す */
-.toast {
-   top: auto;
-   bottom: calc(var(--space) * 3);
-}
-
 /* ToDo / Done の切り替え (見た目は本編の .tabs) */
 .tabs {
    margin-bottom: calc(var(--space) * 3);

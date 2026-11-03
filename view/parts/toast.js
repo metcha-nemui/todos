@@ -1,4 +1,4 @@
-// view/parts/toast.js - 画面上部に一時的に出す通知 (見た目は .toast、常に出す通知は panels/statusBanner.js)
+// view/parts/toast.js - 画面下部に一時的に出す通知 (見た目は .toast、常に出す通知は panels/statusBanner.js)
 
 // 表示しておく時間 (ミリ秒)
 const DEFAULT_DURATION = 2000;
@@ -10,7 +10,7 @@ let hideTimer = null;
 export function showToast(message, duration = DEFAULT_DURATION) {
    if (!toast) {
       toast = document.createElement('div');
-      toast.className = 'toast';
+      toast.className = 'toast toast-bottom';
       toast.setAttribute('role', 'status');
       toast.hidden = true;
       document.body.appendChild(toast);
