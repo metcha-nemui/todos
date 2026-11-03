@@ -31,7 +31,7 @@
       - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
       - `pipSplit.js` — Split: 今日のToDoのうち画面に見えている分 (Want を閉じていれば Must だけ) を一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
-      - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。
+      - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。`bindTabSwipe` は本文 (`main`) を指で横にはらうと隣のタブへ切り替える (入力欄・浮き出す面の上で始めた操作は除く)。
       - `toast.js` — 画面下部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
       - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面上部の設定メニュー内の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。

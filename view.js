@@ -16,7 +16,7 @@ import { bindDragAndDrop } from './view/parts/dragSort.js';
 import { bindTaskActions } from './view/parts/taskList.js';
 import { bindDetailsStateSave, restoreDetailsState } from './view/parts/detailsState.js';
 import { bindThemeSwitch } from './view/parts/theme.js';
-import { bindTabs } from './view/parts/tabs.js';
+import { bindTabs, bindTabSwipe } from './view/parts/tabs.js';
 import { showToast } from './view/parts/toast.js';
 
 export class TodoView {
@@ -42,6 +42,7 @@ export class TodoView {
 
       bindDetailsStateSave();
       bindTabs(document.getElementById('main-tabs'));
+      bindTabSwipe(document.getElementById('main-tabs'), document.getElementById('view-today'));
       bindThemeSwitch(document.getElementById('theme-switch'));
 
       // 画面上部の設定メニューは、項目を選んだら閉じる (開いたモーダルの上に残らないように)
