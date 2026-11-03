@@ -141,7 +141,7 @@ body {
    font-family: var(--font-sans);
    font-feature-settings: "palt";
    /* 本文 (タスク名など) の大きさ。ボタン・見出し・札などは各所で大きさを決める */
-   font-size: var(--text-base);
+   font-size: var(--text-sm);
    line-height: 1.5;
    background-color: var(--background);
    color: var(--foreground);
