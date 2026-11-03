@@ -1,6 +1,6 @@
 // view/parts/datePicker.js - 日付を選ぶカレンダー
 // 端末の日付入力 (<input type="date">) は端末ごとに動きが違う (月を移しただけで確定する、日付を消せない) ので使わない
-import { getTodayDateString, getMonthStartString, shiftDateString, getWeekdayIndex, formatDateWithWeekday } from '../../lib/date.js';
+import { getTodayDateString, getMonthStartString, shiftDateString, getWeekdayIndex, formatDateWithWeekday, formatDateLabel } from '../../lib/date.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 // 起点の要素との間隔と、画面の端との間隔 (px)
@@ -172,13 +172,6 @@ function onKeydown(e) {
    }
 }
 
-// 年が今年と違うときだけ年を付ける
-const formatLabel = (date) => {
-   if (!date) return '日付なし';
-   const year = date.slice(0, 4);
-   return (year === getTodayDateString().slice(0, 4) ? '' : `${year}/`) + formatDateWithWeekday(date);
-};
-
 // 日付入力欄の代わりのボタン。押すとカレンダーを開き、選んだ日付をボタンの文字に出す
 // options: { allowEmpty (「日付なし」を選べるか), onChange(value) (選び直したとき), onOpen, onClose }
 export class DateField {
@@ -208,6 +201,6 @@ export class DateField {
 
    set value(date) {
       this._value = date || '';
-      this.button.textContent = formatLabel(this._value);
+      this.button.textContent = this._value ? formatDateLabel(this._value) : '日付なし';
    }
 }

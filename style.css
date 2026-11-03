@@ -92,7 +92,7 @@ body {
    2. Layout & Container
    ========================================================================== */
 .container {
-   max-width: 1040px;
+   max-width: 760px;
    margin: 0 auto;
 }
 
@@ -103,30 +103,39 @@ body {
 }
 
 /* ==========================================================================
-   3. Panels & Cards
+   3. App Header (日付・配色・設定とタブ。スクロールしても上に残す)
    ========================================================================== */
-.panel {
-   background: var(--card);
-   padding: 24px;
-   border-radius: var(--radius-lg);
-   box-shadow: var(--shadow-sm);
-   border: 1px solid var(--border);
+.app-header {
+   position: sticky;
+   top: 0;
+   z-index: 20;
+   /* 上に残ったとき、下を流れる中身が透けないように塗る */
+   background: var(--background);
+   margin: -16px 0 16px;
+   padding-top: 16px;
+
+   .tabs {
+      margin-bottom: 0;
+   }
 }
 
-.panel-header {
+.app-header-row {
    display: flex;
+   /* 年付きの日付などで1行に入らなければ、配色・設定を次の行へ */
+   flex-wrap: wrap;
    justify-content: space-between;
    align-items: center;
-   /* 下の区切り線はすぐ下のタブ (.tabs) が引く */
-   margin-bottom: 12px;
-   flex-wrap: wrap;
-   gap: 10px;
+   gap: 8px;
+   margin-bottom: 8px;
+}
 
-   h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--foreground);
-      letter-spacing: -0.025em;
+.app-header-actions {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+
+   button {
+      font-size: 1.2rem;
    }
 }
 
@@ -161,10 +170,19 @@ button.date-control {
       height: 16px;
       color: var(--muted-foreground);
    }
+
+   /* スマホ幅では配色・設定と1行に収めるため、アイコンを省く */
+   @media (max-width: 480px) {
+      padding: 6px 10px;
+
+      svg {
+         display: none;
+      }
+   }
 }
 
 .date-display {
-   font-size: 1.6rem;
+   font-size: 1.7rem;
    font-weight: 600;
    color: var(--foreground);
    font-family: "Inter", "Segoe UI", sans-serif;
@@ -976,18 +994,6 @@ summary.list-heading {
    }
 }
 
-/* 画面最上部の操作 (配色テーマと設定メニュー) */
-.app-header {
-   display: flex;
-   justify-content: flex-end;
-   gap: 8px;
-   margin-bottom: 12px;
-
-   button {
-      font-size: 1.2rem;
-   }
-}
-
 /* 画面上部の設定メニュー (テーマ以外のたまに使う操作) */
 .settings-menu {
    position: absolute;
@@ -1017,7 +1023,6 @@ summary.list-heading {
 .theme-switch {
    display: inline-flex;
    gap: 2px;
-   margin-right: auto;
    padding: 2px;
    background: var(--muted);
    border-radius: var(--radius-sm);
