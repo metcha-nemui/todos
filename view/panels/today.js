@@ -39,7 +39,6 @@ export class TodayPanel {
       this.btnPiPFocus = document.getElementById('btn-pip-focus');
       this.btnHeatmap = document.getElementById('btn-heatmap');
       this.btnDoneSearch = document.getElementById('btn-done-search');
-      this.btnDormant = document.getElementById('btn-dormant');
 
       // サジェストを付ける入力欄
       this.suggestTargets = [
@@ -163,11 +162,6 @@ export class TodayPanel {
          handleSortUpdate,
          (id, list, orderedIds) => handleMove(id, list === this.listMust, orderedIds)
       );
-   }
-
-   // 最近やらなくなったものの一覧を開くボタン
-   bindOpenDormant(handler) {
-      this.btnDormant.addEventListener('click', () => handler());
    }
 
    bindPiPSplitButton(getTodos) {

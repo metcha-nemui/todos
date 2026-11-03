@@ -93,9 +93,6 @@ class TodoPresenter {
          (date) => this.model.setCurrentDate(date)
       );
 
-      // 最近やらなくなったもの (選ぶとその名前で Done を検索する)
-      this.view.bindDormant(() => this.model.getDormantActivities());
-
       // 月ごとのタスクの Markdown 出力
       this.view.bindExport(
          (month) => this.model.getTasksByDateInMonth(month),

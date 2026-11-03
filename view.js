@@ -6,7 +6,6 @@ import { TemplateModal } from './view/modals/template.js';
 import { DiaryListModal } from './view/modals/diaryList.js';
 import { HeatmapModal } from './view/modals/heatmap.js';
 import { DoneSearchModal } from './view/modals/doneSearch.js';
-import { DormantModal } from './view/modals/dormant.js';
 import { ExportModal } from './view/modals/export.js';
 import { BackupModal } from './view/modals/backup.js';
 import { SplitModal } from './view/modals/split.js';
@@ -29,7 +28,6 @@ export class TodoView {
       this.diaryListModal = new DiaryListModal();
       this.heatmapModal = new HeatmapModal();
       this.doneSearchModal = new DoneSearchModal();
-      this.dormantModal = new DormantModal();
       this.exportModal = new ExportModal();
       this.btnExport = document.getElementById('btn-export');
       this.backupModal = new BackupModal();
@@ -224,14 +222,6 @@ export class TodoView {
          this.backlogPanel.resetInputDate();
          onSelect(date);
       });
-   }
-
-   // 最近やらなくなったもの。getActivities は { minCount, days, activities } を返す
-   // 選ぶとその名前で Done を検索する
-   bindDormant(getActivities) {
-      this.todayPanel.bindOpenDormant(() => this.dormantModal.open());
-      this.dormantModal.bindGetActivities(getActivities);
-      this.dormantModal.bindSelect((name) => this.doneSearchModal.open(name));
    }
 
    // 月ごとのタスクの Markdown 出力。getTasks は月 ('YYYY-MM') からその月の { date, dones, todos } の配列を返す
