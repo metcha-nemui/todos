@@ -1,4 +1,4 @@
-// model.js - Data Layer (状態の保持と各テーブル操作の窓口)
+// model.js - Data Layer (状態の保持と各種別の読み書きの窓口)
 import { supabase, getSignedIn, signInWithPassword, signOutUser, onAuthChange } from './lib/supabase.js';
 import { getTodayDateString, getTomorrowDateString } from './lib/date.js';
 import * as todoTable from './model/todos.js';
