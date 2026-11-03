@@ -9,7 +9,7 @@
    - `model/backup.js` — 全データの JSON バックアップと復元。DB の行をそのまま書き出し、データの形の版 (`SCHEMA_VERSION`、v0 は旧3テーブル、v1 は `todo_app`) を添える。互換のない変更をしたら版を上げ、旧版 → 新版の変換を `MIGRATIONS` に足す (復元時に古い版のファイルを変換して書き込む)。項目の追加だけなら版は上げない。復元はテーブルが空のときだけ行う。
 - `view.js` — `TodoView`。画面を束ねる窓口。パネル単位の `render*` とイベントの `bind*` メソッド。`view/` の下は層ごとのフォルダに分ける。
    - `view/panels/` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
-      - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。画面ではタブ (Done (Done と Diary) / ToDo / 今後) で出し分ける。画面上部 (`.app-header`、スクロールしても上に残す) に日付の見出し (全タブ共通)・配色・設定メニュー (配色以外のたまに使う操作をまとめる)・タブを置き、中身は外枠のカードなしで並べる。起動時は毎回 Done タブ (`index.html` の初期状態、前回のタブは覚えない)。ToDo を完了にするとトースト「タスクを完了しました」を出す。
+      - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。画面ではタブ (Done (Done と Diary) / ToDo / 今後) で出し分ける。画面上部 (`.app-header`、スクロールしても上に残す) に日付の見出し (全タブ共通、中央)・設定メニュー (右端。配色の切り替えとたまに使う操作をまとめる)・タブを置き、中身は外枠のカードなしで並べる。起動時は毎回 Done タブ (`index.html` の初期状態、前回のタブは覚えない)。ToDo を完了にするとトースト「タスクを完了しました」を出す。
       - ToDo は Must (その日に絶対やるもの) と Want (やりたい・やったほうがいい) に分ける (タスクの `must`。Done は区別しないので、完了にしたら false にする)。追加時にタスク名の先頭に `!` (全角も可) を付けると Must (`TodoModel.addTodo` で解釈するのでクイック登録でも効く)。Must は日付ごとに未完了 `MUST_LIMIT` (2) 件までで、日付なしにはできない。上限を超える操作 (追加・日付変更・未完了に戻す・分割) は Want にして知らせ、Want → Must のドラッグ移動は上限に達していればできない。今後タブでは Must のタスクに札 `Must` を付ける。
       - 期限を過ぎた Must は今日を表示しているとき「期限切れ」として Must の上に出す (`getOverdueMusts`)。期限を過ぎた Want は読み込み時 (`reload`) に日付なしへ戻す (`_releaseOverdueWants`)。
       - `statusBanner.js` — 画面上部の通知 (オフライン / 未ログイン / 読み込み失敗)。
@@ -33,7 +33,7 @@
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
       - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
-      - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面上部の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
+      - `theme.js` — 配色テーマ (システム / ライト / ダーク) の切り替え。localStorage `todo_theme` に保存し、`<html data-theme>` を付け外しする (システムは属性なし)。画面上部の設定メニュー内の切り替えボタン (`bindThemeSwitch`) と、他のウィンドウでの切り替え・端末の設定への追従 (`watchTheme`、クイック登録はこちらだけ使う)。描画前の適用は各 HTML の `<head>` の小さなスクリプトで行う (チラつき防止)。
    - `view/util/` — 画面を知らないヘルパ。`html.js` (`escapeHtml` / `parseHtml`)、`clipboard.js`。
 - `sql/` — Supabase の SQL Editor に貼って実行する SQL。`create_v1.sql` (`todo_app` テーブルと RLS ポリシーの作成)、`auth_v1.sql` (anon で読み書きしていた既存テーブルを本人だけに切り替える)、`drop_v0.sql` (v0 の旧3テーブルの削除)。
 - `lib/supabase.js` — Supabase クライアント初期化、ログイン (`getSignedIn` / `signInWithPassword` / `signOutUser` / `onAuthChange`) と、全行取得の `fetchAllRows` (1リクエストの行数上限を超えても取りこぼさない。テーブルを全件読むときは必ずこれを使う)。`lib/date.js` — 日付ヘルパ。`lib/markdown.js` — タスクの Markdown 書き出し (Done / ToDo 見出しのコピーボタンの形式。他の書き出しもこれを使う)。

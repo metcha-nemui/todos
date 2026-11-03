@@ -45,9 +45,10 @@ export class TodoView {
       bindThemeSwitch(document.getElementById('theme-switch'));
 
       // 画面上部の設定メニューは、項目を選んだら閉じる (開いたモーダルの上に残らないように)
+      // 配色は切り替えた結果を見られるよう、開いたままにする
       const settingsMenu = document.getElementById('settings-menu');
       settingsMenu.addEventListener('click', (e) => {
-         if (e.target.closest('button')) settingsMenu.hidePopover();
+         if (e.target.closest('button') && !e.target.closest('.theme-switch')) settingsMenu.hidePopover();
       });
       document.getElementById('btn-templates').addEventListener('click', () => this.templateModal.open());
 

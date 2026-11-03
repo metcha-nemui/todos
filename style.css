@@ -599,6 +599,13 @@ button.tab {
    }
 }
 
+/* メニュー内の区切り線 */
+.menu-separator {
+   height: 1px;
+   margin: calc(var(--space) * 1) calc(var(--space) * -1);
+   background: var(--border);
+}
+
 .action-menu button.danger {
    color: var(--destructive);
 
@@ -796,30 +803,41 @@ button.tab {
    background: var(--background);
 }
 
+/* 日付を中央に、設定を右端に置く */
 .app-header-row {
-   display: flex;
-   /* 1行に入らなければ、配色・設定を次の行へ */
-   flex-wrap: wrap;
-   justify-content: space-between;
+   display: grid;
+   grid-template-columns: 1fr auto 1fr;
    align-items: center;
    gap: calc(var(--space) * 2);
    margin-bottom: calc(var(--space) * 3);
+
+   .date-nav {
+      grid-column: 2;
+   }
 }
 
 .app-header-actions {
-   display: flex;
-   align-items: center;
-   gap: calc(var(--space) * 1.5);
+   grid-column: 3;
+   justify-self: end;
 }
 
-/* 画面上部の設定メニュー (テーマ以外のたまに使う操作) */
+/* 画面上部の設定メニュー (配色とたまに使う操作)。配色の切り替えは横幅いっぱいに等分する */
 .settings-menu {
    position: absolute;
    inset: auto;
    top: anchor(bottom);
    right: anchor(right);
-   min-width: 10rem;
+   min-width: 12rem;
    margin: calc(var(--space) * 1) 0 0;
+
+   .theme-switch {
+      display: flex;
+
+      button.secondary {
+         flex: 1;
+         justify-content: center;
+      }
+   }
 }
 
 /* ==========================================================================
