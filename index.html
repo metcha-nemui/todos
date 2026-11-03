@@ -45,11 +45,10 @@
                <h2>本日のタスク</h2>
                <div class="date-nav">
                   <button type="button" id="btn-date-prev" class="secondary" title="前日" aria-label="前日"><i data-lucide="chevron-left"></i></button>
-                  <div class="date-control">
-                     <input type="date" id="date-picker" class="date-picker">
+                  <button type="button" id="date-picker" class="date-control" title="日付を選ぶ">
                      <i data-lucide="calendar-days"></i>
                      <span class="date-display" id="current-date-text"></span>
-                  </div>
+                  </button>
                   <button type="button" id="btn-date-next" class="secondary" title="翌日" aria-label="翌日"><i data-lucide="chevron-right"></i></button>
                </div>
             </div>
@@ -143,7 +142,7 @@
                      <input type="text" id="input-backlog-title" placeholder="今後のタスクを入力... (先頭に ! で Must)" autocomplete="off" required style="anchor-name:--input-backlog-anchor">
                      <div id="suggest-backlog-title" class="suggest-list" popover="manual" style="position-anchor:--input-backlog-anchor"></div>
                   </div>
-                  <input type="date" id="input-backlog-date">
+                  <button type="button" id="input-backlog-date" class="date-field" title="日付"></button>
                   <button type="submit">追加</button>
                </form>
                <div id="container-backlog-tasks"></div>
@@ -157,10 +156,15 @@
             <button type="button" class="secondary" data-theme-option="light" title="ライト" aria-label="ライト"><i data-lucide="sun"></i></button>
             <button type="button" class="secondary" data-theme-option="dark" title="ダーク" aria-label="ダーク"><i data-lucide="moon"></i></button>
          </div>
-         <button type="button" id="btn-export" class="secondary">Markdown出力</button>
-         <button type="button" id="btn-backup" class="secondary">バックアップ</button>
-         <button type="button" class="secondary" data-open-config>接続設定</button>
-         <button type="button" id="btn-logout" class="secondary">ログアウト</button>
+         <!-- テーマ以外はたまにしか使わないので、メニューにまとめる -->
+         <button type="button" class="secondary" popovertarget="footer-menu" title="その他" aria-label="その他" style="anchor-name:--footer-menu-anchor"><i data-lucide="ellipsis"></i></button>
+         <div id="footer-menu" class="footer-menu" popover style="position-anchor:--footer-menu-anchor">
+            <button type="button" id="btn-templates" class="secondary">サジェスト候補</button>
+            <button type="button" id="btn-export" class="secondary">Markdown出力</button>
+            <button type="button" id="btn-backup" class="secondary">バックアップ</button>
+            <button type="button" class="secondary" data-open-config>接続設定</button>
+            <button type="button" id="btn-logout" class="secondary">ログアウト</button>
+         </div>
       </div>
    </div>
    

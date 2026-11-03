@@ -44,6 +44,13 @@ export class TodoView {
       bindTabs(document.getElementById('main-tabs'));
       bindThemeSwitch(document.getElementById('theme-switch'));
 
+      // 画面下部のメニューは、項目を選んだら閉じる (開いたモーダルの上に残らないように)
+      const footerMenu = document.getElementById('footer-menu');
+      footerMenu.addEventListener('click', (e) => {
+         if (e.target.closest('button')) footerMenu.hidePopover();
+      });
+      document.getElementById('btn-templates').addEventListener('click', () => this.templateModal.open());
+
       // カスタムサジェスト制御
       setupCustomSuggest(
          [...this.todayPanel.suggestTargets, ...this.backlogPanel.suggestTargets],

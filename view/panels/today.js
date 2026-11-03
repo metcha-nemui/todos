@@ -6,6 +6,7 @@ import { bindPiPSplitButton } from '../parts/pipSplit.js';
 import { bindPiPFocusButton } from '../parts/pipFocus.js';
 import { renderTaskList } from '../parts/taskList.js';
 import { bindLinkedDragAndDrop } from '../parts/dragSort.js';
+import { openDatePicker } from '../parts/datePicker.js';
 
 // 折りたたみ時に表示するWantの件数
 const ELLIPSIS_VISIBLE_COUNT = 5;
@@ -64,7 +65,6 @@ export class TodayPanel {
       // 日付反映
       this._currentDate = currentDate;
       this.currentDateText.textContent = currentDate;
-      this.datePicker.value = currentDate;
 
       // 今日のDone描画
       renderTaskList(this.listDone, dones, true);
@@ -95,8 +95,11 @@ export class TodayPanel {
    }
 
    bindDatePicker(handler) {
-      this.datePicker.addEventListener('change', (e) => {
-         handler(e.target.value);
+      this.datePicker.addEventListener('click', () => {
+         openDatePicker(this.datePicker, {
+            value: this._currentDate,
+            onSelect: (date) => handler(date),
+         });
       });
       
       // 前日 / 翌日ボタン (日付未選択のときは今日を基準にする)

@@ -1,6 +1,7 @@
 // quick/view.js - クイック登録画面 (タスク名と日付を入れて追加するだけ)
 import { showToast } from '../view/parts/toast.js';
 import { watchTheme } from '../view/parts/theme.js';
+import { DateField } from '../view/parts/datePicker.js';
 import { getTodayDateString, getTomorrowDateString } from '../lib/date.js';
 
 // インストールしたアプリとして開いたときのウィンドウの中身の幅 (px)。高さは中身に合わせる
@@ -15,7 +16,13 @@ export class QuickView {
       this.tabs = document.querySelectorAll('[data-quick-kind]');
       this.form = document.getElementById('form-quick-add');
       this.inputTitle = document.getElementById('input-quick-title');
-      this.inputDate = document.getElementById('input-quick-date');
+      // カレンダーは小さなウィンドウに入らないので、開いている間だけウィンドウを広げる
+      this.inputDate = new DateField(document.getElementById('input-quick-date'), {
+         allowEmpty: true,
+         onChange: () => this._renderDateButtons(),
+         onOpen:   (popover) => this._growWindowFor(popover),
+         onClose:  () => this._fitWindow(),
+      });
       this.dateButtons = document.querySelectorAll('[data-quick-date]');
       this.btnAdd = document.getElementById('btn-quick-add');
       this.messageText = document.getElementById('quick-message-text');
@@ -30,7 +37,6 @@ export class QuickView {
             this._renderDateButtons();
          });
       });
-      this.inputDate.addEventListener('input', () => this._renderDateButtons());
       this._renderDateButtons();
 
       // 上部のタブで ToDo / Done のどちらに追加するかを切り替える
@@ -68,6 +74,16 @@ export class QuickView {
       );
    }
 
+   // popover (カレンダー) が入りきるよう、ウィンドウを下端の位置を保ったまま上へ広げる
+   _growWindowFor(popover) {
+      if (!isStandalone()) return;
+      const anchorBottom = this.inputDate.button.getBoundingClientRect().bottom;
+      const lack = Math.ceil(anchorBottom + popover.getBoundingClientRect().height + WINDOW_MARGIN - window.innerHeight);
+      if (lack <= 0) return;
+      window.resizeBy(0, lack);
+      window.moveBy(0, -lack);
+   }
+
    // Done は日付がないと本編のどこにも出ないので、明日 / 日付なし を隠し、日付を必須にする
    _selectKind(isDone) {
       this.isDone = isDone;
@@ -77,7 +93,7 @@ export class QuickView {
       this.dateButtons.forEach(btn => {
          btn.hidden = isDone && btn.dataset.quickDate !== 'today';
       });
-      this.inputDate.required = isDone;
+      this.inputDate.allowEmpty = !isDone;
       if (isDone && !this.inputDate.value) this.inputDate.value = getTodayDateString();
       this.inputTitle.placeholder = isDone ? '実行済タスクを入力...' : 'タスクを入力...';
       this._renderDateButtons();

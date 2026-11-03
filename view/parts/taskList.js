@@ -1,4 +1,5 @@
 // view/parts/taskList.js - タスク行の描画と行内アクション
+import { openDatePicker } from './datePicker.js';
 import { copyToClipboard } from '../util/clipboard.js';
 import { escapeHtml } from '../util/html.js';
 
@@ -10,6 +11,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false, 
       const li = document.createElement('li');
       li.className = 'task-item';
       li.dataset.id = task.id;
+      li.dataset.dueDate = task.due_date || '';
       li.setAttribute('draggable', 'true');
 
       li.innerHTML = `
@@ -23,10 +25,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false, 
                <div class="actions-desktop">
                   <button class="copy-btn secondary"><i data-lucide="copy"></i></button>
                   ${showDateChanger ? `
-                     <button class="secondary move-date-btn">
-                        <input type="date" class="move-date-picker">
-                        <i data-lucide="calendar-days"></i>
-                     </button>
+                     <button class="secondary move-date-btn" title="日付変更"><i data-lucide="calendar-days"></i></button>
                   ` : ''}
                   ${isDone ? '' : `<button class="split-btn secondary" title="分割"><i data-lucide="split"></i></button>`}
                   <button class="edit-btn secondary"><i data-lucide="pencil"></i></button>
@@ -37,10 +36,7 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false, 
                   <div class="action-menu" hidden>
                      <button class="copy-btn secondary"><i data-lucide="copy"></i> コピー</button>
                      ${showDateChanger ? `
-                        <button class="secondary move-date-btn">
-                           <input type="date" class="move-date-picker">
-                           <i data-lucide="calendar-days"></i> 日付変更
-                        </button>`
+                        <button class="secondary move-date-btn"><i data-lucide="calendar-days"></i> 日付変更</button>`
                      : ''}
                      ${isDone ? '' : `<button class="split-btn secondary"><i data-lucide="split"></i> 分割</button>`}
                      <button class="edit-btn secondary"><i data-lucide="pencil"></i> 編集</button>
@@ -98,12 +94,12 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                const titleText = li.querySelector('.task-title-text').textContent;
                copyToClipboard(titleText);
             },
-            'move-date-picker': (e) => {
-               if(e.target.closest(".actions-mobile")) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.target.showPicker();
-               }
+            'move-date-btn': () => {
+               openDatePicker(target, {
+                  value: li.dataset.dueDate || null,
+                  allowEmpty: true,
+                  onSelect: (date) => onChangeDate(id, date),
+               });
             },
             'split-btn'   : () => {
                onSplit(id, li.querySelector('.task-title-text').textContent);
@@ -126,17 +122,6 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                actionMap[className](e);
                return;
             }
-         }
-      });
-
-      listContainer.addEventListener('input', (e) => {
-         const target = e.target;
-         if (target.classList.contains('move-date-picker')) {
-            const li = target.closest('.task-item');
-            if (!li) return;
-            const id = li.dataset.id;
-            const chosenDate = target.value || null;
-            onChangeDate(id, chosenDate);
          }
       });
 

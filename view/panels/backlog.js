@@ -1,5 +1,6 @@
 // view/panels/backlog.js - 「今後のタスク」パネル
 import { renderTaskList } from '../parts/taskList.js';
+import { DateField } from '../parts/datePicker.js';
 import { parseHtml } from '../util/html.js';
 
 export class BacklogPanel {
@@ -7,7 +8,7 @@ export class BacklogPanel {
       this.containerBacklogTasks = document.getElementById('container-backlog-tasks');
       this.formAddBacklog = document.getElementById('form-add-backlog');
       this.inputBacklogTitle = document.getElementById('input-backlog-title');
-      this.inputBacklogDate = document.getElementById('input-backlog-date');
+      this.inputBacklogDate = new DateField(document.getElementById('input-backlog-date'), { allowEmpty: true });
 
       // サジェストを付ける入力欄
       this.suggestTargets = [

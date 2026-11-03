@@ -10,8 +10,8 @@ export function setupCustomSuggest(targets, getTemplates, onManage) {
          const val = input.value.trim().toLowerCase();
          const matches = getTemplates().filter(t => t.toLowerCase().includes(val));
 
-         // 合う候補が無ければ出さない。未入力のときは「候補を編集…」だけでも出す
-         if (matches.length === 0 && (val || !onManage)) {
+         // 未入力のとき (フォーカスしただけのときも) と、合う候補が無いときは出さない
+         if (!val || matches.length === 0) {
             list.hidePopover();
             return;
          }

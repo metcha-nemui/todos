@@ -14,19 +14,20 @@
       - 期限を過ぎた Must は今日を表示しているとき「期限切れ」として Must の上に出す (`getOverdueMusts`)。期限を過ぎた Want は読み込み時 (`reload`) に日付なしへ戻す (`_releaseOverdueWants`)。
       - `statusBanner.js` — 画面上部の通知 (オフライン / 未ログイン / 読み込み失敗)。
    - `view/modals/` — モーダル。
-      - `template.js` — サジェスト候補の登録画面。
+      - `template.js` — サジェスト候補の登録画面。画面下部のメニューの「サジェスト候補」と、サジェスト末尾の「候補を編集…」から開く。
       - `diaryList.js` — 過去の日記の一覧。Diary 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `heatmap.js` — 日ごとの Done 件数のヒートマップ (GitHub の草ふう、直近12か月を月ごとに区切り、記録のない月は省く)。Done 欄の見出しのボタンから開き、選んだ日付へ移動する。
       - `doneSearch.js` — Done タスクの検索 (タスク名の中間一致、新しい順)。Done 欄の見出しの検索ボタンから開き、行ごとにタスク名をコピーでき、行を選ぶとそのタスクの日付へ移動する。
-      - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面下部の「Markdown出力」ボタンから開く。
-      - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面下部の「バックアップ」ボタンから開く。
-      - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面下部のボタン。
+      - `export.js` — 月ごとのタスクの Markdown 出力 (前月 / 翌月で月を選び、コピーまたは `tasks-YYYY-MM.md` でダウンロード)。画面下部のメニューの「Markdown出力」から開く。
+      - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面下部のメニューの「バックアップ」から開く。
+      - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面下部のメニュー。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
    - `view/parts/` — パネルやモーダルから使う UI 部品。対象の要素は引数で受け取る。
       - `taskList.js` — タスク行の描画と行内アクション。
-      - `dragSort.js` / `suggest.js` / `detailsState.js` — 並び替え (`bindLinkedDragAndDrop` はリスト間の移動もできる。Must / Want 用) / サジェスト / 折りたたみの開閉状況の保存。
+      - `datePicker.js` — 日付を選ぶカレンダー (端末の `<input type="date">` は使わない。端末ごとに動きが違うため)。`openDatePicker` は要素の下に開き、日を選ぶまで確定しない (`allowEmpty` で「日付なし」も選べる)。入力欄の代わりは `DateField` (ボタンに日付を出し、`value` で読み書きする)。
+      - `dragSort.js` / `suggest.js` / `detailsState.js` — 並び替え (`bindLinkedDragAndDrop` はリスト間の移動もできる。Must / Want 用) / サジェスト (入力欄が空のときは出さない) / 折りたたみの開閉状況の保存。
       - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
       - `pipSplit.js` — Split: 今日のToDoのうち画面に見えている分 (Want を閉じていれば Must だけ、Want の折りたたみ中はその先頭だけ) を一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
