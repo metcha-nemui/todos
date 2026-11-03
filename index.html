@@ -5,7 +5,6 @@
    <meta name="robots" content="noindex, nofollow, noarchive">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    
-   <!-- PWA (ホーム画面に追加したときの名前・アイコン・表示方法) -->
    <link rel="manifest" href="manifest.webmanifest">
    <meta name="theme-color" content="#fafafa">
    <meta name="mobile-web-app-capable" content="yes">
@@ -13,12 +12,8 @@
    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
    
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-   
    <link rel="stylesheet" href="style.css">
-   <!-- 配色テーマを描画前に当てる (チラつき防止。切り替えは view/parts/theme.js) -->
+   <!-- 描画前に配色を当てる (チラつき防止) -->
    <script>
       const savedTheme = localStorage.getItem('todo_theme');
       if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme;
@@ -27,7 +22,6 @@
    <title>ToDo App</title>
 </head>
 <body>
-   <!-- 画面上部の通知 (動作は view/panels/statusBanner.js) -->
    <div id="status-banner" class="toast" role="status" hidden>
       <span id="status-banner-text"></span>
       <span id="status-banner-actions" class="toast-actions">
@@ -38,7 +32,6 @@
    </div>
    
    <div class="container">
-      <!-- 画面上部 (日付・配色・設定とタブ)。スクロールしても上に残す -->
       <header class="app-header">
          <div class="app-header-row">
             <div class="date-nav">
@@ -55,7 +48,6 @@
                   <button type="button" class="secondary" data-theme-option="light" title="ライト" aria-label="ライト"><i data-lucide="sun"></i></button>
                   <button type="button" class="secondary" data-theme-option="dark" title="ダーク" aria-label="ダーク"><i data-lucide="moon"></i></button>
                </div>
-               <!-- テーマ以外はたまにしか使わないので、設定メニューにまとめる -->
                <button type="button" class="secondary" popovertarget="settings-menu" title="設定" aria-label="設定" style="anchor-name:--settings-menu-anchor"><i data-lucide="settings"></i></button>
                <div id="settings-menu" class="settings-menu" popover style="position-anchor:--settings-menu-anchor">
                   <button type="button" id="btn-templates" class="secondary">サジェスト候補</button>
@@ -67,7 +59,6 @@
             </div>
          </div>
          
-         <!-- Done / ToDo / 今後 の切り替え (動作は view/parts/tabs.js)。起動時は毎回 Done -->
          <div class="tabs" id="main-tabs" role="tablist">
             <button type="button" class="tab" role="tab" id="tab-done" aria-controls="tabpanel-done" aria-selected="true">Done</button>
             <button type="button" class="tab" role="tab" id="tab-todo" aria-controls="tabpanel-todo" aria-selected="false">ToDo</button>
@@ -76,7 +67,6 @@
       </header>
       
       <main id="view-today">
-         <!-- Done タブ (その日の記録 = やったこと + 日記) -->
          <div id="tabpanel-done" role="tabpanel" aria-labelledby="tab-done">
             <details id="details-done" class="collapse" open>
                <summary class="collapse-title">
@@ -110,7 +100,6 @@
             </details>
          </div>
          
-         <!-- ToDo タブ (その日の ToDo) -->
          <div id="tabpanel-todo" role="tabpanel" aria-labelledby="tab-todo" hidden>
             <details id="details-todo" class="collapse" open>
                <summary class="collapse-title">
@@ -128,7 +117,6 @@
                   <button type="submit">追加</button>
                </form>
                
-               <!-- Must (その日に絶対やるもの。件数に上限がある) と、期限を過ぎた Must -->
                <div class="list-heading">
                   <span>Must</span>
                   <span id="list-count-must" class="list-count"></span>
@@ -136,7 +124,6 @@
                <ul class="task-list overdue-list" id="list-overdue" hidden></ul>
                <ul class="task-list" id="list-must"></ul>
                
-               <!-- Want (やりたい・やったほうがいい。期限を過ぎたら日付なしへ戻る) -->
                <details id="details-want" class="list-group" open>
                   <summary class="list-heading">
                      <span>Want</span>
@@ -151,7 +138,6 @@
             </details>
          </div>
          
-         <!-- 今後タブ (今後のタスク) -->
          <div id="tabpanel-backlog" role="tabpanel" aria-labelledby="tab-backlog" hidden>
             <form class="todo-input-form form-add-backlog" id="form-add-backlog">
                <div class="autocomplete-wrapper">
@@ -166,7 +152,6 @@
       </main>
    </div>
    
-   <!-- Config Modal (動作は view/modals/config.js) -->
    <div id="config-modal" class="modal" hidden>
       <div class="modal-content">
          <h2>Supabase 設定</h2>
@@ -177,7 +162,6 @@
       </div>
    </div>
    
-   <!-- ログイン画面 (動作は view/modals/login.js) -->
    <div id="login-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
          <div class="modal-header">
@@ -195,7 +179,6 @@
       </div>
    </div>
 
-   <!-- サジェスト候補の登録画面 (動作は view/modals/template.js) -->
    <div id="template-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
          <div class="modal-header">
@@ -211,7 +194,6 @@
       </div>
    </div>
 
-   <!-- タスクの分割画面 (動作は view/modals/split.js) -->
    <div id="split-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="split-modal-title">
          <div class="modal-header">
@@ -230,7 +212,6 @@
       </div>
    </div>
 
-   <!-- 過去の日記の一覧 (動作は view/modals/diaryList.js) -->
    <div id="diary-list-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="diary-list-modal-title">
          <div class="modal-header">
@@ -242,7 +223,6 @@
       </div>
    </div>
 
-   <!-- Done の検索 (動作は view/modals/doneSearch.js) -->
    <div id="done-search-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="done-search-modal-title">
          <div class="modal-header">
@@ -260,7 +240,6 @@
       </div>
    </div>
 
-   <!-- 月ごとのタスクの Markdown 出力 (動作は view/modals/export.js) -->
    <div id="export-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="export-modal-title">
          <div class="modal-header">
@@ -284,7 +263,6 @@
       </div>
    </div>
 
-   <!-- 全データの JSON バックアップと復元 (動作は view/modals/backup.js) -->
    <div id="backup-modal" class="modal" hidden>
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="backup-modal-title">
          <div class="modal-header">
@@ -301,7 +279,6 @@
       </div>
    </div>
 
-   <!-- 日ごとの Done 件数のヒートマップ (動作は view/modals/heatmap.js) -->
    <div id="heatmap-modal" class="modal" hidden>
       <div class="modal-dialog modal-dialog-wide" role="dialog" aria-modal="true" aria-labelledby="heatmap-modal-title">
          <div class="modal-header">
@@ -325,7 +302,6 @@
       </div>
    </div>
 
-   <!-- PiP の Split (スタイルは pip.css、動作は view/parts/pipSplit.js) -->
    <template id="pip-split-content">
       <div id="wrapper" class="wrapper"></div>
       <div class="footer">
@@ -333,7 +309,6 @@
       </div>
    </template>
 
-   <!-- PiP の Focus (スタイルは pip.css、動作は view/parts/pipFocus.js) -->
    <template id="pip-focus-content">
       <form id="focus-setup" class="focus-screen">
          <label class="focus-minutes">

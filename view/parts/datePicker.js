@@ -9,6 +9,9 @@ const VIEWPORT_MARGIN = 8;
 // 矢印キーで動かす日数
 const KEY_STEPS = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
 
+// Lucide の calendar-days (クイック登録は Lucide を読み込まないので、ここに持つ)
+const CALENDAR_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>`;
+
 const CHEVRON = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 
 // カレンダーは1つを使い回す (要素は自分で作るので HTML 側の用意はいらない)
@@ -172,12 +175,14 @@ function onKeydown(e) {
    }
 }
 
-// 日付入力欄の代わりのボタン。押すとカレンダーを開き、選んだ日付をボタンの文字に出す
+// 日付入力欄の代わりのボタン。押すとカレンダーを開き、選んだ日付をアイコンの後ろに出す
 // options: { allowEmpty (「日付なし」を選べるか), onChange(value) (選び直したとき), onOpen, onClose }
 export class DateField {
    constructor(button, { allowEmpty = false, onChange, onOpen, onClose } = {}) {
       this.button = button;
       this.allowEmpty = allowEmpty;
+      button.innerHTML = `${CALENDAR_ICON}<span></span>`;
+      this.label = button.querySelector('span');
       this.value = '';
 
       button.addEventListener('click', () => {
@@ -201,6 +206,6 @@ export class DateField {
 
    set value(date) {
       this._value = date || '';
-      this.button.textContent = this._value || '日付なし';
+      this.label.textContent = this._value || '日付なし';
    }
 }
