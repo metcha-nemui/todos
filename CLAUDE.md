@@ -10,7 +10,7 @@
 - `view.js` — `TodoView`。画面を束ねる窓口。パネル単位の `render*` とイベントの `bind*` メソッド。`view/` の下は層ごとのフォルダに分ける。
    - `view/panels/` — 画面を構成するパネル。各自の要素取得・描画・イベントを持つ。
       - `today.js` / `diary.js` / `backlog.js` — 「本日のタスク」/「Diary」/「今後のタスク」。画面ではタブ (Done (Done と Diary) / ToDo / 今後) で出し分ける。画面上部 (`.app-header`、スクロールしても上に残す) に日付の見出し (全タブ共通)・配色・設定メニュー (配色以外のたまに使う操作をまとめる)・タブを置き、中身は外枠のカードなしで並べる。起動時は毎回 Done タブ (`index.html` の初期状態、前回のタブは覚えない)。ToDo を完了にするとトースト「タスクを完了しました」を出す。
-      - ToDo は Must (その日に絶対やるもの) と Want (やりたい・やったほうがいい) に分ける (タスクの `must`。Done は区別しないので、完了にしたら false にする)。追加時にタスク名の先頭に `!` (全角も可) を付けると Must (`TodoModel.addTodo` で解釈するのでクイック登録でも効く)。Must は日付ごとに未完了 `MUST_LIMIT` (2) 件までで、日付なしにはできない。上限を超える操作 (追加・日付変更・未完了に戻す・分割) は Want にして知らせ、Want → Must のドラッグ移動は上限に達していればできない。Want は5件を超えると先頭5件だけ出し、「すべて表示」で広げる。今後タブでは Must のタスクに札 `Must` を付ける。
+      - ToDo は Must (その日に絶対やるもの) と Want (やりたい・やったほうがいい) に分ける (タスクの `must`。Done は区別しないので、完了にしたら false にする)。追加時にタスク名の先頭に `!` (全角も可) を付けると Must (`TodoModel.addTodo` で解釈するのでクイック登録でも効く)。Must は日付ごとに未完了 `MUST_LIMIT` (2) 件までで、日付なしにはできない。上限を超える操作 (追加・日付変更・未完了に戻す・分割) は Want にして知らせ、Want → Must のドラッグ移動は上限に達していればできない。今後タブでは Must のタスクに札 `Must` を付ける。
       - 期限を過ぎた Must は今日を表示しているとき「期限切れ」として Must の上に出す (`getOverdueMusts`)。期限を過ぎた Want は読み込み時 (`reload`) に日付なしへ戻す (`_releaseOverdueWants`)。
       - `statusBanner.js` — 画面上部の通知 (オフライン / 未ログイン / 読み込み失敗)。
    - `view/modals/` — モーダル。
@@ -29,7 +29,7 @@
       - `datePicker.js` — 日付を選ぶカレンダー (端末の `<input type="date">` は使わない。端末ごとに動きが違うため)。`openDatePicker` は要素の下に開き、日を選ぶまで確定しない (`allowEmpty` で「日付なし」も選べる)。入力欄の代わりは `DateField` (ボタンに日付を出し、`value` で読み書きする)。
       - `dragSort.js` / `suggest.js` / `detailsState.js` — 並び替え (`bindLinkedDragAndDrop` はリスト間の移動もできる。Must / Want 用) / サジェスト (入力欄が空のときは出さない) / 折りたたみの開閉状況の保存。
       - `pip.js` — Document Picture-in-Picture ウィンドウを開く共通処理。中身は `index.html` の `<template>` から流し込む。
-      - `pipSplit.js` — Split: 今日のToDoのうち画面に見えている分 (Want を閉じていれば Must だけ、Want の折りたたみ中はその先頭だけ) を一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
+      - `pipSplit.js` — Split: 今日のToDoのうち画面に見えている分 (Want を閉じていれば Must だけ) を一覧で出し、クリックで次へ進めて経過時間を記録する。行ごとに一覧から外せる。一覧だけスクロールし、下のタイマーは固定。
       - `pipFocus.js` — Focus: 開始画面で対象のToDoと1タスクあたりの持ち時間 (既定10分、前回値を localStorage `todo_focus_minutes` に保存) を選び、1つずつ表示する。持ち時間が過ぎると次へ強制的に進む。「スキップ」(次へ、時間はリセット) と「完了」(`TodoModel.completeTodo`) だけを持つ。メイン画面で完了・削除・日付変更されたタスクは、`todos` の変更時 (`renderFocus`) に対象から外す。
       - `tabs.js` — タブの切り替え (`role="tab"` のボタンと `aria-controls` で指す中身を `hidden` で出し分ける)。
       - `toast.js` — 画面上部に一時的に出す通知 (`showToast`)。要素は自分で作るので HTML 側の用意はいらない。
@@ -59,7 +59,7 @@
 - 複数の画面で使うスタイルは、特定の画面名を含まないクラスにする (モーダルの枠 `.modal-dialog` / `.modal-header` / `.modal-list` / 一覧上の行 `.modal-toolbar` / 一覧内の区切り見出し `.modal-list-heading` / 下部のボタン行 `.modal-footer` と横に広い枠 `.modal-dialog-wide`、空のときの案内文 `.empty-text`、画面上部の通知 `.toast` と中のボタン群 `.toast-actions`、折りたたみの見出し `.collapse-title`、タブ `.tabs` / `.tab` (本編とクイック登録で共用)、タスク一覧内の小見出し `.list-heading` (折りたためるものは `details.list-group`) とタスク名の後ろの札 `.task-badge`、見出し内の件数 `.list-count`、見出し内のアイコンボタン `.summary-btn` と右端の文字付きボタン `.summary-action`)。
 - 色は `style.css` の `:root` のトークン (shadcn/ui ふうの名前: `--background` / `--card` / `--popover` / `--muted` / `--hover` / `--foreground` / `--muted-foreground` / `--border` / `--primary` / `--primary-text` / `--primary-subtle` / `--ring` / `--destructive` など) で決め、各所では `var(--*)` だけを使う (色の値を直接書かない)。余白・大きさ・文字・角丸・影も同じくトークンを使う (Tailwind ふう: 余白は基準値 `--space` (0.25rem = 4px) を `calc(var(--space) * N)` で N 倍する、部品の高さ `--control-h` / `--control-h-sm` / `--control-h-xs`、アイコン `--icon-size`、文字 `--text-xs` 〜 `--text-xl` と `--font-*`、角丸 `--radius-sm` 〜 `--radius-xl`、影 `--shadow-xs` 〜 `--shadow-lg`、重なり `--z-*`)。トークンは `light-dark(ライト, ダーク)` で両テーマの値を並べる。`pip.css` は常にダーク、`offline.html` は外部ファイルを読めないので自前で同じ値を持つ。
 - HTML のコメントは最低限にする (描画前の配色の適用など、見ただけでは分からないものだけ)。各部分の役割はこのファイルに書く。
-- 文字は英数字が Segoe UI、日本語が Noto Sans JP (Web フォントは読み込まない。Windows には入っている。Android では端末の Roboto / Noto Sans CJK)。太さは 400 / 600 / 700 だけを使う (Segoe UI に 500 がなく、日本語と太さがずれるため)。`html` の `font-size` は変えず、1rem = 16px のまま使う。
+- 文字は英数字が Segoe UI、日本語が Noto Sans JP (Web フォントは読み込まない。Windows には入っている。漢字が大きく太く見えないよう `@font-face` で端末のものを 92% に縮めて使う。Android では端末の Roboto / Noto Sans CJK)。太さは 400 / 600 / 700 だけを使う (Segoe UI に 500 がなく、日本語と太さがずれるため)。`html` の `font-size` は変えず、1rem = 16px のまま使う。
 - スタイルは CSS に書く。インラインスタイルは動的な値 (座標・幅) と、サジェストのアンカー名の対応付けに限る。表示状態の切替は `hidden` 属性か `.is-*` クラスで行う。
 - `sw.js` はアプリのファイルをキャッシュしない (古い版が出続けるのを避けるため)。キャッシュするのは `offline.html` だけ。
 - 日付は `YYYY-MM-DD` 文字列 (ローカル時間)。`lib/date.js` のヘルパを使う。

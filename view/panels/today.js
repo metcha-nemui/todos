@@ -8,9 +8,6 @@ import { renderTaskList } from '../parts/taskList.js';
 import { bindLinkedDragAndDrop } from '../parts/dragSort.js';
 import { openDatePicker } from '../parts/datePicker.js';
 
-// 折りたたみ時に表示するWantの件数
-const ELLIPSIS_VISIBLE_COUNT = 5;
-
 export class TodayPanel {
    constructor() {
       this.currentDateText = document.getElementById('current-date-text');
@@ -22,8 +19,6 @@ export class TodayPanel {
       this.formAddTodo = document.getElementById('form-add-todo');
       this.inputDoneTitle = document.getElementById('input-done-title');
       this.inputTodoTitle = document.getElementById('input-todo-title');
-      this.toggleToDoEllipsis = document.getElementById('toggle-todo-ellipsis');
-      this._todoIsEllipsis = true;
 
       this.listMust = document.getElementById('list-must');
       this.listWant = document.getElementById('list-want');
@@ -51,13 +46,6 @@ export class TodayPanel {
       this._currentDate = null;
       // 1日に置ける Must の上限 (Want から Must へ移せるかの判定に使う)
       this._mustLimit = Infinity;
-
-      this.toggleToDoEllipsis.addEventListener("click", () => {
-         this._todoIsEllipsis = !this._todoIsEllipsis;
-         this.toggleToDoEllipsis.querySelector("#todo-ellipsis-on") .hidden = !this._todoIsEllipsis;
-         this.toggleToDoEllipsis.querySelector("#todo-ellipsis-off").hidden =  this._todoIsEllipsis;
-         this._applyEllipsis();
-      });
    }
 
    // todos は Must が先に並ぶ。overdues は期限を過ぎた Must
@@ -83,15 +71,6 @@ export class TodayPanel {
 
       renderTaskList(this.listWant, wants, false, true);
       this.CountWant.textContent = wants.length;
-      this.toggleToDoEllipsis.hidden = wants.length <= ELLIPSIS_VISIBLE_COUNT;
-      this._applyEllipsis();
-   }
-
-   _applyEllipsis() {
-      const todoItems = this.listWant.querySelectorAll(".task-item");
-      todoItems.forEach((d, i) => {
-         d.hidden = this._todoIsEllipsis && i >= ELLIPSIS_VISIBLE_COUNT;
-      });
    }
 
    bindDatePicker(handler) {
@@ -168,13 +147,10 @@ export class TodayPanel {
    }
 
    bindPiPSplitButton(getTodos) {
-      // 画面に見えている分だけを渡す (Want を閉じていれば Must だけ、折りたたみ中は Want の先頭だけ)
+      // 画面に見えている分だけを渡す (Want を閉じていれば Must だけ)
       bindPiPSplitButton(this.btnPiPSplit, () => {
          const todos = getTodos();
-         const musts = todos.filter(t => t.must);
-         const wants = todos.filter(t => !t.must);
-         if (!this.detailsWant.open) return musts;
-         return [...musts, ...(this._todoIsEllipsis ? wants.slice(0, ELLIPSIS_VISIBLE_COUNT) : wants)];
+         return this.detailsWant.open ? todos : todos.filter(t => t.must);
       });
    }
 
