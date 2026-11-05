@@ -22,6 +22,7 @@
       - `backup.js` — 全データの JSON バックアップと復元 (`todo-backup-YYYY-MM-DD.json`)。画面上部の設定メニューの「バックアップ」から開く。
       - `login.js` — ログイン画面 (メールアドレスとパスワード)。未ログインになると自動で開き、画面上部の通知の「ログイン」からも開く。ログアウトは画面上部の設定メニュー。
       - `split.js` — タスクの分割画面。未完了タスクの行内アクションから開き、OK で元タスクを分割後のタスク群に置き換える (`TodoModel.splitTodo`)。
+      - `edit.js` — タスク名の編集画面。行内アクションの「編集」から開き、保存で `TodoModel.editTodo` を呼ぶ。
       - `config.js` — Supabase 接続設定の入力画面。`app.js` とは別の `<script>` で読み込む (Supabase を読み込めなくても動かすため)。`data-open-config` を付けた要素が入口になる。
       - `close.js` — モーダル共通の閉じる操作 (背景クリック / Escape)。
    - `view/parts/` — パネルやモーダルから使う UI 部品。対象の要素は引数で受け取る。

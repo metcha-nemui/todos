@@ -1058,39 +1058,12 @@ button.date-picker-day {
    }
 }
 
-/* 表示モード / 編集モード (編集中は .task-item に .is-editing が付く) */
 .task-view-mode {
    display: flex;
    align-items: center;
    justify-content: space-between;
    gap: calc(var(--space) * 2);
    width: 100%;
-}
-
-.task-edit-mode {
-   display: none;
-   width: 100%;
-   gap: calc(var(--space) * 1.5);
-
-   .edit-input {
-      flex: 1;
-      min-width: 0;
-      min-height: var(--control-h-sm);
-   }
-
-   button {
-      min-height: var(--control-h-sm);
-      padding: 0 calc(var(--space) * 3);
-   }
-}
-
-.task-item.is-editing {
-   .task-view-mode {
-      display: none;
-   }
-   .task-edit-mode {
-      display: flex;
-   }
 }
 
 .task-item-content {
@@ -1229,6 +1202,13 @@ button.date-picker-day {
    font-size: var(--text-sm);
    color: var(--muted-foreground);
    word-break: break-all;
+}
+
+/* タスク名の編集画面 */
+.edit-form {
+   display: flex;
+   flex-direction: column;
+   gap: calc(var(--space) * 3);
 }
 
 /* 行の一覧だけをスクロールさせる */

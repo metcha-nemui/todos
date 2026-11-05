@@ -9,6 +9,7 @@ import { DoneSearchModal } from './view/modals/doneSearch.js';
 import { ExportModal } from './view/modals/export.js';
 import { BackupModal } from './view/modals/backup.js';
 import { SplitModal } from './view/modals/split.js';
+import { EditModal } from './view/modals/edit.js';
 import { LoginModal } from './view/modals/login.js';
 import { StatusBanner } from './view/panels/statusBanner.js';
 import { setupCustomSuggest } from './view/parts/suggest.js';
@@ -33,6 +34,7 @@ export class TodoView {
       this.backupModal = new BackupModal();
       this.btnBackup = document.getElementById('btn-backup');
       this.splitModal = new SplitModal();
+      this.editModal = new EditModal();
       this.statusBanner  = new StatusBanner();
       this.loginModal = new LoginModal();
       this.btnLogout = document.getElementById('btn-logout');
@@ -161,13 +163,15 @@ export class TodoView {
       this.backlogPanel.bindAddTodo(handler);
    }
 
-   // handlers: { onToggle, onDelete, onEdit, onChangeDate }
+   // handlers: { onToggle, onDelete, onEdit, onChangeDate }。onEdit(id, newTitle) は編集画面で保存したときに呼ぶ
    bindTaskActions(handlers) {
       const lists = [this.todayPanel.listMust, this.todayPanel.listWant, this.todayPanel.listOverdue, this.todayPanel.listDone, this.backlogPanel.containerBacklogTasks];
       bindTaskActions(lists, {
          ...handlers,
+         onEdit:  (id, title) => this.editModal.open({ id, title }),
          onSplit: (id, title) => this.splitModal.open({ id, title }),
       });
+      this.editModal.bindSubmit(handlers.onEdit);
    }
 
    // タスクの分割画面。OK で handler に (元タスクの id, 分割後のタスク名の配列) が渡る

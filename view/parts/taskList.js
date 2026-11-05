@@ -45,18 +45,13 @@ export function renderTaskList(element, tasks, isDone, showDateChanger = false, 
                </div>
             </div>
          </div>
-
-         <form class="task-edit-mode">
-            <input type="text" class="edit-input" value="${escapeHtml(task.title)}" required>
-            <button type="submit" class="save-btn">保存</button>
-            <button type="button" class="cancel-btn secondary">キャンセル</button>
-         </form>
       `;
       element.appendChild(li);
    });
 }
 
 // lists: タスク行 (.task-item) を内包する要素群。イベント委譲で処理する
+// onEdit(id, title) / onSplit(id, title) は編集・分割の画面を開くために呼ぶ (title は今のタスク名)
 export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDate, onSplit }) {
    lists.forEach(listContainer => {
       if(!listContainer) return;
@@ -86,8 +81,6 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
             setTimeout(() => document.addEventListener('click', closeMenu), 0);
             return;
          }
-         const editInput = li.querySelector('.edit-input');
-
          const actionMap = {
             'toggle-check': () => onToggle(id),
             'delete-btn'  : () => {
@@ -110,16 +103,8 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                onSplit(id, li.querySelector('.task-title-text').textContent);
             },
             'edit-btn'    : () => {
-               li.classList.add('is-editing');
-               editInput.focus();
-               const val = editInput.value;
-               editInput.value = '';
-               editInput.value = val;
+               onEdit(id, li.querySelector('.task-title-text').textContent);
             },
-            'cancel-btn'  : () => {
-               editInput.value = li.querySelector('.task-title-text').textContent;
-               li.classList.remove('is-editing');
-            }
          };
 
          for(const className of target.classList) {
@@ -127,21 +112,6 @@ export function bindTaskActions(lists, { onToggle, onDelete, onEdit, onChangeDat
                actionMap[className](e);
                return;
             }
-         }
-      });
-
-      listContainer.addEventListener('submit', (e) => {
-         e.preventDefault();
-         const targetForm = e.target.closest('.task-edit-mode');
-         if (!targetForm) return;
-
-         const li = targetForm.closest('.task-item');
-         const id = li.dataset.id;
-         const editInput = targetForm.querySelector('.edit-input');
-         const newTitle = editInput.value.trim();
-
-         if (newTitle) {
-            onEdit(id, newTitle);
          }
       });
    });
