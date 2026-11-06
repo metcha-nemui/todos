@@ -1076,10 +1076,6 @@ button.date-picker-day {
    .task-title-text {
       word-break: break-all;
    }
-
-   &.done .task-title-text {
-      color: var(--muted-foreground);
-   }
 }
 
 /* 行内アクション (PC は行に乗せたときだけ出す。スマホは「…」のメニュー) */

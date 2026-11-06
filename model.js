@@ -218,22 +218,18 @@ export class TodoModel {
    // タスク操作
    // いずれもDBへの書き込みが成功してから手元のデータに反映する
    // 追加は成功したら true を返す
-   // ToDo はタスク名の先頭に「!」を付けると Must にする (クイック登録でも効く)
    async addTodo(title, dueDate = null, isDone = false) {
       if (!supabase) { console.warn('Supabase not configured'); return; }
       const targetDate = dueDate;
 
-      const mustTitle = isDone ? '' : title.replace(/^[!！]\s*/, '');
-      const wantMust = mustTitle !== '' && mustTitle !== title;
-      
       const { data, error } = await todoTable.insertTodo({
-         title: wantMust ? mustTitle : title,
+         title,
          is_done: isDone,
          due_date: targetDate,
          done_at: null,
          created_at: new Date().toISOString(),
          sort_order: todoTable.nextSortOrder(this.todos, t => t.due_date === targetDate),
-         must: this._fitMust(wantMust, targetDate),
+         must: false,
       });
       if (error) return this._fail('タスクの追加', error);
       
